@@ -1,0 +1,6 @@
+version: '3.7'
+services:
+  microservices-uno:
+    build: .
+    container_name: uno
+    network_mode: "host"

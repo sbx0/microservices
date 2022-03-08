@@ -6,13 +6,14 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>code-generator</module>
         <module>microservices-entity</module>
         <module>microservices-configuration</module>
         <module>microservices-registry</module>
         <module>microservices-gateway</module>
         <module>microservices-infrastructure</module>
         <module>microservices-account</module>
-        <module>code-generator</module>
+        <module>microservices-uno</module>
     </modules>
 
     <parent>
@@ -32,18 +33,6 @@
         <java.version>1.8</java.version>
         <argLine>-Dfile.encoding=UTF-8</argLine>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
     <dependencyManagement>
         <dependencies>
