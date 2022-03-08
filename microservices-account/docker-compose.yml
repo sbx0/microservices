@@ -1,0 +1,6 @@
+version: '3.7'
+services:
+  microservices-account:
+    build: .
+    container_name: account
+    network_mode: "host"

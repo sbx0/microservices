@@ -1,0 +1,42 @@
+server:
+  port: ${PORT:8888}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${REGISTRY_HOST:192.168.1.254}:${REGISTRY_PORT:8761}/eureka/
+  instance:
+    appname: configuration
+    instance-id: ${spring.application.name}:${random.uuid}
+    prefer-ip-address: true
+
+spring:
+  application:
+    name: configuration
+  cloud:
+    inetutils:
+      preferred-networks: 192.168.1\.(.*)
+    config:
+      server:
+        native:
+          search-locations: file:/home/sbx0/configurations
+management:
+  info:
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+
+info:
+  app:
+    name: configuration
+    port: ${PORT:8888}
+
+logging:
+  level:
+    - root: debug
