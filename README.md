@@ -1,6 +1,6 @@
-# microservices
+# microservices [under construction]
 
-This is a java microservice built by Spring Cloud Framework
+This is a java microservice project built by Spring Cloud Framework
 
 # Composition
 
