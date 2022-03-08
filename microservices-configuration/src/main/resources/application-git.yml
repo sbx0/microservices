@@ -21,7 +21,7 @@ spring:
         git:
           uri: https://github.com/sbx0/configuration
           username: sbx0
-          password: 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
+          password: test
           default-label: microservices
           search-paths: ""
           skipSslValidation: true

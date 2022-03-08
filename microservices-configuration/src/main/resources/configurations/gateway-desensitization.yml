@@ -1,0 +1,40 @@
+server:
+  port: ${PORT:8080}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${REGISTRY_HOST:192.168.1.254}:${REGISTRY_PORT:8761}/eureka/
+  instance:
+    appname: gateway
+    instance-id: ${spring.application.name}:${random.uuid}
+    prefer-ip-address: true
+
+spring:
+  cloud:
+    inetutils:
+      preferred-networks: 192.168.1\.(.*)
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+  redis:
+    database: 0
+    host: ${REDIS_HOST:192.168.1.254}
+    password: ${REDIS_PASSWORD:test}
+    port: ${REDIS_PORT:6379}
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+
+logging:
+  level:
+    root: INFO
