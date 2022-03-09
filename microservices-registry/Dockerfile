@@ -5,8 +5,6 @@ MAINTAINER sbx0
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JAVA_OPTS="" \
     PORT=8761 \
-    CONFIG_HOST="192.168.1.254" \
-    CONFIG_PORT=8888 \
     PROFILES="dev"
 
 RUN apt update && apt install curl

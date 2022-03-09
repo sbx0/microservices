@@ -1,6 +1,5 @@
 package cn.sbx0.microservices.account.config;
 
-import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.CorsEndpointProperties;
@@ -31,7 +30,6 @@ import java.util.List;
  */
 @Slf4j
 @Configuration
-@EnableKnife4j
 public class Swagger2Config {
     @Bean
     public Docket createRestApi() {
