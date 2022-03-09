@@ -6,7 +6,7 @@ eureka:
     serviceUrl:
       defaultZone: http://${REGISTRY_HOST:192.168.1.254}:${REGISTRY_PORT:8761}/eureka/
   instance:
-    appname: account
+    appname: uno
     instance-id: ${spring.application.name}:${random.uuid}
     prefer-ip-address: true
 

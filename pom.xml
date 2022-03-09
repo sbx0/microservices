@@ -36,7 +36,7 @@
         <feign-httpclient.version>11.8</feign-httpclient.version>
         <mybatis-plus.version>3.5.1</mybatis-plus.version>
         <pagehelper-spring-boot-starter.version>1.4.1</pagehelper-spring-boot-starter.version>
-        <springfox-swagger2.version>3.0.0</springfox-swagger2.version>
+        <knife4j.version>2.0.9</knife4j.version>
         <sa-token.version>1.29.0</sa-token.version>
         <lombok.version>1.18.22</lombok.version>
         <velocity-engine-core.version>2.3</velocity-engine-core.version>
@@ -83,16 +83,11 @@
                 <artifactId>velocity-engine-core</artifactId>
                 <version>${velocity-engine-core.version}</version>
             </dependency>
-            <!-- swagger2 -->
+            <!-- doc -->
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${springfox-swagger2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>${springfox-swagger2.version}</version>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
             </dependency>
             <!-- sa-token -->
             <dependency>

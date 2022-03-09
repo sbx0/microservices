@@ -10,9 +10,9 @@ import java.util.Map;
 public class CodeGenerator {
     public static final String author = "wangh";
     public static final String packageConfig = "cn.sbx0.microservices";
-    public static final String moduleName = "microservices-account";
-    public static final String modulePackageConfig = "account";
-    public static final String table = "client_config";
+    public static final String moduleName = "microservices-uno";
+    public static final String modulePackageConfig = "uno";
+    public static final String table = "game_room";
     public static String url;
     public static String username;
     public static String password;
@@ -26,7 +26,6 @@ public class CodeGenerator {
                 .create(url, username, password)
                 .globalConfig(builder -> builder.author(author)
                         .fileOverride()
-                        .enableSwagger()
                         .outputDir(System.getProperty("user.dir") + File.separator + moduleName + File.separator + "src" + File.separator + "main" + File.separator + "java"))
                 .packageConfig(builder -> builder.parent(packageConfig)
                         .moduleName(modulePackageConfig)

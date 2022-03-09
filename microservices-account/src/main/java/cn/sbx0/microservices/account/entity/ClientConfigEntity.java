@@ -3,15 +3,12 @@ package cn.sbx0.microservices.account.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * <p>
@@ -24,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Getter
 @Setter
 @TableName("client_config")
-@ApiModel(value = "ClientConfigEntity对象", description = "")
 public class ClientConfigEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

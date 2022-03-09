@@ -33,3 +33,14 @@ services:
         condition: service_healthy
       microservices-gateway:
         condition: service_healthy
+
+  microservices-uno:
+    build: ./microservices-uno
+    network_mode: "host"
+    depends_on:
+      microservices-configuration:
+        condition: service_healthy
+      microservices-registry:
+        condition: service_healthy
+      microservices-gateway:
+        condition: service_healthy

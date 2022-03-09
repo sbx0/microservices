@@ -1,4 +1,4 @@
-package cn.sbx0.microservices.account;
+package cn.sbx0.microservices.uno;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

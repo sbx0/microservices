@@ -1,4 +1,4 @@
-package cn.sbx0.microservices.account.controller;
+package cn.sbx0.microservices.controller;
 
 import cn.sbx0.microservices.entity.PageQueryDTO;
 import cn.sbx0.microservices.entity.Paging;
@@ -6,10 +6,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.Serializable;
 import java.util.List;
@@ -22,13 +23,16 @@ public class BaseController<S extends ServiceImpl<M, T>, M extends BaseMapper<T>
     @Autowired
     protected S service;
 
-    @ApiOperation(value = "根据 ID 查询详情")
+    @PostMapping("/save")
+    public Boolean saveOne(@RequestBody T t) {
+        return service.save(t);
+    }
+
     @GetMapping("/getById/{id}")
     public T getById(@PathVariable("id") Serializable id) {
         return service.getById(id);
     }
 
-    @ApiOperation(value = "列表")
     @GetMapping("/list")
     public Paging<T> list(PageQueryDTO dto) {
         PageHelper.startPage(dto.getPage(), dto.getSize());

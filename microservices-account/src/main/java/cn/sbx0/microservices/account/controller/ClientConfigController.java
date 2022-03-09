@@ -1,11 +1,12 @@
 package cn.sbx0.microservices.account.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import cn.sbx0.microservices.account.entity.ClientConfigEntity;
 import cn.sbx0.microservices.account.mapper.ClientConfigMapper;
 import cn.sbx0.microservices.account.service.impl.ClientConfigServiceImpl;
+import cn.sbx0.microservices.controller.BaseController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>

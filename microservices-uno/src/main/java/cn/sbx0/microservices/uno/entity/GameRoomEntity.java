@@ -1,4 +1,4 @@
-package cn.sbx0.microservices.entity;
+package cn.sbx0.microservices.uno.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -16,36 +16,43 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author wangh
- * @since 2022-03-04
+ * @since 2022-03-09
  */
 @Getter
 @Setter
-@TableName("account")
-public class AccountEntity implements Serializable {
+@TableName("game_room")
+public class GameRoomEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    private String username;
+    private String roomCode;
 
-    private String password;
+    private String roomName;
 
-    private String nickname;
+    private String roomPassword;
 
-    private String email;
+    private Integer playersSize;
 
-    private Integer enableFlag;
+    private Integer roomStatus;
+
+    private Integer privacyFlag;
 
     private String remark;
 
     private Integer delFlag;
 
+    private Integer createUserId;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime crateTime;
 
+    private Integer updateUserId;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
+
 
 }
