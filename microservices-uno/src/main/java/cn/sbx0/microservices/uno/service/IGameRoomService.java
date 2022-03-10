@@ -1,5 +1,6 @@
 package cn.sbx0.microservices.uno.service;
 
+import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -9,8 +10,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author wangh
- * @since 2022-03-09
+ * @since 2022-03-10
  */
 public interface IGameRoomService extends IService<GameRoomEntity> {
-
+    String create(GameRoomCreateDTO dto);
 }

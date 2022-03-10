@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author wangh
- * @since 2022-03-09
+ * @since 2022-03-10
  */
 public interface GameRoomMapper extends BaseMapper<GameRoomEntity> {
 
-}
+        }

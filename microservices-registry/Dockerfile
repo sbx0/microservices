@@ -5,7 +5,9 @@ MAINTAINER sbx0
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JAVA_OPTS="" \
     PORT=8761 \
-    PROFILES="dev"
+    PROFILES="dev" \
+    REGION="virtual-machine" \
+    VERSION="0.0.1"
 
 RUN apt update && apt install curl
 

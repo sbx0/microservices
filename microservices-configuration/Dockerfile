@@ -9,7 +9,9 @@ ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     REGISTRY_PORT=8761 \
     CONFIG_HOST="192.168.1.254" \
     CONFIG_PORT=8888 \
-    PROFILES="native"
+    PROFILES="native" \
+    REGION="virtual-machine" \
+    VERSION="0.0.1"
 
 RUN apt update && apt install curl
 

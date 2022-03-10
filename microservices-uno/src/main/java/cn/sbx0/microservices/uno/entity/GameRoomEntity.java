@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author wangh
- * @since 2022-03-09
+ * @since 2022-03-10
  */
 @Getter
 @Setter
@@ -44,12 +44,12 @@ public class GameRoomEntity implements Serializable {
 
     private Integer delFlag;
 
-    private Integer createUserId;
+    private Long createUserId;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime crateTime;
 
-    private Integer updateUserId;
+    private Long updateUserId;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;

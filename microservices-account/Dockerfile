@@ -11,7 +11,9 @@ ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     REDIS_HOST="192.168.1.254" \
     REDIS_PASSWORD="test" \
     REDIS_PORT=6379 \
-    PROFILES="dev"
+    PROFILES="dev" \
+    REGION="virtual-machine" \
+    VERSION="0.0.1"
 
 RUN apt update && apt install curl
 

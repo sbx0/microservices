@@ -1,0 +1,29 @@
+### 登录
+POST http://{{host}}/ACCOUNT/login
+Accept: application/json
+Content-Type: application/json
+version: dev
+
+{
+  "username": "sbx00",
+  "password": "test"
+}
+
+> {%
+client.global.set("tokenName", response.body.tokenName);
+client.global.set("tokenValue", response.body.tokenValue);
+%}
+
+### 测试
+POST http://{{host}}:8080/UNO/uno/room/create
+satoken: {{tokenValue}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "romeName": "test",
+  "roomPassword": "1",
+  "playersSize": 4,
+  "privacyFlag": 0,
+  "remark": "这是我的房间"
+}

@@ -11,9 +11,9 @@ create table game_room
     privacy_flag   tinyint unsigned default 1     null,
     remark         varchar(50)                    null,
     del_flag       tinyint unsigned default 0     null,
-    create_user_id tinyint unsigned               null,
+    create_user_id bigint unsigned                null,
     crate_time     datetime         default now() not null,
-    update_user_id tinyint unsigned               null,
+    update_user_id bigint unsigned                null,
     update_time    datetime on update now()       null,
     constraint code unique (room_code)
 );
