@@ -82,12 +82,6 @@
                 <artifactId>velocity-engine-core</artifactId>
                 <version>${velocity-engine-core.version}</version>
             </dependency>
-            <!-- doc -->
-            <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-spring-boot-starter</artifactId>
-                <version>${knife4j.version}</version>
-            </dependency>
             <!-- sa-token -->
             <dependency>
                 <groupId>cn.dev33</groupId>

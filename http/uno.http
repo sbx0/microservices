@@ -15,13 +15,13 @@ client.global.set("tokenValue", response.body.tokenValue);
 %}
 
 ### 测试
-POST http://{{host}}:8080/UNO/uno/room/create
+POST http://{{host}}/UNO/uno/room/create
 satoken: {{tokenValue}}
 Accept: application/json
 Content-Type: application/json
 
 {
-  "romeName": "test",
+  "roomName": "test",
   "roomPassword": "1",
   "playersSize": 4,
   "privacyFlag": 0,
