@@ -17,7 +17,9 @@ This is a java microservice project built by Spring Cloud Framework
 
 # Running Examples
 
-1. run `build.bat`
-2. copy `target` folder to your server
-3. run `docker-compose build`
-4. run `docker-compose up -d`
+1. git clone
+2. run `build.sh` or `build.bat`
+3. cd `target` folder
+4. run `docker-compose build`
+5. run `docker-compose up -d`
+6. visit http://127.0.0.1:8761 to see services

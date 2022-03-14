@@ -9,7 +9,7 @@ services:
     build: ./microservices-configuration
     network_mode: "host"
     volumes:
-      - /home/sbx0/configurations:/home/sbx0/configurations
+      - /home/microservices/source_code/target/configurations:/home/configurations
     depends_on:
       microservices-registry:
         condition: service_healthy
