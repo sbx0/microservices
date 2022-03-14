@@ -26,7 +26,7 @@ spring:
     config:
       server:
         native:
-          search-locations: file:/home/configurations
+          search-locations: file:/home/sbx0/configurations
 management:
   info:
     env:
