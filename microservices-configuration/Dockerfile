@@ -11,9 +11,12 @@ ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     CONFIG_PORT=8888 \
     PROFILES="native" \
     REGION="virtual-machine" \
-    VERSION="0.0.1"
+    VERSION="0.0.1" \
+    TZ=Asia/Shanghai
 
-RUN apt update && apt install curl
+ADD /*.jar /bootstrap.jar
+
+RUN apt update && apt install curl && apt install tzdata
 
 HEALTHCHECK --interval=5s --timeout=30s CMD curl -f http://localhost:$PORT/actuator/health || exit 1
 
