@@ -1,6 +1,8 @@
 package cn.sbx0.microservices.account.service;
 
+import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.sbx0.microservices.entity.AccountEntity;
+import cn.sbx0.microservices.entity.LoginDTO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -12,5 +14,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2022-03-04
  */
 public interface IAccountService extends IService<AccountEntity> {
+    AccountEntity findByUsername(String username);
 
+    SaTokenInfo login(LoginDTO dto);
+
+    boolean register(LoginDTO dto);
+
+    AccountEntity loginInfo();
 }

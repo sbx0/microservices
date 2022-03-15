@@ -14,4 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IGameRoomService extends IService<GameRoomEntity> {
     String create(GameRoomCreateDTO dto);
+
+    GameRoomEntity getOneByRoomCode(String roomCode);
 }

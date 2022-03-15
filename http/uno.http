@@ -1,3 +1,14 @@
+### 注册
+POST http://{{host}}:8080/ACCOUNT/register
+satoken: {{tokenValue}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "username": "sbx001",
+  "password": "test"
+}
+
 ### 登录
 POST http://{{host}}/ACCOUNT/login
 Accept: application/json
@@ -14,16 +25,34 @@ client.global.set("tokenName", response.body.tokenName);
 client.global.set("tokenValue", response.body.tokenValue);
 %}
 
-### 测试
+### 创建房间
 POST http://{{host}}/UNO/uno/room/create
 satoken: {{tokenValue}}
 Accept: application/json
 Content-Type: application/json
+version: dev
 
 {
-  "roomName": "test",
-  "roomPassword": "1",
+  "roomName": "Friendship first",
   "playersSize": 4,
   "privacyFlag": 0,
-  "remark": "这是我的房间"
+  "remark": "test"
 }
+
+> {%
+client.global.set("roomCode", response.body.data);
+%}
+
+### 进入房间
+GET http://{{host}}/UNO/uno/room/user/join/{{roomCode}}
+satoken: {{tokenValue}}
+Accept: application/json
+Content-Type: application/json
+version: dev
+
+### 查看列表
+GET http://{{host}}/UNO/uno/room/user/list/{{roomCode}}
+satoken: {{tokenValue}}
+Accept: application/json
+Content-Type: application/json
+version: dev

@@ -17,3 +17,19 @@ create table game_room
     update_time    datetime on update now()       null,
     constraint code unique (room_code)
 );
+
+drop table if exists game_room_user;
+
+create table game_room_user
+(
+    id             bigint unsigned auto_increment primary key,
+    room_id        bigint unsigned                null,
+    user_id        bigint unsigned                null,
+    username       varchar(50)                    null,
+    remark         varchar(50)                    null,
+    del_flag       tinyint unsigned default 0     null,
+    create_user_id bigint unsigned                null,
+    crate_time     datetime         default now() not null,
+    update_user_id bigint unsigned                null,
+    update_time    datetime on update now()       null
+);

@@ -24,10 +24,12 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
         System.out.println(BCrypt.hashpw("03783818", BCrypt.gensalt()));
     }
 
+    @Override
     public AccountEntity findByUsername(String username) {
         return getBaseMapper().findByUsername(username);
     }
 
+    @Override
     public SaTokenInfo login(LoginDTO dto) {
         AccountEntity account = getBaseMapper().findByUsername(dto.getUsername());
         if (account != null && account.getId() > 0) {
@@ -39,6 +41,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
         return null;
     }
 
+    @Override
     public boolean register(LoginDTO dto) {
         AccountEntity exist = findByUsername(dto.getUsername());
         if (exist != null) {
@@ -48,5 +51,10 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
         exist.setUsername(dto.getUsername());
         exist.setPassword(BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt()));
         return getBaseMapper().insert(exist) > 0;
+    }
+
+    @Override
+    public AccountEntity loginInfo() {
+        return getById(StpUtil.getLoginIdAsLong());
     }
 }
