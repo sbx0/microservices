@@ -23,6 +23,7 @@ copy "%path%\microservices-registry\target\*.jar" "%path%\target\microservices-r
 copy "%path%\microservices-registry\Dockerfile" "%path%\target\microservices-registry\"
 
 copy "%path%\docker-compose.yml" "%path%\target\"
+copy "%path%\*.sh" "%path%\target\"
 rd /s /q %path%\target\configurations
 md %path%\target\configurations
 copy "%path%\microservices-configuration\src\main\resources\configurations\*" "%path%\target\configurations\"
