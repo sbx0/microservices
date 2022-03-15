@@ -1,1 +1,1 @@
-jstat -gc 9 5000
+jstat -gc 9 5000 jvisualvm

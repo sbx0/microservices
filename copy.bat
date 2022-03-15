@@ -22,6 +22,11 @@ md %path%\target\microservices-registry
 copy "%path%\microservices-registry\target\*.jar" "%path%\target\microservices-registry\"
 copy "%path%\microservices-registry\Dockerfile" "%path%\target\microservices-registry\"
 
+rd /s /q %path%\target\microservices-uno
+md %path%\target\microservices-uno
+copy "%path%\microservices-uno\target\*.jar" "%path%\target\microservices-uno\"
+copy "%path%\microservices-uno\Dockerfile" "%path%\target\microservices-uno\"
+
 copy "%path%\docker-compose.yml" "%path%\target\"
 copy "%path%\*.sh" "%path%\target\"
 rd /s /q %path%\target\configurations
