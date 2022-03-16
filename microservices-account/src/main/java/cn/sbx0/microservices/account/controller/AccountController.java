@@ -6,6 +6,7 @@ import cn.sbx0.microservices.account.mapper.AccountMapper;
 import cn.sbx0.microservices.account.service.impl.AccountServiceImpl;
 import cn.sbx0.microservices.controller.BaseController;
 import cn.sbx0.microservices.entity.AccountEntity;
+import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.entity.LoginDTO;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,13 +23,18 @@ public class AccountController extends BaseController<AccountServiceImpl, Accoun
         return service.login(dto);
     }
 
+    @PostMapping("/logout")
+    public void logout() {
+        service.logout();
+    }
+
     @PostMapping("/register")
     public Boolean register(@RequestBody LoginDTO dto) {
         return service.register(dto);
     }
 
     @GetMapping("/user/loginInfo")
-    public AccountEntity loginInfo() {
+    public AccountVO loginInfo() {
         return service.loginInfo();
     }
 }

@@ -4,12 +4,10 @@ services:
   microservices-registry:
     build: ./microservices-registry
     network_mode: "host"
-    restart: always
 
   microservices-configuration:
     build: ./microservices-configuration
     network_mode: "host"
-    restart: always
     volumes:
       - /home/sbx0/configurations:/home/sbx0/configurations
     depends_on:
@@ -19,7 +17,6 @@ services:
   microservices-gateway:
     build: ./microservices-gateway
     network_mode: "host"
-    restart: always
     depends_on:
       microservices-configuration:
         condition: service_healthy
@@ -29,7 +26,6 @@ services:
   microservices-account:
     build: ./microservices-account
     network_mode: "host"
-    restart: always
     depends_on:
       microservices-configuration:
         condition: service_healthy
@@ -41,7 +37,6 @@ services:
   microservices-uno:
     build: ./microservices-uno
     network_mode: "host"
-    restart: always
     depends_on:
       microservices-configuration:
         condition: service_healthy

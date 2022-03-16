@@ -1,6 +1,6 @@
 package cn.sbx0.microservices.uno.feign;
 
-import cn.sbx0.microservices.entity.AccountEntity;
+import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.config.FeignConfiguration;
 import lb.CustomLoadBalancerConfiguration;
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
@@ -15,5 +15,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 @FeignClient(name = "ACCOUNT", configuration = FeignConfiguration.class)
 public interface AccountService {
     @GetMapping("/user/loginInfo")
-    AccountEntity loginInfo();
+    AccountVO loginInfo();
 }

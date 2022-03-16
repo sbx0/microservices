@@ -10,7 +10,7 @@ create table account
     enable_flag tinyint unsigned default 1     null,
     remark      varchar(50)                    null,
     del_flag    tinyint unsigned default 0     null,
-    crate_time  datetime         default now() not null,
+    create_time datetime         default now() not null,
     update_time datetime on update now()       null,
     constraint username unique (username)
 );
@@ -28,7 +28,7 @@ create table client_config
     scopes        varchar(100)                   null,
     remark        varchar(50)                    null,
     del_flag      tinyint unsigned default 0     null,
-    crate_time    datetime         default now() not null,
+    create_time   datetime         default now() not null,
     update_time   datetime on update now()       null,
     constraint client_id unique (client_id)
 );

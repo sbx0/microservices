@@ -24,7 +24,8 @@ public class SaTokenConfigure {
     public SaReactorFilter getSaReactorFilter() {
         return new SaReactorFilter()
                 // 拦截地址
-                .addInclude("/**")
+                .addInclude("/ACCOUNT/**")
+                .addInclude("/UNO/**")
                 // 开放地址
                 .addExclude("/favicon.ico")
                 .addExclude("/actuator/*")

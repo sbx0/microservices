@@ -1,6 +1,6 @@
 package cn.sbx0.microservices.uno.service.impl;
 
-import cn.sbx0.microservices.entity.AccountEntity;
+import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomUserEntity;
 import cn.sbx0.microservices.uno.feign.AccountService;
@@ -38,7 +38,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
             return false;
         }
         GameRoomUserEntity gamer = new GameRoomUserEntity();
-        AccountEntity account = accountService.loginInfo();
+        AccountVO account = accountService.loginInfo();
         gamer.setRoomId(gameRoom.getId());
         gamer.setUserId(account.getId());
 
@@ -48,7 +48,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
             LocalDateTime baseTime = now.minusMinutes(3);
             LocalDateTime lastTime = alreadyJoin.getUpdateTime();
             if (lastTime == null) {
-                lastTime = alreadyJoin.getCrateTime();
+                lastTime = alreadyJoin.getCreateTime();
             }
             if (baseTime.isBefore(lastTime)) {
                 return false;
@@ -72,7 +72,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
             if (one.getUpdateTime() != null) {
                 return baseTime.isBefore(one.getUpdateTime());
             }
-            return baseTime.isBefore(one.getCrateTime());
+            return baseTime.isBefore(one.getCreateTime());
         }).collect(Collectors.toList());
     }
 }

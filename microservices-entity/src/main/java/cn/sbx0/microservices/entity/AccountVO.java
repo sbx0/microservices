@@ -1,0 +1,26 @@
+package cn.sbx0.microservices.entity;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * <p>
+ *
+ * </p>
+ *
+ * @author wangh
+ * @since 2022-03-04
+ */
+@Getter
+@Setter
+public class AccountVO {
+
+    private Long id;
+
+    private String username;
+
+    private String nickname;
+
+    private String email;
+
+}

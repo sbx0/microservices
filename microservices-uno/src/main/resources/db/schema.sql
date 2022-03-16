@@ -12,7 +12,7 @@ create table game_room
     remark         varchar(50)                    null,
     del_flag       tinyint unsigned default 0     null,
     create_user_id bigint unsigned                null,
-    crate_time     datetime         default now() not null,
+    create_time    datetime         default now() not null,
     update_user_id bigint unsigned                null,
     update_time    datetime on update now()       null,
     constraint code unique (room_code)
@@ -29,7 +29,7 @@ create table game_room_user
     remark         varchar(50)                    null,
     del_flag       tinyint unsigned default 0     null,
     create_user_id bigint unsigned                null,
-    crate_time     datetime         default now() not null,
+    create_time    datetime         default now() not null,
     update_user_id bigint unsigned                null,
     update_time    datetime on update now()       null
 );

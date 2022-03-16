@@ -14,7 +14,7 @@
                remark,
                del_flag,
                create_user_id,
-               crate_time,
+               create_time,
                update_user_id,
                update_time
         from game_room
@@ -33,7 +33,7 @@
                remark,
                del_flag,
                create_user_id,
-               crate_time,
+               create_time,
                update_user_id,
                update_time
         from game_room

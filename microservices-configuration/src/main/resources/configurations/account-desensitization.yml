@@ -47,3 +47,6 @@ management:
 logging:
   level:
     root: INFO
+
+sa-token:
+  token-name: token

@@ -4,7 +4,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "username": "sbx00",
+  "username": "sbx0",
   "password": "test"
 }
 
@@ -25,7 +25,7 @@ Content-Type: application/json
 }
 
 ### 测试
-GET http://{{host}}:8080/ACCOUNT/account/clientConfigEntity/list
+GET http://{{host}}:8080/ACCOUNT/user/loginInfo
 satoken: {{tokenValue}}
 Accept: application/json
 Content-Type: application/json

@@ -5,8 +5,10 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.account.mapper.AccountMapper;
 import cn.sbx0.microservices.account.service.IAccountService;
 import cn.sbx0.microservices.entity.AccountEntity;
+import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.entity.LoginDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +44,11 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
     }
 
     @Override
+    public void logout() {
+        StpUtil.logout();
+    }
+
+    @Override
     public boolean register(LoginDTO dto) {
         AccountEntity exist = findByUsername(dto.getUsername());
         if (exist != null) {
@@ -54,7 +61,9 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
     }
 
     @Override
-    public AccountEntity loginInfo() {
-        return getById(StpUtil.getLoginIdAsLong());
+    public AccountVO loginInfo() {
+        AccountVO vo = new AccountVO();
+        BeanUtils.copyProperties(getById(StpUtil.getLoginIdAsLong()), vo);
+        return vo;
     }
 }

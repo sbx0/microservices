@@ -47,7 +47,7 @@ public class GameRoomUserEntity implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime crateTime;
+    private LocalDateTime createTime;
 
     private Long updateUserId;
 

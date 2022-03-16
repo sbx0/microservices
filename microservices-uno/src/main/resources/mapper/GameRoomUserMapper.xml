@@ -10,13 +10,13 @@
                remark,
                del_flag,
                create_user_id,
-               crate_time,
+               create_time,
                update_user_id,
                update_time
         from game_room_user
         where user_id = #{id}
           and del_flag = 0
-        order by update_time desc, crate_time desc
+        order by update_time desc, create_time desc
         limit 1
     </select>
     <select id="listByGameRoom" resultType="cn.sbx0.microservices.uno.entity.GameRoomUserEntity">
@@ -27,14 +27,14 @@
                any_value(remark)         as remark,
                del_flag,
                any_value(create_user_id) as create_user_id,
-               crate_time,
+               create_time,
                any_value(update_user_id) as update_user_id,
                update_time
         from game_room_user
         where room_id = #{id}
           and del_flag = 0
-        group by user_id, update_time, crate_time
-        order by update_time desc, crate_time desc
+        group by user_id, update_time, create_time
+        order by update_time desc, create_time desc
         limit #{size}
     </select>
 </mapper>
