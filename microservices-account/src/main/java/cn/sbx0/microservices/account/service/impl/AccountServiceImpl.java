@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity> implements IAccountService {
     public static void main(String[] args) {
-        System.out.println(BCrypt.hashpw("03783818", BCrypt.gensalt()));
+        System.out.println(BCrypt.hashpw("test", BCrypt.gensalt()));
     }
 
     @Override

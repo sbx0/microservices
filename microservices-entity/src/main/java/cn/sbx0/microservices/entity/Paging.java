@@ -15,6 +15,10 @@ import java.util.List;
 public class Paging<T> implements Serializable {
     private static final long serialVersionUID = -1;
 
+    private String code;
+
+    private String message;
+
     private long total = 0;
 
     private List<T> data = Collections.emptyList();

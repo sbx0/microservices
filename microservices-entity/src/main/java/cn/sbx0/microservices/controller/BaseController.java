@@ -43,6 +43,8 @@ public class BaseController<S extends ServiceImpl<M, T>, M extends BaseMapper<T>
         paging.setSize((long) pageInfo.getPageSize());
         paging.setTotal(pageInfo.getTotal());
         paging.setData(list);
+        paging.setCode("0");
+        paging.setMessage("success");
         return paging;
     }
 }

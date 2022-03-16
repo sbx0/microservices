@@ -15,7 +15,7 @@ create table account
     constraint username unique (username)
 );
 INSERT INTO assembler.account (id, username, password, nickname, email, del_flag, enable_flag, remark)
-VALUES (1, 'sbx0', '$2a$10$FgUDlcElk34L8rLFPkSVJeLc0qg4hhZP5/cl4jChA8ezWW28tCQ.i', 'test', 'test', 0, 1, 'test');
+VALUES (1, 'sbx0', '$2a$10$.VfoB8BM56FqqVbKjHa3jeZbFvZLqwaZFlt5Ahj32zpOm55z3ubza', 'test', 'test', 0, 1, 'test');
 
 drop table if exists client_config;
 
