@@ -39,6 +39,7 @@
         <sa-token.version>1.29.0</sa-token.version>
         <lombok.version>1.18.22</lombok.version>
         <velocity-engine-core.version>2.3</velocity-engine-core.version>
+        <jackson-datatype-jsr310.version>2.13.2</jackson-datatype-jsr310.version>
     </properties>
 
     <dependencyManagement>
@@ -103,6 +104,11 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson-datatype-jsr310.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
