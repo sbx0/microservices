@@ -43,3 +43,7 @@ info:
   app:
     name: configuration
     port: ${PORT:8888}
+
+logging:
+  level:
+    - root: info

@@ -11,10 +11,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -44,18 +42,10 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
 
         GameRoomUserEntity alreadyJoin = getBaseMapper().alreadyJoinByCreateUserId(account.getId());
         if (alreadyJoin != null) {
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime baseTime = now.minusMinutes(3);
-            LocalDateTime lastTime = alreadyJoin.getUpdateTime();
-            if (lastTime == null) {
-                lastTime = alreadyJoin.getCreateTime();
-            }
-            if (baseTime.isBefore(lastTime)) {
-                return false;
-            }
+            return false;
         }
 
-        gamer.setUsername(account.getUsername());
+        gamer.setUsername(account.getNickname());
         gamer.setCreateUserId(account.getId());
         return save(gamer);
     }
@@ -66,13 +56,6 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         if (gameRoom == null || gameRoom.getRoomStatus() > 0) {
             return Collections.emptyList();
         }
-        List<GameRoomUserEntity> gamers = getBaseMapper().listByGameRoom(gameRoom.getId(), gameRoom.getPlayersSize());
-        LocalDateTime baseTime = LocalDateTime.now().minusMinutes(3);
-        return gamers.stream().filter(one -> {
-            if (one.getUpdateTime() != null) {
-                return baseTime.isBefore(one.getUpdateTime());
-            }
-            return baseTime.isBefore(one.getCreateTime());
-        }).collect(Collectors.toList());
+        return getBaseMapper().listByGameRoom(gameRoom.getId(), gameRoom.getPlayersSize());
     }
 }

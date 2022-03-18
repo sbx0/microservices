@@ -7,10 +7,7 @@ import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.service.impl.GameRoomServiceImpl;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author wangh
@@ -23,6 +20,12 @@ public class GameRoomController extends BaseController<GameRoomServiceImpl, Game
     public ResponseVO<String> create(@RequestBody GameRoomCreateDTO dto) {
         String code = service.create(dto);
         return new ResponseVO<>(code != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, code);
+    }
+
+    @GetMapping("/info/{roomCode}")
+    public ResponseVO<GameRoomEntity> info(@PathVariable("roomCode") String roomCode) {
+        GameRoomEntity entity = service.getOneByRoomCode(roomCode);
+        return new ResponseVO<>(entity != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, entity);
     }
 }
 

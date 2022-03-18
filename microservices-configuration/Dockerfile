@@ -5,10 +5,8 @@ MAINTAINER sbx0
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JAVA_OPTS="" \
     PORT=8888 \
-    REGISTRY_HOST="192.168.1.254" \
-    REGISTRY_PORT=8761 \
-    CONFIG_HOST="192.168.1.254" \
-    CONFIG_PORT=8888 \
+    REGISTRY_URL="http://192.168.1.254:8761/eureka/" \
+    CONFIG_LOCATION="file:/home/sbx0/configurations" \
     PROFILES="native" \
     REGION="virtual-machine" \
     VERSION="0.0.1" \

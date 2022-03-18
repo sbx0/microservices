@@ -4,7 +4,7 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://${REGISTRY_HOST:192.168.1.254}:${REGISTRY_PORT:8761}/eureka/
+      defaultZone: ${REGISTRY_URL:http://192.168.1.254:8761/eureka/}
     register-with-eureka: true
     fetch-registry: true
     prefer-same-zone-eureka: true
@@ -49,3 +49,7 @@ info:
   app:
     name: configuration
     port: ${PORT:8888}
+
+logging:
+  level:
+    - root: debug

@@ -49,4 +49,5 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     public GameRoomEntity getOneByRoomCode(String roomCode) {
         return getBaseMapper().getOneByRoomCode(roomCode);
     }
+
 }
