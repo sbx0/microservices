@@ -31,6 +31,12 @@ public class GameRoomUserController extends BaseController<GameRoomUserServiceIm
         return new ResponseVO<>(success ? ResponseVO.SUCCESS : ResponseVO.FAILED, success);
     }
 
+    @GetMapping("/quit/{roomCode}")
+    public ResponseVO<Boolean> quitGameRoom(@PathVariable("roomCode") String roomCode) {
+        boolean success = service.quitGameRoom(roomCode);
+        return new ResponseVO<>(success ? ResponseVO.SUCCESS : ResponseVO.FAILED, success);
+    }
+
     @GetMapping("/list/{roomCode}")
     public ResponseVO<List<GameRoomUserEntity>> listByGameRoom(@PathVariable("roomCode") String roomCode) {
         List<GameRoomUserEntity> data = service.listByGameRoom(roomCode);

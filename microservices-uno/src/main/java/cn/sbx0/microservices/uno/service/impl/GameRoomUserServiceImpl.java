@@ -1,5 +1,6 @@
 package cn.sbx0.microservices.uno.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomUserEntity;
@@ -51,11 +52,26 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     }
 
     @Override
+    public boolean quitGameRoom(String roomCode) {
+        GameRoomUserEntity alreadyJoin = getBaseMapper().alreadyJoinByCreateUserId(StpUtil.getLoginIdAsLong());
+        alreadyJoin.setDelFlag(1);
+        getBaseMapper().updateById(alreadyJoin);
+        return true;
+    }
+
+    @Override
     public List<GameRoomUserEntity> listByGameRoom(String roomCode) {
         GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
         if (gameRoom == null || gameRoom.getRoomStatus() > 0) {
             return Collections.emptyList();
         }
         return getBaseMapper().listByGameRoom(gameRoom.getId(), gameRoom.getPlayersSize());
+    }
+
+    @Override
+    public Boolean isIAmIn(long roomId, long userId) {
+        GameRoomUserEntity alreadyJoin = getBaseMapper().alreadyJoinByCreateUserId(userId);
+        if (alreadyJoin == null) return false;
+        return alreadyJoin.getRoomId() == roomId;
     }
 }

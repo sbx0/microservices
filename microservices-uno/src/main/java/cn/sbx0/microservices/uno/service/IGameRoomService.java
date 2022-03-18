@@ -2,6 +2,7 @@ package cn.sbx0.microservices.uno.service;
 
 import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
+import cn.sbx0.microservices.uno.entity.GameRoomInfoVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -17,4 +18,5 @@ public interface IGameRoomService extends IService<GameRoomEntity> {
 
     GameRoomEntity getOneByRoomCode(String roomCode);
 
+    GameRoomInfoVO info(String roomCode);
 }

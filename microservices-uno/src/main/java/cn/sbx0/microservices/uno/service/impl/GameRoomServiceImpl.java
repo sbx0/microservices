@@ -3,12 +3,16 @@ package cn.sbx0.microservices.uno.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
+import cn.sbx0.microservices.uno.entity.GameRoomInfoVO;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
+import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +26,9 @@ import java.util.UUID;
  */
 @Service
 public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEntity> implements IGameRoomService {
+    @Lazy
+    @Resource
+    private IGameRoomUserService userService;
 
     @Override
     public String create(GameRoomCreateDTO dto) {
@@ -48,6 +55,16 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     @Override
     public GameRoomEntity getOneByRoomCode(String roomCode) {
         return getBaseMapper().getOneByRoomCode(roomCode);
+    }
+
+    @Override
+    public GameRoomInfoVO info(String roomCode) {
+        GameRoomEntity room = getOneByRoomCode(roomCode);
+        long userId = StpUtil.getLoginIdAsLong();
+        GameRoomInfoVO vo = new GameRoomInfoVO();
+        BeanUtils.copyProperties(room, vo);
+        vo.setIsIAmIn(userService.isIAmIn(room.getId(), userId));
+        return vo;
     }
 
 }
