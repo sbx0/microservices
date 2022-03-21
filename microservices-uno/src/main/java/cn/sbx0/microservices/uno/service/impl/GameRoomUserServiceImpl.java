@@ -42,7 +42,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         gamer.setUserId(account.getId());
         gamer.setUsername(account.getNickname());
         gamer.setCreateUserId(account.getId());
-        return getBaseMapper().atomSave(gamer);
+        return getBaseMapper().atomSave(gamer, gameRoom.getPlayersSize());
     }
 
     @Override

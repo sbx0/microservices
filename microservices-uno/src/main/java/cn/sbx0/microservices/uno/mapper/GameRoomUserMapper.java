@@ -19,7 +19,7 @@ public interface GameRoomUserMapper extends BaseMapper<GameRoomUserEntity> {
 
     List<GameRoomUserEntity> listByGameRoom(@Param("id") Long id, @Param("size") Integer size);
 
-    boolean atomSave(GameRoomUserEntity gamer);
+    boolean atomSave(@Param("entity") GameRoomUserEntity gamer, @Param("size") Integer size);
 
     boolean quitGameRoom(long userId);
 }

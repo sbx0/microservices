@@ -28,5 +28,11 @@ public class GameRoomController extends BaseController<GameRoomServiceImpl, Game
         GameRoomInfoVO entity = service.info(roomCode);
         return new ResponseVO<>(entity != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, entity);
     }
+
+    @GetMapping("/start/{roomCode}")
+    public ResponseVO<Boolean> start(@PathVariable("roomCode") String roomCode) {
+        Boolean result = service.start(roomCode);
+        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+    }
 }
 

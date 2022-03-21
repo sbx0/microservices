@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomInfoVO;
+import cn.sbx0.microservices.uno.entity.GameRoomStatusEnum;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
@@ -65,6 +66,13 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
         BeanUtils.copyProperties(room, vo);
         vo.setIsIAmIn(userService.isIAmIn(room.getId(), userId));
         return vo;
+    }
+
+    @Override
+    public Boolean start(String roomCode) {
+        GameRoomEntity room = getOneByRoomCode(roomCode);
+        room.setRoomStatus(GameRoomStatusEnum.BEGINNING.getValue());
+        return updateById(room);
     }
 
 }
