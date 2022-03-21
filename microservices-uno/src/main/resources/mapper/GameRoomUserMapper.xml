@@ -12,13 +12,14 @@
                #{entity.username},
                #{entity.remark},
                #{entity.createUserId} WHERE NOT EXISTS(SELECT * FROM game_room_user WHERE room_id = #{entity.roomId} AND user_id = #{entity.userId} AND del_flag = 0) AND (SELECT ifnull(COUNT(*), 0) &lt;
-               #{size} FROM game_room_user WHERE room_id = #{entity.roomId} AND del_flag = 0)
+               #{size} FROM game_room_user WHERE room_id = #{entity.roomId} AND del_flag = 0) AND (SELECT ifnull(COUNT(*), 0) = 0 FROM game_room_user WHERE user_id =
+               #{entity.userId} AND del_flag = 0)
     </insert>
-    <update id="quitGameRoom">
-        UPDATE game_room_user
-        SET del_flag = 1
+    <delete id="quitGameRoom">
+        delete
+        from game_room_user
         WHERE user_id = #{userId}
-    </update>
+    </delete>
 
     <select id="alreadyJoinByCreateUserId" resultType="cn.sbx0.microservices.uno.entity.GameRoomUserEntity">
         select id,
