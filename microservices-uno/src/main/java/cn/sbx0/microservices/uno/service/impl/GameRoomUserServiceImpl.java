@@ -40,23 +40,14 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         AccountVO account = accountService.loginInfo();
         gamer.setRoomId(gameRoom.getId());
         gamer.setUserId(account.getId());
-
-        GameRoomUserEntity alreadyJoin = getBaseMapper().alreadyJoinByCreateUserId(account.getId());
-        if (alreadyJoin != null) {
-            return false;
-        }
-
         gamer.setUsername(account.getNickname());
         gamer.setCreateUserId(account.getId());
-        return save(gamer);
+        return getBaseMapper().atomSave(gamer);
     }
 
     @Override
     public boolean quitGameRoom(String roomCode) {
-        GameRoomUserEntity alreadyJoin = getBaseMapper().alreadyJoinByCreateUserId(StpUtil.getLoginIdAsLong());
-        alreadyJoin.setDelFlag(1);
-        getBaseMapper().updateById(alreadyJoin);
-        return true;
+        return getBaseMapper().quitGameRoom(StpUtil.getLoginIdAsLong());
     }
 
     @Override

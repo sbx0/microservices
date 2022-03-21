@@ -1,6 +1,5 @@
 package lb;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,7 +70,6 @@ public class MyLoadBalancer implements ReactorServiceInstanceLoadBalancer {
         if (StringUtils.hasText(version)) {
             List<ServiceInstance> matchVersionInstances = instances.stream().filter(one -> one.getMetadata().getOrDefault("version", "dev").equals(version)).collect(Collectors.toList());
             if (!matchVersionInstances.isEmpty()) {
-                log.info("match version instances size is " + matchVersionInstances.size());
                 instances = matchVersionInstances;
             }
         }
@@ -79,12 +77,6 @@ public class MyLoadBalancer implements ReactorServiceInstanceLoadBalancer {
         int index = ThreadLocalRandom.current().nextInt(instances.size());
 
         ServiceInstance instance = instances.get(index);
-
-        try {
-            log.info("chose instance " + instance.getInstanceId() + " " + instance.getHost() + " metadata = " + objectMapper.writeValueAsString(instance.getMetadata()));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
 
         return new DefaultResponse(instance);
     }

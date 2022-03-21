@@ -6,6 +6,9 @@ spring:
     name: registry
 
 eureka:
+  server:
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 10000
   instance:
     prefer-ip-address: true
   client:
