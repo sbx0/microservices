@@ -9,6 +9,8 @@ import cn.sbx0.microservices.uno.mapper.GameRoomUserMapper;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,6 +33,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     private AccountService accountService;
 
     @Override
+    @CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result")
     public boolean joinGameRoom(String roomCode) {
         GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
         if (gameRoom == null || gameRoom.getRoomStatus() > 0) {
@@ -46,11 +49,13 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     }
 
     @Override
+    @CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result")
     public boolean quitGameRoom(String roomCode) {
         return getBaseMapper().quitGameRoom(StpUtil.getLoginIdAsLong());
     }
 
     @Override
+    @Cacheable(cacheNames = "listByGameRoom", key = "#roomCode")
     public List<GameRoomUserEntity> listByGameRoom(String roomCode) {
         GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
         if (gameRoom == null || gameRoom.getRoomStatus() > 0) {
