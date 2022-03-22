@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 /**
  * @author sbx0
  * @since 2022/3/9
@@ -13,7 +15,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardEntity {
+public class CardEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String color;
     private String point;
 

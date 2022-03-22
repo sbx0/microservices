@@ -6,6 +6,7 @@ import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomInfoVO;
 import cn.sbx0.microservices.uno.entity.GameRoomStatusEnum;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
+import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -30,6 +31,8 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     @Lazy
     @Resource
     private IGameRoomUserService userService;
+    @Resource
+    private IGameCardService cardService;
 
     @Override
     public String create(GameRoomCreateDTO dto) {
@@ -72,7 +75,11 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     public Boolean start(String roomCode) {
         GameRoomEntity room = getOneByRoomCode(roomCode);
         room.setRoomStatus(GameRoomStatusEnum.BEGINNING.getValue());
-        return updateById(room);
+        boolean result = updateById(room);
+        if (result) {
+            cardService.initCardDeck(roomCode);
+        }
+        return result;
     }
 
 }

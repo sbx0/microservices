@@ -1,5 +1,8 @@
 package cn.sbx0.microservices.uno.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,12 +12,14 @@ import java.util.Map;
  * @author sbx0
  * @since 2022/3/9
  */
+@Setter
+@Getter
 public class CardDeckEntity {
-    private List<CardEntity> cards = new ArrayList<>();
-    private String[] colors = new String[]{"red", "yellow", "green", "blue"};
-    private Map<String, Integer> numbers = new HashMap<>();
+    public static List<CardEntity> CARDS = new ArrayList<>();
+    private static String[] colors = new String[]{"red", "yellow", "green", "blue"};
+    private static Map<String, Integer> numbers = new HashMap<>();
 
-    public CardDeckEntity() {
+    static {
         numbers.put("0", 1);
         numbers.put("1", 2);
         numbers.put("2", 2);
@@ -31,12 +36,12 @@ public class CardDeckEntity {
 
         for (Map.Entry<String, Integer> number : numbers.entrySet()) {
             for (int i = 0; i < 4 * number.getValue(); i++) {
-                cards.add(new CardEntity(colors[i % 4], number.getKey()));
+                CARDS.add(new CardEntity(colors[i % 4], number.getKey()));
             }
         }
         for (int i = 0; i < 4; i++) {
-            cards.add(new CardEntity("", "wild"));
-            cards.add(new CardEntity("", "wild draw four"));
+            CARDS.add(new CardEntity("", "wild"));
+            CARDS.add(new CardEntity("", "wild draw four"));
         }
     }
 
@@ -46,7 +51,7 @@ public class CardDeckEntity {
 
     public static void main(String[] args) {
         CardDeckEntity cardDesk = new CardDeckEntity();
-        List<CardEntity> cards = cardDesk.cards.subList(0, cardDesk.cards.size());
+        List<CardEntity> cards = cardDesk.CARDS.subList(0, cardDesk.CARDS.size());
         PlayEntity a = new PlayEntity("a");
         PlayEntity b = new PlayEntity("b");
         PlayEntity c = new PlayEntity("c");
