@@ -11,6 +11,7 @@ import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -33,7 +34,8 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     private AccountService accountService;
 
     @Override
-    @CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result")
+    @Caching(evict = {@CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result"),
+            @CacheEvict(cacheNames = "countByGameRoom", key = "#roomCode", condition = "#result")})
     public boolean joinGameRoom(String roomCode) {
         GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
         if (gameRoom == null || gameRoom.getRoomStatus() > 0) {
@@ -49,7 +51,8 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     }
 
     @Override
-    @CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result")
+    @Caching(evict = {@CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result"),
+            @CacheEvict(cacheNames = "countByGameRoom", key = "#roomCode", condition = "#result")})
     public boolean quitGameRoom(String roomCode) {
         return getBaseMapper().quitGameRoom(StpUtil.getLoginIdAsLong());
     }
@@ -62,6 +65,16 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
             return Collections.emptyList();
         }
         return getBaseMapper().listByGameRoom(gameRoom.getId(), gameRoom.getPlayersSize());
+    }
+
+    @Override
+    @Cacheable(cacheNames = "countByGameRoom", key = "#roomCode")
+    public Integer countByGameRoom(String roomCode) {
+        GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
+        if (gameRoom == null) {
+            return 0;
+        }
+        return getBaseMapper().countByGameRoom(gameRoom.getId());
     }
 
     @Override

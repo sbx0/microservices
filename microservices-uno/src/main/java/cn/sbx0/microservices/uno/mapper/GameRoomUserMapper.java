@@ -4,6 +4,7 @@ import cn.sbx0.microservices.uno.entity.GameRoomUserEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -15,11 +16,13 @@ import java.util.List;
  * @since 2022-03-15
  */
 public interface GameRoomUserMapper extends BaseMapper<GameRoomUserEntity> {
-    GameRoomUserEntity alreadyJoinByCreateUserId(Long id);
+    GameRoomUserEntity alreadyJoinByCreateUserId(Serializable id);
 
-    List<GameRoomUserEntity> listByGameRoom(@Param("id") Long id, @Param("size") Integer size);
+    List<GameRoomUserEntity> listByGameRoom(@Param("id") Serializable id, @Param("size") Integer size);
 
     boolean atomSave(@Param("entity") GameRoomUserEntity gamer, @Param("size") Integer size);
 
-    boolean quitGameRoom(long userId);
+    boolean quitGameRoom(Serializable userId);
+
+    Integer countByGameRoom(Serializable id);
 }

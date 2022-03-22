@@ -21,4 +21,7 @@ public interface IGameRoomUserService extends IService<GameRoomUserEntity> {
     Boolean isIAmIn(long roomId, long userId);
 
     boolean quitGameRoom(String roomCode);
+
+    Integer countByGameRoom(String roomCode);
+
 }
