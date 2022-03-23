@@ -22,16 +22,19 @@ public class GameCardController {
     @Resource
     private IGameCardService service;
 
-    @GetMapping("/draw/begin/{roomCode}")
-    public ResponseVO<List<CardEntity>> drawCardOnBeginning(@PathVariable("roomCode") String roomCode) {
-        List<CardEntity> cards = service.drawCardOnBeginning(roomCode);
-        return new ResponseVO<>(cards != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, cards);
-    }
-
     @GetMapping("/my/{roomCode}")
     public ResponseVO<List<CardEntity>> myCard(@PathVariable("roomCode") String roomCode) {
         List<CardEntity> cards = service.myCard(roomCode);
         return new ResponseVO<>(cards != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, cards);
+    }
+
+    @GetMapping("/play/{roomCode}/{uuid}")
+    public ResponseVO<Boolean> playCard(
+            @PathVariable("roomCode") String roomCode,
+            @PathVariable("uuid") String uuid
+    ) {
+        Boolean result = service.playCard(roomCode, uuid);
+        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 }
 

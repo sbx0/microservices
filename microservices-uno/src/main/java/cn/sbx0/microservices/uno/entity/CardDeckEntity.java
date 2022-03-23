@@ -3,10 +3,7 @@ package cn.sbx0.microservices.uno.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author sbx0
@@ -36,12 +33,12 @@ public class CardDeckEntity {
 
         for (Map.Entry<String, Integer> number : numbers.entrySet()) {
             for (int i = 0; i < 4 * number.getValue(); i++) {
-                CARDS.add(new CardEntity(colors[i % 4], number.getKey()));
+                CARDS.add(new CardEntity(UUID.randomUUID().toString(), colors[i % 4], number.getKey()));
             }
         }
         for (int i = 0; i < 4; i++) {
-            CARDS.add(new CardEntity("", "wild"));
-            CARDS.add(new CardEntity("", "wild draw four"));
+            CARDS.add(new CardEntity(UUID.randomUUID().toString(), "black", "wild"));
+            CARDS.add(new CardEntity(UUID.randomUUID().toString(), "black", "wild draw four"));
         }
     }
 

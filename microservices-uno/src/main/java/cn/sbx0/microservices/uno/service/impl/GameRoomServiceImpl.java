@@ -1,10 +1,7 @@
 package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
-import cn.sbx0.microservices.uno.entity.GameRoomEntity;
-import cn.sbx0.microservices.uno.entity.GameRoomInfoVO;
-import cn.sbx0.microservices.uno.entity.GameRoomStatusEnum;
+import cn.sbx0.microservices.uno.entity.*;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
@@ -78,6 +75,10 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
         boolean result = updateById(room);
         if (result) {
             cardService.initCardDeck(roomCode);
+            List<GameRoomUserEntity> gamers = userService.listByGameRoom(roomCode);
+            for (GameRoomUserEntity gamer : gamers) {
+                cardService.drawCard(roomCode, gamer.getUserId(), 7);
+            }
         }
         return result;
     }

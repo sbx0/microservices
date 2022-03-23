@@ -2,6 +2,7 @@ package cn.sbx0.microservices.uno.service;
 
 import cn.sbx0.microservices.uno.entity.CardEntity;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -15,7 +16,13 @@ import java.util.List;
 public interface IGameCardService {
     void initCardDeck(String roomCode);
 
-    List<CardEntity> drawCardOnBeginning(String roomCode);
+    List<CardEntity> drawCard(String roomCode);
+
+    List<CardEntity> drawCard(String roomCode, int number);
+
+    List<CardEntity> drawCard(String roomCode, Serializable userId, int number);
 
     List<CardEntity> myCard(String roomCode);
+
+    Boolean playCard(String roomCode, String uuid);
 }
