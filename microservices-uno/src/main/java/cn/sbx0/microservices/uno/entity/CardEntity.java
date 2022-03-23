@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class CardEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String uid;
+    private String uuid;
     private String color;
     private String point;
 }

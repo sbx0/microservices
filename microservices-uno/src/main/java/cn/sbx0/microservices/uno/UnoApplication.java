@@ -1,5 +1,6 @@
 package cn.sbx0.microservices.uno;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,8 +8,9 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -24,10 +26,15 @@ public class UnoApplication {
     }
 
     @Bean
-    public RedisTemplate<Object, Object> redisStringTemplate(RedisTemplate<Object, Object> redisTemplate) {
-        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-        redisTemplate.setKeySerializer(stringRedisSerializer);
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
+    public RedisTemplate<String, Object> redisStringTemplate(LettuceConnectionFactory lettuceConnectionFactory, ObjectMapper objectMapper) {
+        final RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(lettuceConnectionFactory);
+        // value serializer
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        // hash value serializer
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
         return redisTemplate;
     }
 }

@@ -94,7 +94,7 @@ public class GameCardServiceImpl implements IGameCardService {
         String key = "cards_" + roomCode + "_" + StpUtil.getLoginIdAsString();
         List<CardEntity> cards = myCard(roomCode);
         for (CardEntity card : cards) {
-            if (uuid.equals(card.getUid())) {
+            if (uuid.equals(card.getUuid())) {
                 cards.remove(card);
                 break;
             }
