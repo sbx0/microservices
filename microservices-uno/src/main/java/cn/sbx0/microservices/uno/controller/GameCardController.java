@@ -4,10 +4,7 @@ package cn.sbx0.microservices.uno.controller;
 import cn.sbx0.microservices.entity.ResponseVO;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.service.IGameCardService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -28,12 +25,21 @@ public class GameCardController {
         return new ResponseVO<>(cards != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, cards);
     }
 
+    @GetMapping("/draw/{roomCode}")
+    public ResponseVO<List<CardEntity>> drawCard(
+            @PathVariable("roomCode") String roomCode
+    ) {
+        List<CardEntity> result = service.drawCard(roomCode, 1);
+        return new ResponseVO<>(result != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+    }
+
     @GetMapping("/play/{roomCode}/{uuid}")
     public ResponseVO<Boolean> playCard(
             @PathVariable("roomCode") String roomCode,
-            @PathVariable("uuid") String uuid
+            @PathVariable("uuid") String uuid,
+            @RequestParam(value = "color", required = false) String color
     ) {
-        Boolean result = service.playCard(roomCode, uuid);
+        Boolean result = service.playCard(roomCode, uuid, color);
         return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 

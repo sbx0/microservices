@@ -24,7 +24,7 @@ public interface IGameCardService {
 
     List<CardEntity> myCardList(String roomCode);
 
-    Boolean playCard(String roomCode, String uuid);
+    Boolean playCard(String roomCode, String uuid, String color);
 
     void discardCard(String roomCode, CardEntity card);
 
