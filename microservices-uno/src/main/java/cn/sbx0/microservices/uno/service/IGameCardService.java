@@ -22,7 +22,11 @@ public interface IGameCardService {
 
     List<CardEntity> drawCard(String roomCode, Serializable userId, int number);
 
-    List<CardEntity> myCard(String roomCode);
+    List<CardEntity> myCardList(String roomCode);
 
     Boolean playCard(String roomCode, String uuid);
+
+    void discardCard(String roomCode, CardEntity card);
+
+    List<CardEntity> discardCardList(String roomCode);
 }

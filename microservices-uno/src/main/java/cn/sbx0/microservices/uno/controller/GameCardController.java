@@ -23,8 +23,8 @@ public class GameCardController {
     private IGameCardService service;
 
     @GetMapping("/my/{roomCode}")
-    public ResponseVO<List<CardEntity>> myCard(@PathVariable("roomCode") String roomCode) {
-        List<CardEntity> cards = service.myCard(roomCode);
+    public ResponseVO<List<CardEntity>> myCardList(@PathVariable("roomCode") String roomCode) {
+        List<CardEntity> cards = service.myCardList(roomCode);
         return new ResponseVO<>(cards != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, cards);
     }
 
@@ -35,6 +35,12 @@ public class GameCardController {
     ) {
         Boolean result = service.playCard(roomCode, uuid);
         return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+    }
+
+    @GetMapping("/discard/{roomCode}")
+    public ResponseVO<List<CardEntity>> discardCardList(@PathVariable("roomCode") String roomCode) {
+        List<CardEntity> cards = service.discardCardList(roomCode);
+        return new ResponseVO<>(cards != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, cards);
     }
 }
 

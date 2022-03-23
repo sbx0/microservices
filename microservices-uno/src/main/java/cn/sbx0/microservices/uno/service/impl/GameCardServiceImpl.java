@@ -27,7 +27,7 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public void initCardDeck(String roomCode) {
-        String key = "cards_" + roomCode;
+        String key = "cards:" + roomCode;
         List<CardEntity> cards = CardDeckEntity.CARDS;
         Collections.shuffle(cards);
         redisTemplate.opsForList().rightPushAll(key, cards);
@@ -36,8 +36,8 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public List<CardEntity> drawCard(String roomCode) {
-        String key = "cards_" + roomCode;
-        String keyPlusUserID = key + "_" + StpUtil.getLoginIdAsString();
+        String key = "cards:" + roomCode;
+        String keyPlusUserID = key + ":" + StpUtil.getLoginIdAsString();
         List<CardEntity> cards = new ArrayList<>();
         List<CardEntity> pops = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
@@ -59,8 +59,8 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public List<CardEntity> drawCard(String roomCode, Serializable userId, int number) {
-        String key = "cards_" + roomCode;
-        String keyPlusUserID = key + "_" + userId;
+        String key = "cards:" + roomCode;
+        String keyPlusUserID = key + ":" + userId;
         if (number < 1) {
             number = 1;
         }
@@ -79,8 +79,8 @@ public class GameCardServiceImpl implements IGameCardService {
     }
 
     @Override
-    public List<CardEntity> myCard(String roomCode) {
-        String key = "cards_" + roomCode + "_" + StpUtil.getLoginIdAsString();
+    public List<CardEntity> myCardList(String roomCode) {
+        String key = "cards:" + roomCode + ":" + StpUtil.getLoginIdAsString();
         Long size = redisTemplate.opsForList().size(key);
         if (size == null) {
             size = 0L;
@@ -91,17 +91,41 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public Boolean playCard(String roomCode, String uuid) {
-        String key = "cards_" + roomCode + "_" + StpUtil.getLoginIdAsString();
-        List<CardEntity> cards = myCard(roomCode);
+        String key = "cards:" + roomCode + ":" + StpUtil.getLoginIdAsString();
+        List<CardEntity> cards = myCardList(roomCode);
         for (CardEntity card : cards) {
             if (uuid.equals(card.getUuid())) {
                 cards.remove(card);
+                discardCard(roomCode, card);
                 break;
             }
         }
         redisTemplate.expire(key, Duration.ZERO);
         redisTemplate.opsForList().rightPushAll(key, cards);
         return true;
+    }
+
+    @Override
+    public void discardCard(String roomCode, CardEntity card) {
+        String key = "cards:" + roomCode + ":discard";
+        Long size = redisTemplate.opsForList().size(key);
+        if (size == null) {
+            size = 0L;
+        }
+        if (size > 10) {
+            redisTemplate.opsForList().leftPop(key);
+        }
+        redisTemplate.opsForList().rightPush(key, card);
+    }
+
+    @Override
+    public List<CardEntity> discardCardList(String roomCode) {
+        String key = "cards:" + roomCode + ":discard";
+        Long size = redisTemplate.opsForList().size(key);
+        if (size == null) {
+            size = 0L;
+        }
+        return redisTemplate.opsForList().range(key, 0, size);
     }
 
     private void extensionOfTime(String key) {
