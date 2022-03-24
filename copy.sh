@@ -27,6 +27,9 @@ cp $DIR/microservices-uno/target/*.jar $DIR/target/microservices-uno
 cp $DIR/microservices-uno/*Dockerfile $DIR/target/microservices-uno
 
 cp $DIR/docker-compose*.yml $DIR/target
+cp $DIR/compose.sh $DIR/target
+# .env file need you to create, it contain value you needs env
+cp $DIR/.env $DIR/target
 mkdir $DIR/target/configurations
 cp $DIR/microservices-configuration/src/main/resources/configurations/* $DIR/target/configurations
 

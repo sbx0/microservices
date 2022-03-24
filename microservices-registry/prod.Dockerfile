@@ -5,7 +5,7 @@ MAINTAINER sbx0
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JAVA_OPTS="" \
     PORT=8761 \
-    PROFILES="prod" \
+    PROFILES="dev" \
     REGION="aliyun" \
     VERSION="0.0.1" \
     TZ=Asia/Shanghai
