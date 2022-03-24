@@ -2,13 +2,15 @@ version: '3.7'
 services:
 
   microservices-registry:
-    build: ./microservices-registry
-    dockerfile: prod.Dockerfile
+    build:
+      context: ./microservices-registry
+      dockerfile: prod.Dockerfile
     network_mode: "host"
 
   microservices-configuration:
-    build: ./microservices-configuration
-    dockerfile: prod.Dockerfile
+    build:
+      context: ./microservices-configuration
+      dockerfile: prod.Dockerfile
     network_mode: "host"
     volumes:
       - /home/sbx0/configurations:/home/sbx0/configurations
@@ -17,8 +19,9 @@ services:
         condition: service_healthy
 
   microservices-gateway:
-    build: ./microservices-gateway
-    dockerfile: prod.Dockerfile
+    build:
+      context: ./microservices-gateway
+      dockerfile: prod.Dockerfile
     network_mode: "host"
     depends_on:
       microservices-configuration:
@@ -27,8 +30,9 @@ services:
         condition: service_healthy
 
   microservices-account:
-    build: ./microservices-account
-    dockerfile: prod.Dockerfile
+    build:
+      context: ./microservices-account
+      dockerfile: prod.Dockerfile
     network_mode: "host"
     depends_on:
       microservices-configuration:
@@ -39,8 +43,9 @@ services:
         condition: service_healthy
 
   microservices-uno:
-    build: ./microservices-uno
-    dockerfile: prod.Dockerfile
+    build:
+      context: ./microservices-uno
+      dockerfile: prod.Dockerfile
     network_mode: "host"
     depends_on:
       microservices-configuration:
