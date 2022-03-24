@@ -27,6 +27,10 @@ spring:
       server:
         native:
           search-locations: ${CONFIG_LOCATION:file:C:\Users\winmj\IdeaProjects\microservices\microservices-configuration\src\main\resources\configurations}
+  security:
+    user:
+      name: ${NAME:sbx0}
+      password: ${PASSWORD:123456}
 management:
   info:
     env:
