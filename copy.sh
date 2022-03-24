@@ -26,7 +26,7 @@ mkdir $DIR/target/microservices-uno
 cp $DIR/microservices-uno/target/*.jar $DIR/target/microservices-uno
 cp $DIR/microservices-uno/Dockerfile $DIR/target/microservices-uno
 
-cp $DIR/docker-compose.yml $DIR/target
+cp $DIR/docker-compose*.yml $DIR/target
 mkdir $DIR/target/configurations
 cp $DIR/microservices-configuration/src/main/resources/configurations/* $DIR/target/configurations
 

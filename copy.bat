@@ -27,7 +27,7 @@ md %path%\target\microservices-uno
 copy "%path%\microservices-uno\target\*.jar" "%path%\target\microservices-uno\"
 copy "%path%\microservices-uno\Dockerfile" "%path%\target\microservices-uno\"
 
-copy "%path%\docker-compose.yml" "%path%\target\"
+copy "%path%\docker-compose*.yml" "%path%\target\"
 copy "%path%\*.sh" "%path%\target\"
 rd /s /q %path%\target\configurations
 md %path%\target\configurations
