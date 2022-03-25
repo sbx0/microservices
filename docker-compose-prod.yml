@@ -13,10 +13,12 @@ services:
       dockerfile: prod.Dockerfile
     network_mode: "host"
     volumes:
-      - /home/sbx0/configurations:/home/sbx0/configurations
+      - /home/microservices/source_code/target/configurations:/home/sbx0/configurations
     depends_on:
       microservices-registry:
         condition: service_healthy
+    environment:
+      PASSWORD:
 
   microservices-gateway:
     build:

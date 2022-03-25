@@ -18,6 +18,10 @@ log() {
   docker-compose logs -f --tail=1
 }
 
+config() {
+  docker-compose -f docker-compose-prod.yml --env-file .env config
+}
+
 case "$1" in
 "build" | "b")
   build
@@ -27,6 +31,9 @@ case "$1" in
   ;;
 "build-and-up" | "bp")
   build-and-up
+  ;;
+"config" | "c")
+  config
   ;;
 "log" | "l")
   log
