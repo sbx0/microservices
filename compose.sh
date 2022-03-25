@@ -6,7 +6,7 @@ build() {
 }
 
 up() {
-  docker-compose -f docker-compose-prod.yml --env-file .env up -d microservices-configuration
+  docker-compose -f docker-compose-prod.yml --env-file .env up -d microservices-account
 }
 
 build-and-up() {

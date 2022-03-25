@@ -30,6 +30,8 @@ services:
         condition: service_healthy
       microservices-registry:
         condition: service_healthy
+    environment:
+      PASSWORD:
 
   microservices-account:
     build:
@@ -41,8 +43,8 @@ services:
         condition: service_healthy
       microservices-registry:
         condition: service_healthy
-      microservices-gateway:
-        condition: service_healthy
+    environment:
+      PASSWORD:
 
   microservices-uno:
     build:
@@ -54,5 +56,5 @@ services:
         condition: service_healthy
       microservices-registry:
         condition: service_healthy
-      microservices-gateway:
-        condition: service_healthy
+    environment:
+      PASSWORD:
