@@ -4,7 +4,7 @@ MAINTAINER sbx0
 
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JAVA_OPTS="" \
-    USERNAME="sbx0" \
+    NAME="sbx0" \
     PASSWORD="123456" \
     REGISTRY_URL="http://127.0.0.1:8761/eureka/" \
     CONFIG_URL="127.0.0.1:8888" \

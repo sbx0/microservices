@@ -4,6 +4,8 @@ MAINTAINER sbx0
 
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JAVA_OPTS="" \
+    NAME="sbx0" \
+    PASSWORD="123456" \
     PORT=8888 \
     REGISTRY_URL="http://127.0.0.1:8761/eureka/" \
     CONFIG_LOCATION="file:/home/microservices/source_code/target/configurations" \
