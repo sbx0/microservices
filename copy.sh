@@ -34,3 +34,5 @@ mkdir $DIR/target/configurations
 cp $DIR/microservices-configuration/src/main/resources/configurations/* $DIR/target/configurations
 
 echo "copy finished"
+
+cd $DIR/target
