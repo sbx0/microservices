@@ -19,12 +19,24 @@ public class GameCardController {
     @Resource
     private IGameCardService service;
 
+    /**
+     * 查询当前登录用户手牌
+     *
+     * @param roomCode 房间编号
+     * @return 手牌列表
+     */
     @GetMapping("/my/{roomCode}")
     public ResponseVO<List<CardEntity>> myCardList(@PathVariable("roomCode") String roomCode) {
         List<CardEntity> cards = service.myCardList(roomCode);
         return new ResponseVO<>(cards != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, cards);
     }
 
+    /**
+     * 抽牌
+     *
+     * @param roomCode 房间编号
+     * @return 抽到的牌列表
+     */
     @GetMapping("/draw/{roomCode}")
     public ResponseVO<List<CardEntity>> drawCard(
             @PathVariable("roomCode") String roomCode
@@ -33,6 +45,14 @@ public class GameCardController {
         return new ResponseVO<>(result != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 
+    /**
+     * 出牌
+     *
+     * @param roomCode 房间编号
+     * @param uuid     牌唯一编号
+     * @param color    【可选】可变色牌指定颜色
+     * @return 是否成功
+     */
     @GetMapping("/play/{roomCode}/{uuid}")
     public ResponseVO<Boolean> playCard(
             @PathVariable("roomCode") String roomCode,
@@ -43,6 +63,12 @@ public class GameCardController {
         return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 
+    /**
+     * 弃牌堆
+     *
+     * @param roomCode 房间编号
+     * @return 弃牌堆列表
+     */
     @GetMapping("/discard/{roomCode}")
     public ResponseVO<List<CardEntity>> discardCardList(@PathVariable("roomCode") String roomCode) {
         List<CardEntity> cards = service.discardCardList(roomCode);
