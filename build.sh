@@ -11,7 +11,7 @@ SERVICES=(
 
 init() {
   echo "create .env"
-  echo -e "PASSWORD=test\nCONFIG_URL=127.0.0.1:8888" >.env
+  echo -e "PASSWORD=test\nCONFIG_LOCATION=127.0.0.1:8888" >.env
   # echo "config environment"
   # sed -i "\$a MICROSERVICES_DIR=${PWD}" /etc/environment
   # source /etc/environment
