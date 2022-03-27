@@ -12,8 +12,6 @@ SERVICES=(
 init() {
   echo "create .env"
   echo -e "PASSWORD=test\nCONFIG_URL=127.0.0.1:8888" >.env
-  mkdir target
-  echo "create target"
   # echo "config environment"
   # sed -i "\$a MICROSERVICES_DIR=${PWD}" /etc/environment
   # source /etc/environment
@@ -24,10 +22,10 @@ build() {
   echo "maven building"
   mvn -T 1C -DskipTests clean install
   echo "build finished"
+  mkdir target
 }
 
 copy() {
-  mkdir target	
   for SERVICE in "${SERVICES[@]}"; do
     rm -rf "$PWD"/target/"$SERVICE"
     mkdir "$PWD"/target/"$SERVICE"
