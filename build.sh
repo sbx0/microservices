@@ -11,7 +11,7 @@ SERVICES=(
 
 init() {
   echo "create .env"
-  echo -e "PASSWORD=test\nCONFIG_LOCATION=127.0.0.1:8888" >.env
+  echo -e "PASSWORD=test\nCONFIG_LOCATION=$PWD/target/configurations\nCONFIG_URL:127.0.0.1:8888\nREGISTRY_URL=http://127.0.0.1:8761/eureka/\nREDIS_HOST=127.0.0.1\nREDIS_PASSWORD=03783818Redis" >.env
   # echo "config environment"
   # sed -i "\$a MICROSERVICES_DIR=${PWD}" /etc/environment
   # source /etc/environment

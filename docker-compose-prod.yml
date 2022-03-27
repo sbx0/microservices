@@ -13,13 +13,14 @@ services:
       dockerfile: prod.Dockerfile
     network_mode: "host"
     volumes:
-      - $PWD/target/configurations:/home/sbx0/configurations
+      - $CONFIG_LOCATION:$CONFIG_LOCATION
     depends_on:
       microservices-registry:
         condition: service_healthy
     environment:
       PASSWORD:
       CONFIG_LOCATION:
+      REGISTRY_URL:
 
   microservices-gateway:
     build:
@@ -33,7 +34,10 @@ services:
         condition: service_healthy
     environment:
       PASSWORD:
-      CONFIG_LOCATION:
+      CONFIG_URL:
+      REGISTRY_URL:
+      REDIS_HOST:
+      REDIS_PASSWORD:
 
   microservices-account:
     build:
@@ -47,7 +51,10 @@ services:
         condition: service_healthy
     environment:
       PASSWORD:
-      CONFIG_LOCATION:
+      CONFIG_URL:
+      REGISTRY_URL:
+      REDIS_HOST:
+      REDIS_PASSWORD:
 
   microservices-uno:
     build:
@@ -61,4 +68,7 @@ services:
         condition: service_healthy
     environment:
       PASSWORD:
-      CONFIG_LOCATION:
+      CONFIG_URL:
+      REGISTRY_URL:
+      REDIS_HOST:
+      REDIS_PASSWORD:
