@@ -33,7 +33,7 @@ services:
         condition: service_healthy
     environment:
       PASSWORD:
-      CONFIG_URL:
+      CONFIG_LOCATION:
 
   microservices-account:
     build:
@@ -47,7 +47,7 @@ services:
         condition: service_healthy
     environment:
       PASSWORD:
-      CONFIG_URL:
+      CONFIG_LOCATION:
 
   microservices-uno:
     build:
@@ -61,4 +61,4 @@ services:
         condition: service_healthy
     environment:
       PASSWORD:
-      CONFIG_URL:
+      CONFIG_LOCATION:
