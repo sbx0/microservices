@@ -9,6 +9,10 @@ up() {
   docker-compose -f docker-compose-prod.yml --env-file .env up -d microservices-account
 }
 
+down() {
+  docker-compose -f docker-compose-prod.yml --env-file .env down
+}
+
 build-and-up() {
   build
   up
@@ -37,6 +41,9 @@ case "$1" in
   ;;
 "log" | "l")
   log
+  ;;
+"down" | "d")
+  down
   ;;
 *)
  up

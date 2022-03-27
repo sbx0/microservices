@@ -11,7 +11,7 @@ SERVICES=(
 
 init() {
   echo "create .env"
-  echo "PASSWORD=test" >.env
+  echo -e "PASSWORD=test\nCONFIG_URL=127.0.0.1:8888" >.env
   mkdir target
   echo "create target"
   # echo "config environment"
@@ -27,6 +27,7 @@ build() {
 }
 
 copy() {
+  mkdir target	
   for SERVICE in "${SERVICES[@]}"; do
     rm -rf "$PWD"/target/"$SERVICE"
     mkdir "$PWD"/target/"$SERVICE"

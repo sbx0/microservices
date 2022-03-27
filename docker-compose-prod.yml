@@ -13,12 +13,13 @@ services:
       dockerfile: prod.Dockerfile
     network_mode: "host"
     volumes:
-      - /home/microservices/source_code/target/configurations:/home/sbx0/configurations
+      - $PWD/target/configurations:/home/sbx0/configurations
     depends_on:
       microservices-registry:
         condition: service_healthy
     environment:
       PASSWORD:
+      CONFIG_LOCATION:
 
   microservices-gateway:
     build:
@@ -32,6 +33,7 @@ services:
         condition: service_healthy
     environment:
       PASSWORD:
+      CONFIG_URL:
 
   microservices-account:
     build:
@@ -45,6 +47,7 @@ services:
         condition: service_healthy
     environment:
       PASSWORD:
+      CONFIG_URL:
 
   microservices-uno:
     build:
@@ -58,3 +61,4 @@ services:
         condition: service_healthy
     environment:
       PASSWORD:
+      CONFIG_URL:
