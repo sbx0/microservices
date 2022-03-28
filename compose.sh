@@ -6,7 +6,11 @@ build() {
 }
 
 up() {
-  docker-compose -f docker-compose-prod.yml --env-file .env up -d microservices-account
+  if [ -n "$1" ]; then
+    docker-compose -f docker-compose-prod.yml --env-file .env up -d "$1"
+  else
+    docker-compose -f docker-compose-prod.yml --env-file .env up -d microservices-gateway
+  fi
 }
 
 down() {
@@ -31,7 +35,7 @@ case "$1" in
   build
   ;;
 "up" | "p")
-  up
+  up "$2"
   ;;
 "build-and-up" | "bp")
   build-and-up
@@ -46,6 +50,6 @@ case "$1" in
   down
   ;;
 *)
- up
+  up "$2"
   ;;
 esac
