@@ -6,6 +6,10 @@ services:
       context: ./microservices-registry
       dockerfile: prod.Dockerfile
     network_mode: "host"
+    deploy:
+      resources:
+        limits:
+          memory: 200m
 
   microservices-configuration:
     build:
@@ -21,6 +25,10 @@ services:
       PASSWORD:
       CONFIG_LOCATION:
       REGISTRY_URL:
+    deploy:
+      resources:
+        limits:
+          memory: 200m
 
   microservices-gateway:
     build:
@@ -38,6 +46,10 @@ services:
       REGISTRY_URL:
       REDIS_HOST:
       REDIS_PASSWORD:
+    deploy:
+      resources:
+        limits:
+          memory: 200m
 
   microservices-account:
     build:
@@ -55,6 +67,10 @@ services:
       REGISTRY_URL:
       REDIS_HOST:
       REDIS_PASSWORD:
+    deploy:
+      resources:
+        limits:
+          memory: 200m
 
   microservices-uno:
     build:
@@ -72,3 +88,7 @@ services:
       REGISTRY_URL:
       REDIS_HOST:
       REDIS_PASSWORD:
+    deploy:
+      resources:
+        limits:
+          memory: 500m
