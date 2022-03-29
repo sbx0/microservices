@@ -78,6 +78,8 @@ public class MyLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
         ServiceInstance instance = instances.get(index);
 
+        log.info("LoadBalancer choose " + serviceId + "[" + version + "] " + instance.getHost() + ":" + instance.getPort());
+
         return new DefaultResponse(instance);
     }
 }

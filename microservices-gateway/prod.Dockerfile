@@ -21,6 +21,7 @@ HEALTHCHECK --interval=5s --timeout=30s CMD curl -f http://localhost:$PORT/actua
 
 ADD /*.jar /bootstrap.jar
 
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Dreactor.netty.http.server.accessLogEnabled=true -jar /bootstrap.jar --spring.profiles.active=$PROFILES"]
+#  -Dreactor.netty.http.server.accessLogEnabled=true
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /bootstrap.jar --spring.profiles.active=$PROFILES"]
 
 EXPOSE $PORT
