@@ -5,7 +5,7 @@ spring:
     inetutils:
       preferred-networks: 192.168.1\.(.*)
     config:
-      uri: http://${CONFIG_URL:192.168.1.3:8888}
+      uri: ${CONFIG_URL:http://192.168.1.3:8888}
       fail-fast: true
       username: ${NAME:sbx0}
       password: ${PASSWORD:123456}
