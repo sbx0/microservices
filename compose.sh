@@ -1,6 +1,9 @@
 #!/bin/bash
 # chmod u+x compose.sh
 
+SOURCE_CONFIGS="../microservices-configuration/src/main/resources/configurations"
+CHANGED_CONFIGS="./configurations/*"
+
 build() {
   docker-compose -f docker-compose-prod.yml --env-file .env build
 }
@@ -22,12 +25,25 @@ build-and-up() {
   up
 }
 
+restart() {
+  if [ -n "$1" ]; then
+    docker-compose -f docker-compose-prod.yml --env-file .env restart "$1"
+  else
+    echo "service-name require"
+    echo "eg. bash compose.sh restart service-name"
+  fi
+}
+
 log() {
   docker-compose logs -f --tail=1
 }
 
 config() {
   docker-compose -f docker-compose-prod.yml --env-file .env config
+}
+
+back() {
+  cp $CHANGED_CONFIGS $SOURCE_CONFIGS
 }
 
 case "$1" in
@@ -40,8 +56,14 @@ case "$1" in
 "build-and-up" | "bp")
   build-and-up
   ;;
+"restart" | "re")
+  restart "$2"
+  ;;
 "config" | "c")
   config
+  ;;
+"back")
+  back
   ;;
 "log" | "l")
   log

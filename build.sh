@@ -1,6 +1,9 @@
 #!/bin/bash
 # sed -i 's/\r//' build.sh
 # chmod u+x build.sh
+# BUILD is where docker-compose build
+BUILD=build
+# SERVICES is all service
 SERVICES=(
   microservices-account
   microservices-configuration
@@ -8,42 +11,46 @@ SERVICES=(
   microservices-registry
   microservices-uno
 )
+SOURCE_CONFIGS="$PWD/microservices-configuration/src/main/resources/configurations/*"
 
 init() {
   echo "create .env"
-  echo -e "PASSWORD=test\nCONFIG_LOCATION=$PWD/target/configurations\nCONFIG_URL:127.0.0.1:8888\nREGISTRY_URL=http://127.0.0.1:8761/eureka/\nREDIS_HOST=127.0.0.1\nREDIS_PASSWORD=03783818Redis" >.env
+  echo "PASSWORD=test" >.env
+  sed -i "\$a CONFIG_LOCATION=${PWD}/${BUILD}/configurations" .env
+  sed -i '$a CONFIG_URL=127.0.0.1:8888' .env
+  sed -i '$a REGISTRY_URL=http://127.0.0.1:8761/eureka/' .env
+  sed -i '$a REDIS_HOST=127.0.0.1' .env
+  sed -i '$a REDIS_PASSWORD=test' .env
   # echo "config environment"
   # sed -i "\$a MICROSERVICES_DIR=${PWD}" /etc/environment
   # source /etc/environment
   echo "init finished"
+  mkdir "$PWD/$BUILD/configurations"
 }
 
 build() {
   echo "maven building"
   mvn -T 1C -DskipTests clean install
   echo "build finished"
-  mkdir target
 }
 
 copy() {
   for SERVICE in "${SERVICES[@]}"; do
-    rm -rf "$PWD"/target/"$SERVICE"
-    mkdir "$PWD"/target/"$SERVICE"
-    cp "$PWD"/"$SERVICE"/target/*.jar "$PWD"/target/"$SERVICE"
-    cp "$PWD"/"$SERVICE"/*Dockerfile "$PWD"/target/"$SERVICE"
-    echo "$SERVICE files copy"
+    rm -rf "${PWD:?}/${BUILD:?}/${SERVICE:?}"
+    mkdir "${PWD:?}/${BUILD:?}/${SERVICE:?}"
+    cp -f ${PWD:?}"/"${SERVICE:?}"/"target/*.jar "${PWD:?}/${BUILD:?}/${SERVICE:?}"
+    cp -f ${PWD:?}"/"${SERVICE:?}"/"*Dockerfile "${PWD:?}/${BUILD:?}/${SERVICE:?}"
+    echo "${SERVICE} files copy"
   done
 
-  rm -rf "$PWD"/target/configurations
-  mkdir "$PWD"/target/configurations
-  cp "$PWD"/microservices-configuration/src/main/resources/configurations/* "$PWD"/target/configurations
+  cp -f $SOURCE_CONFIGS "${PWD:?}/${BUILD:?}/configurations"
   echo "configurations files copy"
 
-  cp "$PWD"/docker-compose*.yml "$PWD"/target
+  cp -f $PWD/docker-compose*.yml "${PWD:?}/${BUILD:?}"
   echo "docker-compose files copy"
-  cp "$PWD"/compose.sh "$PWD"/target
+  cp -f $PWD/compose.sh "${PWD:?}/${BUILD:?}"
   echo "compose.sh copy"
-  cp "$PWD"/.env "$PWD"/target
+  cp -f $PWD/.env "${PWD:?}/${BUILD:?}"
   echo ".env copy"
 
   echo "copy finished"
