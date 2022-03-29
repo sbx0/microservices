@@ -43,7 +43,7 @@ config() {
 }
 
 back() {
-  cp $CHANGED_CONFIGS $SOURCE_CONFIGS
+  cp -f $CHANGED_CONFIGS $SOURCE_CONFIGS
 }
 
 case "$1" in
