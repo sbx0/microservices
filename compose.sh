@@ -10,9 +10,9 @@ build() {
 
 up() {
   if [ -n "$1" ]; then
-    docker-compose -f docker-compose-prod.yml --env-file .env up -d "$1"
+    docker-compose -f docker-compose-prod.yml --env-file .env up --compatibility -d "$1"
   else
-    docker-compose -f docker-compose-prod.yml --env-file .env up -d microservices-gateway
+    docker-compose -f docker-compose-prod.yml --env-file .env up --compatibility -d microservices-gateway
   fi
 }
 
