@@ -9,6 +9,7 @@ import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.entity.LoginDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -61,9 +62,10 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
     }
 
     @Override
-    public AccountVO loginInfo() {
+    @Cacheable(cacheNames = "loginInfo", key = "#userId")
+    public AccountVO loginInfo(Long userId) {
         AccountVO vo = new AccountVO();
-        BeanUtils.copyProperties(getById(StpUtil.getLoginIdAsLong()), vo);
+        BeanUtils.copyProperties(getById(userId), vo);
         return vo;
     }
 }

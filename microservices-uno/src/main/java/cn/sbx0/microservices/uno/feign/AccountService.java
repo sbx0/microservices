@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @LoadBalancerClient(value = "ACCOUNT", configuration = CustomLoadBalancerConfiguration.class)
 @FeignClient(name = "ACCOUNT", configuration = FeignConfiguration.class)
 public interface AccountService {
-    @GetMapping("/user/loginInfo")
+    @GetMapping(value = "/user/loginInfo", produces = "application/json")
     AccountVO loginInfo();
 }

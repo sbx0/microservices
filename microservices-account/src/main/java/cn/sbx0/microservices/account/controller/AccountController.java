@@ -2,6 +2,7 @@ package cn.sbx0.microservices.account.controller;
 
 
 import cn.dev33.satoken.stp.SaTokenInfo;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.account.mapper.AccountMapper;
 import cn.sbx0.microservices.account.service.impl.AccountServiceImpl;
 import cn.sbx0.microservices.controller.BaseController;
@@ -35,6 +36,6 @@ public class AccountController extends BaseController<AccountServiceImpl, Accoun
 
     @GetMapping("/user/loginInfo")
     public AccountVO loginInfo() {
-        return service.loginInfo();
+        return service.loginInfo(StpUtil.getLoginIdAsLong());
     }
 }

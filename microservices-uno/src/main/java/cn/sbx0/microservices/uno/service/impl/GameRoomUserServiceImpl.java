@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * <p>
@@ -32,6 +34,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     private IGameRoomService gameRoomService;
     @Resource
     private AccountService accountService;
+    private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 
     @Override
     @Caching(evict = {@CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result"),
@@ -47,14 +50,23 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         gamer.setUserId(account.getId());
         gamer.setUsername(account.getNickname());
         gamer.setCreateUserId(account.getId());
-        return getBaseMapper().atomSave(gamer, gameRoom.getPlayersSize());
+        boolean result = getBaseMapper().atomSave(gamer, gameRoom.getPlayersSize());
+        if (result) {
+            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "join", account.getId().toString()));
+        }
+        return result;
     }
 
     @Override
     @Caching(evict = {@CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result"),
             @CacheEvict(cacheNames = "countByGameRoom", key = "#roomCode", condition = "#result")})
     public boolean quitGameRoom(String roomCode) {
-        return getBaseMapper().quitGameRoom(StpUtil.getLoginIdAsLong());
+        String userId = StpUtil.getLoginIdAsString();
+        boolean result = getBaseMapper().quitGameRoom(userId);
+        if (result) {
+            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "quit", userId));
+        }
+        return result;
     }
 
     @Override

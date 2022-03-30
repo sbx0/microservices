@@ -69,7 +69,9 @@ public class MyLoadBalancer implements ReactorServiceInstanceLoadBalancer {
         String version = requestData.getHeaders().getFirst("version");
         if (StringUtils.hasText(version)) {
             List<ServiceInstance> matchVersionInstances = instances.stream().filter(one -> one.getMetadata().getOrDefault("version", "dev").equals(version)).collect(Collectors.toList());
-            if (!matchVersionInstances.isEmpty()) {
+            if (matchVersionInstances.isEmpty()) {
+                return new EmptyResponse();
+            } else {
                 instances = matchVersionInstances;
             }
         }

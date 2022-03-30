@@ -3,6 +3,8 @@ package cn.sbx0.microservices.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 /**
  * <p>
  *
@@ -13,7 +15,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class AccountVO {
+public class AccountVO implements Serializable {
+    private static final long serialVersionUID = -1;
 
     private Long id;
 

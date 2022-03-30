@@ -12,8 +12,12 @@ import cn.sbx0.microservices.uno.entity.GameRoomVO;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import cn.sbx0.microservices.uno.service.impl.GameRoomServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -23,30 +27,40 @@ import java.util.List;
  * @author wangh
  * @since 2022-03-10
  */
-@RestController
+@Slf4j
+@Controller
 @RequestMapping("/uno/room")
 public class GameRoomController extends BaseController<GameRoomServiceImpl, GameRoomMapper, GameRoomEntity> {
     @Resource
     private IGameRoomUserService gameRoomUserService;
 
+    @GetMapping(value = "/subscribe/{roomCode}", consumes = MediaType.ALL_VALUE)
+    public SseEmitter subscribe(@PathVariable("roomCode") String roomCode) {
+        return service.subscribe(roomCode);
+    }
+
+    @ResponseBody
     @PostMapping("/create")
     public ResponseVO<String> create(@RequestBody GameRoomCreateDTO dto) {
         String code = service.create(dto);
         return new ResponseVO<>(code != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, code);
     }
 
+    @ResponseBody
     @GetMapping("/info/{roomCode}")
     public ResponseVO<GameRoomInfoVO> info(@PathVariable("roomCode") String roomCode) {
         GameRoomInfoVO entity = service.info(roomCode);
         return new ResponseVO<>(entity != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, entity);
     }
 
+    @ResponseBody
     @GetMapping("/start/{roomCode}")
     public ResponseVO<Boolean> start(@PathVariable("roomCode") String roomCode) {
         Boolean result = service.start(roomCode);
         return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 
+    @ResponseBody
     @GetMapping("/list")
     public Paging<GameRoomVO> pagingList(PageQueryDTO dto) {
         Paging<GameRoomEntity> source = super.list(dto);
