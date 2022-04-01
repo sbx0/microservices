@@ -23,7 +23,7 @@ public interface IGameRoomService extends IService<GameRoomEntity> {
 
     Boolean start(String roomCode);
 
-    void message(String roomCode, String type, String message);
+    void message(String roomCode, String type, Object message);
 
     SseEmitter subscribe(String roomCode);
 }

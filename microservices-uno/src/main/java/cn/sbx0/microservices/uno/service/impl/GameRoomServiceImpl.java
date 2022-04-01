@@ -1,7 +1,11 @@
 package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import cn.sbx0.microservices.uno.entity.*;
+import cn.sbx0.microservices.entity.AccountVO;
+import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
+import cn.sbx0.microservices.uno.entity.GameRoomEntity;
+import cn.sbx0.microservices.uno.entity.GameRoomInfoVO;
+import cn.sbx0.microservices.uno.entity.GameRoomStatusEnum;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
@@ -11,17 +15,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -39,7 +42,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     private IGameRoomUserService userService;
     @Resource
     private IGameCardService cardService;
-    private final static ConcurrentHashMap<String, SseEmitter> caches = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<String, ConcurrentHashMap<String, SseEmitter>> caches = new ConcurrentHashMap<>();
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 
 
@@ -87,9 +90,9 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
         boolean result = updateById(room);
         if (result) {
             cardService.initCardDeck(roomCode);
-            List<GameRoomUserEntity> gamers = userService.listByGameRoom(roomCode);
-            for (GameRoomUserEntity gamer : gamers) {
-                cardService.drawCard(roomCode, gamer.getUserId(), 7);
+            List<AccountVO> gamers = userService.listByGameRoom(roomCode);
+            for (AccountVO gamer : gamers) {
+                cardService.drawCard(roomCode, gamer.getId(), 7);
             }
         }
         return result;
@@ -123,31 +126,37 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
 
         });
 
-        caches.put(userId, sseEmitter);
+        ConcurrentHashMap<String, SseEmitter> cache = caches.get(roomCode);
+        if (cache == null) {
+            cache = new ConcurrentHashMap<>();
+        }
+        cache.put(userId, sseEmitter);
+        caches.put(roomCode, cache);
 
         return sseEmitter;
     }
 
     @Override
-    public void message(String roomCode, String type, String message) {
-        List<GameRoomUserEntity> users = userService.listByGameRoom(roomCode);
-        if (!CollectionUtils.isEmpty(users)) {
-            nonBlockingService.execute(() -> {
-                List<String> ids = users.stream().map((one) -> one.getUserId().toString()).collect(Collectors.toList());
-                for (String id : ids) {
-                    SseEmitter sse = caches.get(id);
-                    if (sse == null) {
-                        continue;
-                    }
-                    try {
-                        sse.send(SseEmitter.event().name(type).data(message));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        sse.completeWithError(e);
-                        caches.remove(id);
-                    }
+    public void message(String roomCode, String type, Object message) {
+        nonBlockingService.execute(() -> {
+            ConcurrentHashMap<String, SseEmitter> cache = caches.get(roomCode);
+            if (cache == null) {
+                return;
+            }
+            for (Map.Entry<String, SseEmitter> c : cache.entrySet()) {
+                SseEmitter sse = c.getValue();
+                if (sse == null) {
+                    continue;
                 }
-            });
-        }
+                try {
+                    sse.send(SseEmitter.event().name(type).data(message));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    sse.completeWithError(e);
+                    cache.remove(c.getKey());
+                    caches.put(roomCode, cache);
+                }
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 package cn.sbx0.microservices.uno.service;
 
+import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.entity.GameRoomUserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -16,7 +17,7 @@ import java.util.List;
 public interface IGameRoomUserService extends IService<GameRoomUserEntity> {
     boolean joinGameRoom(String roomCode);
 
-    List<GameRoomUserEntity> listByGameRoom(String roomCode);
+    List<AccountVO> listByGameRoom(String roomCode);
 
     Boolean isIAmIn(long roomId, long userId);
 

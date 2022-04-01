@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -52,7 +53,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         gamer.setCreateUserId(account.getId());
         boolean result = getBaseMapper().atomSave(gamer, gameRoom.getPlayersSize());
         if (result) {
-            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "join", account.getId().toString()));
+            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "join", account));
         }
         return result;
     }
@@ -64,19 +65,27 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         String userId = StpUtil.getLoginIdAsString();
         boolean result = getBaseMapper().quitGameRoom(userId);
         if (result) {
-            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "quit", userId));
+            AccountVO account = accountService.loginInfo();
+            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "quit", account));
         }
         return result;
     }
 
     @Override
     @Cacheable(cacheNames = "listByGameRoom", key = "#roomCode")
-    public List<GameRoomUserEntity> listByGameRoom(String roomCode) {
+    public List<AccountVO> listByGameRoom(String roomCode) {
         GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
         if (gameRoom == null || gameRoom.getRoomStatus() > 0) {
             return Collections.emptyList();
         }
-        return getBaseMapper().listByGameRoom(gameRoom.getId(), gameRoom.getPlayersSize());
+        List<GameRoomUserEntity> users = getBaseMapper().listByGameRoom(gameRoom.getId(), gameRoom.getPlayersSize());
+        return users.stream().map((one) -> {
+            AccountVO account = new AccountVO();
+            account.setId(one.getUserId());
+            account.setUsername(one.getUsername());
+            account.setNickname(one.getUsername());
+            return account;
+        }).collect(Collectors.toList());
     }
 
     @Override

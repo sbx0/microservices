@@ -2,6 +2,7 @@ package cn.sbx0.microservices.uno.controller;
 
 
 import cn.sbx0.microservices.controller.BaseController;
+import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.entity.ResponseVO;
 import cn.sbx0.microservices.uno.entity.GameRoomUserEntity;
 import cn.sbx0.microservices.uno.mapper.GameRoomUserMapper;
@@ -38,8 +39,8 @@ public class GameRoomUserController extends BaseController<GameRoomUserServiceIm
     }
 
     @GetMapping("/list/{roomCode}")
-    public ResponseVO<List<GameRoomUserEntity>> listByGameRoom(@PathVariable("roomCode") String roomCode) {
-        List<GameRoomUserEntity> data = service.listByGameRoom(roomCode);
+    public ResponseVO<List<AccountVO>> listByGameRoom(@PathVariable("roomCode") String roomCode) {
+        List<AccountVO> data = service.listByGameRoom(roomCode);
         return new ResponseVO<>(data != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, data);
     }
 }
