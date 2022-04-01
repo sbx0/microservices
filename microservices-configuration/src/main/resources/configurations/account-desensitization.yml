@@ -9,6 +9,7 @@ eureka:
     fetch-registry: true
     prefer-same-zone-eureka: true
     region: ${REGION:local}
+    registryFetchIntervalSeconds: 5
   instance:
     appname: account
     instance-id: ${spring.application.name}:${random.uuid}

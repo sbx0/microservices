@@ -9,6 +9,7 @@ eureka:
     fetch-registry: true
     prefer-same-zone-eureka: true
     region: ${REGION:local}
+    registryFetchIntervalSeconds: 5
   instance:
     appname: gateway
     instance-id: ${spring.application.name}:${random.uuid}
@@ -21,10 +22,24 @@ spring:
   cloud:
     inetutils:
       preferred-networks: 192.168.1\.(.*)
+    loadbalancer:
+      cache:
+        enable: false
     gateway:
+      httpclient:
+        connect-timeout: 1000
+        response-timeout: 5s
       discovery:
         locator:
           enabled: true
+        httpclient:
+          connect-timeout: 1000
+          response-timeout: 5s
+      routes:
+        - id: nextjs
+          uri: http://127.0.0.1:3000
+          predicates:
+            - Path=/**
   redis:
     database: 0
     host: ${REDIS_HOST:192.168.1.254}
