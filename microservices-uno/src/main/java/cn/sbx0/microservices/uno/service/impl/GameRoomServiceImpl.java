@@ -139,23 +139,34 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     @Override
     public void message(String roomCode, String type, Object message) {
         nonBlockingService.execute(() -> {
-            ConcurrentHashMap<String, SseEmitter> cache = caches.get(roomCode);
-            if (cache == null) {
-                return;
-            }
-            for (Map.Entry<String, SseEmitter> c : cache.entrySet()) {
-                SseEmitter sse = c.getValue();
-                if (sse == null) {
-                    continue;
+            if ("*".equals(roomCode)) {
+                for (Map.Entry<String, ConcurrentHashMap<String, SseEmitter>> cs : caches.entrySet()) {
+                    ConcurrentHashMap<String, SseEmitter> cache = cs.getValue();
+                    sendMessage(roomCode, type, message, cache);
                 }
-                try {
-                    sse.send(SseEmitter.event().name(type).data(message));
-                } catch (IOException e) {
-                    sse.completeWithError(e);
-                    cache.remove(c.getKey());
-                    caches.put(roomCode, cache);
-                }
+            } else {
+                ConcurrentHashMap<String, SseEmitter> cache = caches.get(roomCode);
+                sendMessage(roomCode, type, message, cache);
             }
         });
+    }
+
+    private void sendMessage(String roomCode, String type, Object message, ConcurrentHashMap<String, SseEmitter> cache) {
+        if (cache == null) {
+            return;
+        }
+        for (Map.Entry<String, SseEmitter> c : cache.entrySet()) {
+            SseEmitter sse = c.getValue();
+            if (sse == null) {
+                continue;
+            }
+            try {
+                sse.send(SseEmitter.event().name(type).data(message));
+            } catch (IOException e) {
+                sse.completeWithError(e);
+                cache.remove(c.getKey());
+                caches.put(roomCode, cache);
+            }
+        }
     }
 }
