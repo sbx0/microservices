@@ -17,7 +17,7 @@ public class ServerSideEventScheduled {
     @Resource
     private IGameRoomService roomService;
 
-    @Scheduled(fixedDelay = 15000)
+    @Scheduled(fixedDelay = 5000)
     public void heartbeat() {
         log.debug("SSE heartbeat...");
         roomService.message("*", "message", "heartbeat");
