@@ -151,7 +151,6 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
                 try {
                     sse.send(SseEmitter.event().name(type).data(message));
                 } catch (IOException e) {
-                    e.printStackTrace();
                     sse.completeWithError(e);
                     cache.remove(c.getKey());
                     caches.put(roomCode, cache);
