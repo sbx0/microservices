@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:0}
+  port: ${ACCOUNT_PORT:0}
 
 eureka:
   client:
@@ -20,9 +20,9 @@ eureka:
 
 spring:
   datasource:
-    url: jdbc:mysql://mysql.rds.aliyuncs.com:3306/test?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
-    username: test
-    password: test
+    url: ${DB_URL:jdbc:mysql://127.0.0.1:3306/assembler?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:test}
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     database: 0

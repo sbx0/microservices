@@ -18,8 +18,13 @@ This is a java microservice project built by Spring Cloud Framework
 # Running Examples
 
 1. git clone
-2. run `build.sh` or `build.bat`
-3. cd `target` folder
-4. run `docker-compose build`
-5. run `docker-compose up -d`
+2. run `./build.sh i` to init (windows can use git bash to run)
+2. run `./build.sh` to build
+2. run `./build.sh c` to copy file into `build`
+3. cd `build` folder
+4. run `./compose.sh bp` to build and up
 6. visit http://127.0.0.1:8761 to see services
+
+# IDEA
+
+`CONFIG_URL=http://127.0.0.1:8888;SECURITY_NAME=sbx0;SECURITY_PASSWORD=test;REGISTRY_URL=http://127.0.0.1:8761/eureka/`

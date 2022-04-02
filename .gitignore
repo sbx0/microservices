@@ -4,3 +4,5 @@ target
 *-dev.yml
 *-test.yml
 *-prod.yml
+.env
+build

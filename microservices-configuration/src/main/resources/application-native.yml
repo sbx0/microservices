@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:8888}
+  port: ${CONFIGURATION_PORT:8888}
 
 eureka:
   client:
@@ -26,11 +26,11 @@ spring:
     config:
       server:
         native:
-          search-locations: ${CONFIG_LOCATION:file:C:\Users\winmj\IdeaProjects\microservices\microservices-configuration\src\main\resources\configurations}
+          search-locations: file:${CONFIG_LOCATION:C:\Users\winmj\IdeaProjects\microservices\microservices-configuration\src\main\resources\configurations}
   security:
     user:
-      name: ${NAME:sbx0}
-      password: ${PASSWORD:123456}
+      name: ${SECURITY_NAME:sbx0}
+      password: ${SECURITY_PASSWORD:123456}
 management:
   info:
     env:
@@ -46,7 +46,7 @@ management:
 info:
   app:
     name: configuration
-    port: ${PORT:8888}
+    port: ${CONFIGURATION_PORT:8888}
 
 logging:
   level:

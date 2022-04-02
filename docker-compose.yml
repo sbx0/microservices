@@ -1,39 +1,128 @@
 version: '3.7'
+
+networks:
+  china-telecom:
+    driver: bridge
+
 services:
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    networks:
+      china-telecom:
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+    ports:
+      - 3306:3306
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    command: redis-server --requirepass test
+    restart: always
+    networks:
+      china-telecom:
+    ports:
+      - 6379:6379
 
   microservices-registry:
     build:
       context: ./microservices-registry
       dockerfile: Dockerfile
-    network_mode: "host"
+    networks:
+      china-telecom:
+    ports:
+      - $REGISTRY_PORT:$REGISTRY_PORT
+    environment:
+      REGION:
+      VERSION:
+      REGISTRY_URL:
+      SECURITY_NAME:
+      SECURITY_PASSWORD:
+      CONFIG_URL:
+      HOST_CONFIG_LOCATION:
+      CONFIG_LOCATION:
+      REDIS_HOST:
+      REDIS_PORT:
+      REDIS_PASSWORD:
+      DB_URL:
+      DB_USERNAME:
+      DB_PASSWORD:
+      REGISTRY_PORT:
+      REGISTRY_PROFILES:
 
   microservices-configuration:
     build:
       context: ./microservices-configuration
       dockerfile: Dockerfile
-    network_mode: "host"
+    networks:
+      china-telecom:
     volumes:
-      - /home/sbx0/configurations:/home/sbx0/configurations
+      - $HOST_CONFIG_LOCATION:$CONFIG_LOCATION
     depends_on:
       microservices-registry:
         condition: service_healthy
+    ports:
+      - $CONFIGURATION_PORT:$CONFIGURATION_PORT
+    environment:
+      REGION:
+      VERSION:
+      REGISTRY_URL:
+      SECURITY_NAME:
+      SECURITY_PASSWORD:
+      CONFIG_URL:
+      HOST_CONFIG_LOCATION:
+      CONFIG_LOCATION:
+      REDIS_HOST:
+      REDIS_PORT:
+      REDIS_PASSWORD:
+      DB_URL:
+      DB_USERNAME:
+      DB_PASSWORD:
+      CONFIGURATION_PORT:
+      CONFIGURATION_PROFILES:
 
   microservices-gateway:
     build:
       context: ./microservices-gateway
       dockerfile: Dockerfile
-    network_mode: "host"
+    networks:
+      china-telecom:
     depends_on:
       microservices-configuration:
         condition: service_healthy
       microservices-registry:
         condition: service_healthy
+    ports:
+      - $GATEWAY_PORT:$GATEWAY_PORT
+    environment:
+      REGION:
+      VERSION:
+      REGISTRY_URL:
+      SECURITY_NAME:
+      SECURITY_PASSWORD:
+      CONFIG_URL:
+      HOST_CONFIG_LOCATION:
+      CONFIG_LOCATION:
+      REDIS_HOST:
+      REDIS_PORT:
+      REDIS_PASSWORD:
+      DB_URL:
+      DB_USERNAME:
+      DB_PASSWORD:
+      GATEWAY_PORT:
+      GATEWAY_PROFILES:
+      NEXT_URL:
 
   microservices-account:
     build:
       context: ./microservices-account
       dockerfile: Dockerfile
-    network_mode: "host"
+    networks:
+      china-telecom:
     depends_on:
       microservices-configuration:
         condition: service_healthy
@@ -41,12 +130,30 @@ services:
         condition: service_healthy
       microservices-gateway:
         condition: service_healthy
+    environment:
+      REGION:
+      VERSION:
+      REGISTRY_URL:
+      SECURITY_NAME:
+      SECURITY_PASSWORD:
+      CONFIG_URL:
+      HOST_CONFIG_LOCATION:
+      CONFIG_LOCATION:
+      REDIS_HOST:
+      REDIS_PORT:
+      REDIS_PASSWORD:
+      DB_URL:
+      DB_USERNAME:
+      DB_PASSWORD:
+      ACCOUNT_PORT:
+      ACCOUNT_PROFILES:
 
   microservices-uno:
     build:
       context: ./microservices-uno
       dockerfile: Dockerfile
-    network_mode: "host"
+    networks:
+      china-telecom:
     depends_on:
       microservices-configuration:
         condition: service_healthy
@@ -54,3 +161,20 @@ services:
         condition: service_healthy
       microservices-gateway:
         condition: service_healthy
+    environment:
+      REGION:
+      VERSION:
+      REGISTRY_URL:
+      SECURITY_NAME:
+      SECURITY_PASSWORD:
+      CONFIG_URL:
+      HOST_CONFIG_LOCATION:
+      CONFIG_LOCATION:
+      REDIS_HOST:
+      REDIS_PORT:
+      REDIS_PASSWORD:
+      DB_URL:
+      DB_USERNAME:
+      DB_PASSWORD:
+      UNO_PORT:
+      UNO_PROFILES:
