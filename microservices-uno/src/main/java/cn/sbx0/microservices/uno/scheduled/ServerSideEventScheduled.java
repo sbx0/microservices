@@ -19,7 +19,7 @@ public class ServerSideEventScheduled {
 
     @Scheduled(fixedDelay = 5000)
     public void heartbeat() {
-        log.debug("SSE heartbeat...");
+        log.info("SSE heartbeat...");
         roomService.message("*", "message", "heartbeat");
     }
 }

@@ -142,7 +142,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
             if ("*".equals(roomCode)) {
                 for (Map.Entry<String, ConcurrentHashMap<String, SseEmitter>> cs : caches.entrySet()) {
                     ConcurrentHashMap<String, SseEmitter> cache = cs.getValue();
-                    sendMessage(roomCode, type, message, cache);
+                    sendMessage(cs.getKey(), type, message, cache);
                 }
             } else {
                 ConcurrentHashMap<String, SseEmitter> cache = caches.get(roomCode);
@@ -152,6 +152,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     }
 
     private void sendMessage(String roomCode, String type, Object message, ConcurrentHashMap<String, SseEmitter> cache) {
+        log.info("sendMessage");
         if (cache == null) {
             return;
         }
