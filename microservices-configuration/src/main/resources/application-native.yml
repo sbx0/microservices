@@ -10,6 +10,7 @@ eureka:
     prefer-same-zone-eureka: true
     region: ${REGION:local}
   instance:
+    ip-address: ${IP_ADDRESS:172.30.40.220}
     appname: configuration
     instance-id: ${spring.application.name}:${random.uuid}
     prefer-ip-address: true

@@ -11,6 +11,7 @@ eureka:
     region: ${REGION:local}
     registryFetchIntervalSeconds: 5
   instance:
+    ip-address: ${IP_ADDRESS:172.30.40.220}
     appname: uno
     instance-id: ${spring.application.name}:${random.uuid}
     prefer-ip-address: true

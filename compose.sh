@@ -7,7 +7,7 @@ CHANGED_CONFIGS="./configurations/*"
 build() {
   case "$1" in
   "local")
-    docker-compose -f docker-compose.yml --env-file .env build
+    docker-compose -f docker-compose.yml --env-file .env build --build-arg http_proxy=http://172.30.32.1:11112 --build-arg https_proxy=http://172.30.32.1:11112
     ;;
   *)
     docker-compose -f docker-compose-prod.yml --env-file .env build

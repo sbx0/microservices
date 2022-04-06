@@ -16,19 +16,19 @@ SOURCE_CONFIGS="$PWD/microservices-configuration/src/main/resources/configuratio
 init() {
   echo "create .env"
   echo "# HOST_CONFIG_LOCATION which is where your configurations files located" >.env
-  sed -i '$a HOST_CONFIG_LOCATION=C://Users/JsonSnow/IdeaProjects/microservices/build/configurations' .env
+  sed -i '$a HOST_CONFIG_LOCATION=/mnt/c/Users/JsonSnow/IdeaProjects/microservices/build/configurations' .env
   sed -i '$a TZ=Asia/Shanghai' .env
   sed -i '$a REGION=local' .env
   sed -i '$a VERSION=0.0.0' .env
-  sed -i '$a REGISTRY_URL=http://microservices-registry:8761/eureka/' .env
+  sed -i '$a REGISTRY_URL=http://172.30.40.220:8761/eureka/' .env
   sed -i '$a SECURITY_NAME=sbx0' .env
   sed -i '$a SECURITY_PASSWORD=test' .env
-  sed -i '$a CONFIG_URL=http://microservices-configuration:8888' .env
+  sed -i '$a CONFIG_URL=http://172.30.40.220:8888' .env
   sed -i '$a CONFIG_LOCATION=/home/sbx0/configurations' .env
-  sed -i '$a REDIS_HOST=redis' .env
+  sed -i '$a REDIS_HOST=172.30.40.220' .env
   sed -i '$a REDIS_PORT=6379' .env
   sed -i '$a REDIS_PASSWORD=test' .env
-  sed -i '$a DB_URL=jdbc:mysql://mysql:3306/assembler?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true' .env
+  sed -i '$a DB_URL=jdbc:mysql://172.30.40.220:3306/assembler?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true' .env
   sed -i '$a DB_USERNAME=root' .env
   sed -i '$a DB_PASSWORD=test' .env
   sed -i '$a # REGISTRY' .env
@@ -40,7 +40,7 @@ init() {
   sed -i '$a # GATEWAY' .env
   sed -i '$a GATEWAY_PORT=8080' .env
   sed -i '$a GATEWAY_PROFILES=dev' .env
-  sed -i '$a NEXT_URL=http://172.18.0.1:3000' .env
+  sed -i '$a NEXT_URL=http://172.30.32.1:3000' .env
   sed -i '$a # ACCOUNT' .env
   sed -i '$a ACCOUNT_PORT=0' .env
   sed -i '$a ACCOUNT_PROFILES=dev' .env

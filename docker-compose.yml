@@ -1,9 +1,5 @@
 version: '3.7'
 
-networks:
-  china-telecom:
-    driver: bridge
-
 services:
 
   mysql:
@@ -11,31 +7,34 @@ services:
     container_name: mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-    networks:
-      china-telecom:
     environment:
       MYSQL_ROOT_PASSWORD: test
-    ports:
-      - 3306:3306
+    network_mode: "host"
+    deploy:
+      resources:
+        limits:
+          memory: 500m
 
   redis:
     image: redis:latest
     container_name: redis
     command: redis-server --requirepass test
     restart: always
-    networks:
-      china-telecom:
-    ports:
-      - 6379:6379
+    network_mode: "host"
+    deploy:
+      resources:
+        limits:
+          memory: 300m
 
   microservices-registry:
     build:
       context: ./microservices-registry
       dockerfile: Dockerfile
-    networks:
-      china-telecom:
-    ports:
-      - $REGISTRY_PORT:$REGISTRY_PORT
+    network_mode: "host"
+    deploy:
+      resources:
+        limits:
+          memory: 200m
     environment:
       REGION:
       VERSION:
@@ -58,15 +57,16 @@ services:
     build:
       context: ./microservices-configuration
       dockerfile: Dockerfile
-    networks:
-      china-telecom:
     volumes:
       - $HOST_CONFIG_LOCATION:$CONFIG_LOCATION
     depends_on:
       microservices-registry:
         condition: service_healthy
-    ports:
-      - $CONFIGURATION_PORT:$CONFIGURATION_PORT
+    network_mode: "host"
+    deploy:
+      resources:
+        limits:
+          memory: 200m
     environment:
       REGION:
       VERSION:
@@ -85,44 +85,48 @@ services:
       CONFIGURATION_PORT:
       CONFIGURATION_PROFILES:
 
-  microservices-gateway:
-    build:
-      context: ./microservices-gateway
-      dockerfile: Dockerfile
-    networks:
-      china-telecom:
-    depends_on:
-      microservices-configuration:
-        condition: service_healthy
-      microservices-registry:
-        condition: service_healthy
-    ports:
-      - $GATEWAY_PORT:$GATEWAY_PORT
-    environment:
-      REGION:
-      VERSION:
-      REGISTRY_URL:
-      SECURITY_NAME:
-      SECURITY_PASSWORD:
-      CONFIG_URL:
-      HOST_CONFIG_LOCATION:
-      CONFIG_LOCATION:
-      REDIS_HOST:
-      REDIS_PORT:
-      REDIS_PASSWORD:
-      DB_URL:
-      DB_USERNAME:
-      DB_PASSWORD:
-      GATEWAY_PORT:
-      GATEWAY_PROFILES:
-      NEXT_URL:
+  #  microservices-gateway:
+  #    build:
+  #      context: ./microservices-gateway
+  #      dockerfile: Dockerfile
+  #    depends_on:
+  #      microservices-configuration:
+  #        condition: service_healthy
+  #      microservices-registry:
+  #        condition: service_healthy
+  #    network_mode: "host"
+  #    deploy:
+  #      resources:
+  #        limits:
+  #          memory: 300m
+  #    environment:
+  #      REGION:
+  #      VERSION:
+  #      REGISTRY_URL:
+  #      SECURITY_NAME:
+  #      SECURITY_PASSWORD:
+  #      CONFIG_URL:
+  #      HOST_CONFIG_LOCATION:
+  #      CONFIG_LOCATION:
+  #      REDIS_HOST:
+  #      REDIS_PORT:
+  #      REDIS_PASSWORD:
+  #      DB_URL:
+  #      DB_USERNAME:
+  #      DB_PASSWORD:
+  #      GATEWAY_PORT:
+  #      GATEWAY_PROFILES:
+  #      NEXT_URL:
 
   microservices-account:
     build:
       context: ./microservices-account
       dockerfile: Dockerfile
-    networks:
-      china-telecom:
+    network_mode: "host"
+    deploy:
+      resources:
+        limits:
+          memory: 200m
     depends_on:
       microservices-configuration:
         condition: service_healthy
@@ -152,8 +156,11 @@ services:
     build:
       context: ./microservices-uno
       dockerfile: Dockerfile
-    networks:
-      china-telecom:
+    network_mode: "host"
+    deploy:
+      resources:
+        limits:
+          memory: 500m
     depends_on:
       microservices-configuration:
         condition: service_healthy
