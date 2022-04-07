@@ -1,4 +1,5 @@
 version: '3.7'
+
 services:
 
   microservices-registry:
@@ -9,86 +10,155 @@ services:
     deploy:
       resources:
         limits:
-          memory: 400m
+          memory: 300m
+    environment:
+      REGION:
+      VERSION:
+      REGISTRY_URL:
+      SECURITY_NAME:
+      SECURITY_PASSWORD:
+      CONFIG_URL:
+      HOST_CONFIG_LOCATION:
+      CONFIG_LOCATION:
+      REDIS_HOST:
+      REDIS_PORT:
+      REDIS_PASSWORD:
+      DB_URL:
+      DB_USERNAME:
+      DB_PASSWORD:
+      REGISTRY_PORT:
+      REGISTRY_PROFILES:
+      IP_ADDRESS:
 
   microservices-configuration:
     build:
       context: ./microservices-configuration
       dockerfile: prod.Dockerfile
-    network_mode: "host"
     volumes:
-      - $CONFIG_LOCATION:$CONFIG_LOCATION
+      - $HOST_CONFIG_LOCATION:$CONFIG_LOCATION
     depends_on:
       microservices-registry:
         condition: service_healthy
-    environment:
-      PASSWORD:
-      CONFIG_LOCATION:
-      REGISTRY_URL:
+    network_mode: "host"
     deploy:
       resources:
         limits:
-          memory: 400m
+          memory: 300m
+    environment:
+      REGION:
+      VERSION:
+      REGISTRY_URL:
+      SECURITY_NAME:
+      SECURITY_PASSWORD:
+      CONFIG_URL:
+      HOST_CONFIG_LOCATION:
+      CONFIG_LOCATION:
+      REDIS_HOST:
+      REDIS_PORT:
+      REDIS_PASSWORD:
+      DB_URL:
+      DB_USERNAME:
+      DB_PASSWORD:
+      CONFIGURATION_PORT:
+      CONFIGURATION_PROFILES:
+      IP_ADDRESS:
 
   microservices-gateway:
     build:
       context: ./microservices-gateway
       dockerfile: prod.Dockerfile
-    network_mode: "host"
     depends_on:
       microservices-configuration:
         condition: service_healthy
       microservices-registry:
         condition: service_healthy
-    environment:
-      PASSWORD:
-      CONFIG_URL:
-      REGISTRY_URL:
-      REDIS_HOST:
-      REDIS_PASSWORD:
+    network_mode: "host"
     deploy:
       resources:
         limits:
-          memory: 400m
+          memory: 300m
+    environment:
+      REGION:
+      VERSION:
+      REGISTRY_URL:
+      SECURITY_NAME:
+      SECURITY_PASSWORD:
+      CONFIG_URL:
+      HOST_CONFIG_LOCATION:
+      CONFIG_LOCATION:
+      REDIS_HOST:
+      REDIS_PORT:
+      REDIS_PASSWORD:
+      DB_URL:
+      DB_USERNAME:
+      DB_PASSWORD:
+      GATEWAY_PORT:
+      GATEWAY_PROFILES:
+      NEXT_URL:
+      IP_ADDRESS:
 
   microservices-account:
     build:
       context: ./microservices-account
       dockerfile: prod.Dockerfile
     network_mode: "host"
+    deploy:
+      resources:
+        limits:
+          memory: 400m
     depends_on:
       microservices-configuration:
         condition: service_healthy
       microservices-registry:
         condition: service_healthy
     environment:
-      PASSWORD:
-      CONFIG_URL:
+      REGION:
+      VERSION:
       REGISTRY_URL:
+      SECURITY_NAME:
+      SECURITY_PASSWORD:
+      CONFIG_URL:
+      HOST_CONFIG_LOCATION:
+      CONFIG_LOCATION:
       REDIS_HOST:
+      REDIS_PORT:
       REDIS_PASSWORD:
-    deploy:
-      resources:
-        limits:
-          memory: 400m
+      DB_URL:
+      DB_USERNAME:
+      DB_PASSWORD:
+      ACCOUNT_PORT:
+      ACCOUNT_PROFILES:
+      IP_ADDRESS:
 
   microservices-uno:
     build:
       context: ./microservices-uno
       dockerfile: prod.Dockerfile
     network_mode: "host"
+    deploy:
+      resources:
+        limits:
+          memory: 500m
     depends_on:
       microservices-configuration:
         condition: service_healthy
       microservices-registry:
         condition: service_healthy
     environment:
-      PASSWORD:
-      CONFIG_URL:
+      REGION:
+      VERSION:
       REGISTRY_URL:
+      SECURITY_NAME:
+      SECURITY_PASSWORD:
+      CONFIG_URL:
+      HOST_CONFIG_LOCATION:
+      CONFIG_LOCATION:
       REDIS_HOST:
+      REDIS_PORT:
       REDIS_PASSWORD:
-    deploy:
-      resources:
-        limits:
-          memory: 1024m
+      DB_URL:
+      DB_USERNAME:
+      DB_PASSWORD:
+      UNO_PORT:
+      UNO_PROFILES:
+      IP_ADDRESS:

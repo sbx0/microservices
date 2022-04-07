@@ -34,7 +34,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 200m
+          memory: 300m
     environment:
       REGION:
       VERSION:
@@ -52,6 +52,7 @@ services:
       DB_PASSWORD:
       REGISTRY_PORT:
       REGISTRY_PROFILES:
+      IP_ADDRESS:
 
   microservices-configuration:
     build:
@@ -66,7 +67,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 200m
+          memory: 300m
     environment:
       REGION:
       VERSION:
@@ -84,6 +85,7 @@ services:
       DB_PASSWORD:
       CONFIGURATION_PORT:
       CONFIGURATION_PROFILES:
+      IP_ADDRESS:
 
   #  microservices-gateway:
   #    build:
@@ -117,6 +119,7 @@ services:
   #      GATEWAY_PORT:
   #      GATEWAY_PROFILES:
   #      NEXT_URL:
+  #      IP_ADDRESS:
 
   microservices-account:
     build:
@@ -126,13 +129,11 @@ services:
     deploy:
       resources:
         limits:
-          memory: 200m
+          memory: 400m
     depends_on:
       microservices-configuration:
         condition: service_healthy
       microservices-registry:
-        condition: service_healthy
-      microservices-gateway:
         condition: service_healthy
     environment:
       REGION:
@@ -151,6 +152,7 @@ services:
       DB_PASSWORD:
       ACCOUNT_PORT:
       ACCOUNT_PROFILES:
+      IP_ADDRESS:
 
   microservices-uno:
     build:
@@ -165,8 +167,6 @@ services:
       microservices-configuration:
         condition: service_healthy
       microservices-registry:
-        condition: service_healthy
-      microservices-gateway:
         condition: service_healthy
     environment:
       REGION:
@@ -185,3 +185,4 @@ services:
       DB_PASSWORD:
       UNO_PORT:
       UNO_PROFILES:
+      IP_ADDRESS:

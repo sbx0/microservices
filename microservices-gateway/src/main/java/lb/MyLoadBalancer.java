@@ -10,6 +10,7 @@ import org.springframework.cloud.loadbalancer.core.NoopServiceInstanceListSuppli
 import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.SelectedInstanceCallback;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
@@ -66,13 +67,23 @@ public class MyLoadBalancer implements ReactorServiceInstanceLoadBalancer {
             return new EmptyResponse();
         }
 
+        String region = requestData.getHeaders().getFirst("region");
+        if (StringUtils.hasText(region)) {
+            List<ServiceInstance> matchVersionInstances = instances.stream().filter(one -> one.getMetadata().getOrDefault("region", "local").equals(region)).collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(matchVersionInstances)) {
+                instances = matchVersionInstances;
+            } else {
+                log.info("no match region service");
+            }
+        }
+
         String version = requestData.getHeaders().getFirst("version");
         if (StringUtils.hasText(version)) {
-            List<ServiceInstance> matchVersionInstances = instances.stream().filter(one -> one.getMetadata().getOrDefault("version", "dev").equals(version)).collect(Collectors.toList());
-            if (matchVersionInstances.isEmpty()) {
-                return new EmptyResponse();
-            } else {
+            List<ServiceInstance> matchVersionInstances = instances.stream().filter(one -> one.getMetadata().getOrDefault("version", "0.0.0").equals(version)).collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(matchVersionInstances)) {
                 instances = matchVersionInstances;
+            } else {
+                log.info("no match version service");
             }
         }
 

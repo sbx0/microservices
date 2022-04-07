@@ -53,7 +53,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         gamer.setCreateUserId(account.getId());
         boolean result = getBaseMapper().atomSave(gamer, gameRoom.getPlayersSize());
         if (result) {
-            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "join", account));
+            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "join", "*", account));
         }
         return result;
     }
@@ -66,7 +66,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         boolean result = getBaseMapper().quitGameRoom(userId);
         if (result) {
             AccountVO account = accountService.loginInfo();
-            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "quit", account));
+            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "quit", "*", account));
         }
         return result;
     }

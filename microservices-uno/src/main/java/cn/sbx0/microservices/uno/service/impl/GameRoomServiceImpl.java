@@ -2,10 +2,7 @@ package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
-import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
-import cn.sbx0.microservices.uno.entity.GameRoomEntity;
-import cn.sbx0.microservices.uno.entity.GameRoomInfoVO;
-import cn.sbx0.microservices.uno.entity.GameRoomStatusEnum;
+import cn.sbx0.microservices.uno.entity.*;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
@@ -92,7 +89,8 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
             cardService.initCardDeck(roomCode);
             List<AccountVO> gamers = userService.listByGameRoom(roomCode);
             for (AccountVO gamer : gamers) {
-                cardService.drawCard(roomCode, gamer.getId(), 7);
+                List<CardEntity> cardEntities = cardService.drawCard(roomCode, gamer.getId(), 7);
+                nonBlockingService.execute(() -> message(roomCode, "draw_card", gamer.getId().toString(), cardEntities));
             }
         }
         return result;
@@ -137,22 +135,21 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     }
 
     @Override
-    public void message(String roomCode, String type, Object message) {
+    public void message(String roomCode, String type, String userId, Object message) {
         nonBlockingService.execute(() -> {
             if ("*".equals(roomCode)) {
                 for (Map.Entry<String, ConcurrentHashMap<String, SseEmitter>> cs : caches.entrySet()) {
                     ConcurrentHashMap<String, SseEmitter> cache = cs.getValue();
-                    sendMessage(cs.getKey(), type, message, cache);
+                    sendMessage(cs.getKey(), type, userId, message, cache);
                 }
             } else {
                 ConcurrentHashMap<String, SseEmitter> cache = caches.get(roomCode);
-                sendMessage(roomCode, type, message, cache);
+                sendMessage(roomCode, type, userId, message, cache);
             }
         });
     }
 
-    private void sendMessage(String roomCode, String type, Object message, ConcurrentHashMap<String, SseEmitter> cache) {
-        log.info("sendMessage");
+    private void sendMessage(String roomCode, String type, String userId, Object message, ConcurrentHashMap<String, SseEmitter> cache) {
         if (cache == null) {
             return;
         }
@@ -160,6 +157,11 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
             SseEmitter sse = c.getValue();
             if (sse == null) {
                 continue;
+            }
+            if (!"*".equals(userId)) {
+                if (!c.getKey().equals(userId)) {
+                    continue;
+                }
             }
             try {
                 sse.send(SseEmitter.event().name(type).data(message));
