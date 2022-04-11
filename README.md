@@ -31,3 +31,13 @@ This is a java microservice project built by Spring Cloud Framework
 # WSL2
 
 `/etc/init.d/docker start`
+
+# arthas
+
+`docker exec -it container_id /bin/bash`
+
+`curl -O https://arthas.aliyun.com/arthas-boot.jar`
+
+`java -jar arthas-boot.jar`
+
+`watch cn.sbx0.microservices.uno.service.impl.GameRoomServiceImpl message {params} -x 2`

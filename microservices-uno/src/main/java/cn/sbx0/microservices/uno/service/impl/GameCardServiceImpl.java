@@ -4,6 +4,8 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.uno.entity.CardDeckEntity;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.service.IGameCardService;
+import cn.sbx0.microservices.uno.service.IGameRoomService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -14,6 +16,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,6 +28,10 @@ import java.util.concurrent.TimeUnit;
 public class GameCardServiceImpl implements IGameCardService {
     @Resource
     private RedisTemplate<String, CardEntity> redisTemplate;
+    private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
+    @Lazy
+    @Resource
+    private IGameRoomService gameRoomService;
 
     @Override
     public void initCardDeck(String roomCode) {
@@ -59,6 +67,8 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public List<CardEntity> drawCard(String roomCode, Serializable userId, int number) {
+        String sizeKey = "cards:" + roomCode + ":" + StpUtil.getLoginIdAsString();
+        Long size = redisTemplate.opsForList().size(sizeKey);
         String key = "cards:" + roomCode;
         String keyPlusUserID = key + ":" + userId;
         if (number < 1) {
@@ -73,6 +83,7 @@ public class GameCardServiceImpl implements IGameCardService {
             cards.addAll(pops);
         }
         redisTemplate.opsForList().leftPushAll(keyPlusUserID, cards);
+        nonBlockingService.execute(() -> gameRoomService.message(roomCode, "number_of_cards", "*", userId + "=" + size));
         extensionOfTime(key);
         extensionOfTime(keyPlusUserID);
         return cards;
@@ -143,6 +154,7 @@ public class GameCardServiceImpl implements IGameCardService {
             redisTemplate.opsForList().rightPop(key);
         }
         redisTemplate.opsForList().leftPush(key, card);
+        nonBlockingService.execute(() -> gameRoomService.message(roomCode, "discard_cards", "*", card));
         extensionOfTime(key);
     }
 

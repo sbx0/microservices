@@ -75,7 +75,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     @Cacheable(cacheNames = "listByGameRoom", key = "#roomCode")
     public List<AccountVO> listByGameRoom(String roomCode) {
         GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
-        if (gameRoom == null || gameRoom.getRoomStatus() > 0) {
+        if (gameRoom == null) {
             return Collections.emptyList();
         }
         List<GameRoomUserEntity> users = getBaseMapper().listByGameRoom(gameRoom.getId(), gameRoom.getPlayersSize());
