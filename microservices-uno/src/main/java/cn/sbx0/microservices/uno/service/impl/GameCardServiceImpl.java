@@ -77,7 +77,12 @@ public class GameCardServiceImpl implements IGameCardService {
         List<CardEntity> cards = new ArrayList<>();
         List<CardEntity> pops = new ArrayList<>();
         for (int i = 0; i < number; i++) {
-            pops.add(redisTemplate.opsForList().rightPop(key));
+            CardEntity card = redisTemplate.opsForList().rightPop(key);
+            if (card == null) {
+                initCardDeck(roomCode);
+                card = redisTemplate.opsForList().rightPop(key);
+            }
+            pops.add(card);
         }
         if (!CollectionUtils.isEmpty(pops)) {
             cards.addAll(pops);
@@ -102,7 +107,8 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public Boolean playCard(String roomCode, String uuid, String color) {
-        String key = "cards:" + roomCode + ":" + StpUtil.getLoginIdAsString();
+        String userId = StpUtil.getLoginIdAsString();
+        String key = "cards:" + roomCode + ":" + userId;
         String discardKey = "cards:" + roomCode + ":discard";
         List<CardEntity> cards = myCardList(roomCode);
 
@@ -131,6 +137,7 @@ public class GameCardServiceImpl implements IGameCardService {
                 if (canPlay) {
                     cards.remove(card);
                     card.setColor(color);
+                    nonBlockingService.execute(() -> gameRoomService.message(roomCode, "number_of_cards", "*", userId + "=" + cards.size()));
                     discardCard(roomCode, card);
                     break;
                 } else {
