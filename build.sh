@@ -90,7 +90,7 @@ build-copy-up() {
   build
   copy
   cd build || exit
-  ./compose.sh build-and-up "$1"
+  ./compose.sh build-and-up "$1" "$2"
 }
 
 case "$1" in
@@ -104,6 +104,6 @@ case "$1" in
   copy
   ;;
 *)
-  build-copy-up "$1"
+  build-copy-up "$1" "$2"
   ;;
 esac

@@ -8,6 +8,7 @@ import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.netflix.appinfo.ApplicationInfoManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
@@ -39,9 +40,21 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     private IGameRoomUserService userService;
     @Resource
     private IGameCardService cardService;
+    @Resource
+    private ApplicationInfoManager applicationInfoManager;
+
     private final static ConcurrentHashMap<String, ConcurrentHashMap<String, SseEmitter>> caches = new ConcurrentHashMap<>();
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 
+
+    @Override
+    public String choose(String roomCode) {
+        GameRoomEntity gameRoom = getOneByRoomCode(roomCode);
+        if (gameRoom == null) {
+            return null;
+        }
+        return gameRoom.getInstanceId();
+    }
 
     @Override
     public String create(GameRoomCreateDTO dto) {
@@ -57,6 +70,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
         BeanUtils.copyProperties(dto, entity);
         entity.setRoomCode(UUID.randomUUID().toString());
         entity.setCreateUserId(userId);
+        entity.setInstanceId(applicationInfoManager.getInfo().getInstanceId());
         int number = getBaseMapper().insert(entity);
         if (number > 0) {
             return entity.getRoomCode();
@@ -73,6 +87,9 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     @Override
     public GameRoomInfoVO info(String roomCode) {
         GameRoomEntity room = getOneByRoomCode(roomCode);
+        if (room == null) {
+            return null;
+        }
         long userId = StpUtil.getLoginIdAsLong();
         GameRoomInfoVO vo = new GameRoomInfoVO();
         BeanUtils.copyProperties(room, vo);

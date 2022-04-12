@@ -7,10 +7,18 @@ CHANGED_CONFIGS="./configurations/*"
 build() {
   case "$1" in
   "local")
-    docker-compose -f docker-compose.yml --env-file .env build --build-arg http_proxy=http://172.30.32.1:11112 --build-arg https_proxy=http://172.30.32.1:11112
+    if [ -n "$2" ]; then
+      docker-compose -f docker-compose.yml --env-file .env build "$2"
+    else
+      docker-compose -f docker-compose.yml --env-file .env build
+    fi
     ;;
   *)
-    docker-compose -f docker-compose-prod.yml --env-file .env build
+    if [ -n "$2" ]; then
+      docker-compose -f docker-compose-prod.yml --env-file .env build "$2"
+    else
+      docker-compose -f docker-compose-prod.yml --env-file .env build
+    fi
     ;;
   esac
 }

@@ -26,4 +26,6 @@ public interface IGameRoomService extends IService<GameRoomEntity> {
     void message(String roomCode, String type, String userId, Object message);
 
     SseEmitter subscribe(String roomCode);
+
+    String choose(String roomCode);
 }
