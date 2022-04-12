@@ -90,7 +90,7 @@ build-copy-up() {
   build
   copy
   cd build || exit
-  ./compose.sh up "$1"
+  ./compose.sh build-and-up "$1"
 }
 
 case "$1" in

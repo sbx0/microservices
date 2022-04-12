@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -65,6 +66,16 @@ public class MyLoadBalancer implements ReactorServiceInstanceLoadBalancer {
                 log.warn("No servers available for service: " + serviceId);
             }
             return new EmptyResponse();
+        }
+
+        String instanceId = requestData.getHeaders().getFirst("instance-id");
+        if (StringUtils.hasText(instanceId)) {
+            Optional<ServiceInstance> first = instances.stream().filter(one -> one.getInstanceId().equals(instanceId)).findFirst();
+            if (first.isPresent()) {
+                return new DefaultResponse(first.get());
+            } else {
+                log.info("no match instance id");
+            }
         }
 
         String region = requestData.getHeaders().getFirst("region");
