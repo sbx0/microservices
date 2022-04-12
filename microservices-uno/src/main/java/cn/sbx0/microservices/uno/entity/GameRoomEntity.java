@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author wangh
- * @since 2022-03-10
+ * @since 2022-04-12
  */
 @Getter
 @Setter
@@ -32,31 +32,72 @@ public class GameRoomEntity implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+    /**
+     * 房间编号
+     */
     private String roomCode;
 
+    /**
+     * 房间名称
+     */
     private String roomName;
 
+    /**
+     * 房间密码
+     */
     private String roomPassword;
 
+    /**
+     * 房间容量
+     */
     private Integer playersSize;
 
+    /**
+     * 房间状态
+     */
     private Integer roomStatus;
 
-    private Integer privacyFlag;
+    /**
+     * 是否公开
+     */
+    private Integer publicFlag;
 
+    /**
+     * 实例ID
+     */
+    private String instanceId;
+
+    /**
+     * 备注
+     */
     private String remark;
 
+    /**
+     * 逻辑删除
+     */
     private Integer delFlag;
 
+    /**
+     * 创建人
+     */
     private Long createUserId;
 
+    /**
+     * 创建时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createTime;
 
+    /**
+     * 修改人
+     */
     private Long updateUserId;
 
+    /**
+     * 修改时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
