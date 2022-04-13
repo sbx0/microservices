@@ -12,7 +12,7 @@ SERVICES=(
   microservices-uno
 )
 SOURCE_CONFIGS="$PWD/microservices-configuration/src/main/resources/configurations/*"
-WSL_IP=$(ifconfig eth0 | grep -w inet | awk '{print $2}')
+# WSL_IP=$(ifconfig eth0 | grep -w inet | awk '{print $2}')
 
 init() {
   echo "create .env"
@@ -48,7 +48,7 @@ init() {
   sed -i '$a # UNO' .env
   sed -i '$a UNO_PORT=0' .env
   sed -i '$a UNO_PROFILES=dev' .env
-  sed -i "\$a IP_ADDRESS=${WSL_IP}" .env
+  sed -i '$a IP_ADDRESS=wsl2.sbx0.cn' .env
   # sed -i "\$a CONFIG_LOCATION=${PWD}/${BUILD}/configurations" .env
   # echo "config environment"
   # sed -i "\$a MICROSERVICES_DIR=${PWD}" /etc/environment

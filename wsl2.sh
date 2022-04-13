@@ -19,6 +19,16 @@ set_wsl2_ip_to_windows_host() {
   else
     echo "$wsl_ip $wsl_domain" >>$win_hosts_path
   fi
+
+  win_domain="win.sbx0.cn"
+  win_ip=$(cat /etc/resolv.conf | grep "nameserver" | awk '{print $2}')
+  if grep "$win_domain" $win_hosts_path; then
+    echo "win_ip ${win_ip}"
+    wsl_hosts=$(sed -s "s/.* $win_domain/$win_ip $win_domain/g" $win_hosts_path)
+    echo "$wsl_hosts" >$win_hosts_path
+  else
+    echo "$win_ip $win_domain" >>$win_hosts_path
+  fi
 }
 
 set_windows_ip_to_wsl2_host() {
