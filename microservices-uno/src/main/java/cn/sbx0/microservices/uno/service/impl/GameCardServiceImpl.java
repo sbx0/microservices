@@ -1,12 +1,15 @@
 package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.entity.CardDeckEntity;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
+import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -28,10 +31,15 @@ import java.util.concurrent.TimeUnit;
 public class GameCardServiceImpl implements IGameCardService {
     @Resource
     private RedisTemplate<String, CardEntity> redisTemplate;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
     @Lazy
     @Resource
     private IGameRoomService gameRoomService;
+    @Lazy
+    @Resource
+    private IGameRoomUserService userService;
 
     @Override
     public void initCardDeck(String roomCode) {
@@ -108,6 +116,20 @@ public class GameCardServiceImpl implements IGameCardService {
     @Override
     public Boolean playCard(String roomCode, String uuid, String color) {
         String userId = StpUtil.getLoginIdAsString();
+        String currentGamerKey = "currentGamer:" + roomCode;
+        String currentGamerStr = stringRedisTemplate.opsForValue().get(currentGamerKey);
+        if (currentGamerStr == null) {
+            currentGamerStr = "0";
+        }
+        int index = Integer.parseInt(currentGamerStr);
+        List<AccountVO> gamers = userService.listByGameRoom(roomCode);
+        AccountVO currentGamer = gamers.get(index);
+        if (currentGamer == null) {
+            return false;
+        }
+        if (currentGamer.getId() != Long.parseLong(userId)) {
+            return false;
+        }
         String key = "cards:" + roomCode + ":" + userId;
         String discardKey = "cards:" + roomCode + ":discard";
         List<CardEntity> cards = myCardList(roomCode);
@@ -135,6 +157,7 @@ public class GameCardServiceImpl implements IGameCardService {
                 }
 
                 if (canPlay) {
+                    functionCard(roomCode, card);
                     cards.remove(card);
                     card.setColor(color);
                     nonBlockingService.execute(() -> gameRoomService.message(roomCode, "number_of_cards", "*", userId + "=" + cards.size()));
@@ -146,8 +169,67 @@ public class GameCardServiceImpl implements IGameCardService {
             }
         }
         redisTemplate.expire(key, Duration.ZERO);
-        redisTemplate.opsForList().leftPushAll(key, cards);
+        if (!CollectionUtils.isEmpty(cards)) {
+            redisTemplate.opsForList().leftPushAll(key, cards);
+        }
         return true;
+    }
+
+    private void functionCard(String roomCode, CardEntity card) {
+        String key;
+        String direction;
+        int size = 2;
+        switch (card.getPoint()) {
+            case "reverse":
+                key = "direction:" + roomCode;
+                direction = stringRedisTemplate.opsForValue().get(key);
+                if ("normal".equals(direction)) {
+                    direction = "reverse";
+                } else {
+                    direction = "normal";
+                }
+                stringRedisTemplate.opsForValue().set(key, direction);
+                extensionOfTime(key);
+                step(roomCode, 1);
+                return;
+            case "wild draw four":
+                size = 4;
+            case "draw two":
+                key = "penaltyCards:" + roomCode;
+                String numberStr = stringRedisTemplate.opsForValue().get(key);
+                if (numberStr == null) {
+                    numberStr = "0";
+                }
+                int number = Integer.parseInt(numberStr);
+                number += size;
+                stringRedisTemplate.opsForValue().set(key, String.valueOf(number));
+                extensionOfTime(key);
+                step(roomCode, 1);
+                return;
+            case "skip":
+                step(roomCode, 2);
+            default:
+                step(roomCode, 1);
+        }
+    }
+
+    private void step(String roomCode, int step) {
+        String key = "currentGamer:" + roomCode;
+        String currentGamer = stringRedisTemplate.opsForValue().get(key);
+        if (currentGamer == null) {
+            currentGamer = "0";
+        }
+        List<AccountVO> gamers = userService.listByGameRoom(roomCode);
+        String directionKey = "direction:" + roomCode;
+        String direction = stringRedisTemplate.opsForValue().get(directionKey);
+        int newIndex = Integer.parseInt(currentGamer);
+        if ("normal".equals(direction)) {
+            newIndex = (newIndex + step) % gamers.size();
+        } else {
+            newIndex = (newIndex - step + gamers.size()) % gamers.size();
+        }
+        stringRedisTemplate.opsForValue().set(key, String.valueOf(newIndex));
+        extensionOfTime(key);
     }
 
     @Override
@@ -173,6 +255,17 @@ public class GameCardServiceImpl implements IGameCardService {
             size = 0L;
         }
         return redisTemplate.opsForList().range(key, 0, size);
+    }
+
+    @Override
+    public void initGame(String roomCode) {
+        // normal reverse
+        stringRedisTemplate.opsForValue().set("direction:" + roomCode, "normal");
+        extensionOfTime("direction:" + roomCode);
+        stringRedisTemplate.opsForValue().set("currentGamer:" + roomCode, "0");
+        extensionOfTime("currentGamer:" + roomCode);
+        stringRedisTemplate.opsForValue().set("penaltyCards:" + roomCode, "0");
+        extensionOfTime("penaltyCards:" + roomCode);
     }
 
     private void extensionOfTime(String key) {

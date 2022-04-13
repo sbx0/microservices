@@ -42,7 +42,6 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     private IGameCardService cardService;
     @Resource
     private ApplicationInfoManager applicationInfoManager;
-
     private final static ConcurrentHashMap<String, ConcurrentHashMap<String, SseEmitter>> caches = new ConcurrentHashMap<>();
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 
@@ -105,6 +104,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
         if (result) {
             cardService.initCardDeck(roomCode);
             List<AccountVO> gamers = userService.listByGameRoom(roomCode);
+            cardService.initGame(roomCode);
             for (AccountVO gamer : gamers) {
                 List<CardEntity> cardEntities = cardService.drawCard(roomCode, gamer.getId(), 7);
                 nonBlockingService.execute(() -> message(roomCode, "draw_card", gamer.getId().toString(), cardEntities));
