@@ -229,6 +229,8 @@ public class GameCardServiceImpl implements IGameCardService {
             newIndex = (newIndex - step + gamers.size()) % gamers.size();
         }
         stringRedisTemplate.opsForValue().set(key, String.valueOf(newIndex));
+        int finalNewIndex = newIndex;
+        nonBlockingService.execute(() -> gameRoomService.message(roomCode, "who_turn", "*", String.valueOf(finalNewIndex)));
         extensionOfTime(key);
     }
 
