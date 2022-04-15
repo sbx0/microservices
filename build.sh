@@ -86,8 +86,7 @@ copy() {
   echo "copy finished"
 }
 
-build-copy-up() {
-  build
+copy-up() {
   copy
   cd build || exit
   ./compose.sh build-and-up "$1" "$2"
@@ -104,6 +103,6 @@ case "$1" in
   copy
   ;;
 *)
-  build-copy-up "$1" "$2"
+  copy-up "$1" "$2"
   ;;
 esac

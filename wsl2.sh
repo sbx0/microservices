@@ -2,9 +2,8 @@
 # chmod u+x wsl2.sh
 
 set_proxy() {
-  host_ip=$(cat /etc/resolv.conf | grep "nameserver" | cut -f 2 -d " ")
-  echo export https_proxy="http://${host_ip}:11112"
-  echo export http_proxy="http://${host_ip}:11112"
+  echo export https_proxy="http://win.sbx0.cn:11112"
+  echo export http_proxy="http://win.sbx0.cn:11112"
   echo "vim /root/.bashrc"
   echo "source /root/.bashrc"
 }
