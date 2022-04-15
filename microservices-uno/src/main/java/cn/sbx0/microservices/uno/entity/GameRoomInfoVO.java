@@ -33,7 +33,7 @@ public class GameRoomInfoVO implements Serializable {
 
     private Integer roomStatus;
 
-    private Integer privacyFlag;
+    private Integer publicFlag;
 
     private String remark;
 
@@ -43,5 +43,7 @@ public class GameRoomInfoVO implements Serializable {
     private LocalDateTime createTime;
 
     private Boolean isIAmIn;
+
+    private Integer currentGamer;
 
 }

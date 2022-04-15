@@ -12,6 +12,7 @@ import com.netflix.appinfo.ApplicationInfoManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -42,6 +43,8 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     private IGameCardService cardService;
     @Resource
     private ApplicationInfoManager applicationInfoManager;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
     private final static ConcurrentHashMap<String, ConcurrentHashMap<String, SseEmitter>> caches = new ConcurrentHashMap<>();
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 
@@ -93,6 +96,12 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
         GameRoomInfoVO vo = new GameRoomInfoVO();
         BeanUtils.copyProperties(room, vo);
         vo.setIsIAmIn(userService.isIAmIn(room.getId(), userId));
+        String currentGamerKey = "currentGamer:" + roomCode;
+        String currentGamerStr = stringRedisTemplate.opsForValue().get(currentGamerKey);
+        if (currentGamerStr == null) {
+            currentGamerStr = "0";
+        }
+        vo.setCurrentGamer(Integer.parseInt(currentGamerStr));
         return vo;
     }
 
