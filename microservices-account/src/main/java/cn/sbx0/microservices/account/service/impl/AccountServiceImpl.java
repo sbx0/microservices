@@ -4,14 +4,16 @@ import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.account.mapper.AccountMapper;
 import cn.sbx0.microservices.account.service.IAccountService;
+import cn.sbx0.microservices.entity.AccountConverter;
 import cn.sbx0.microservices.entity.AccountEntity;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.entity.LoginDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -23,6 +25,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity> implements IAccountService {
+    @Resource
+    private AccountConverter accountEntityConverter;
+
     public static void main(String[] args) {
         System.out.println(BCrypt.hashpw("test", BCrypt.gensalt()));
     }
@@ -64,8 +69,6 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
     @Override
     @Cacheable(cacheNames = "loginInfo", key = "#userId")
     public AccountVO loginInfo(Long userId) {
-        AccountVO vo = new AccountVO();
-        BeanUtils.copyProperties(getById(userId), vo);
-        return vo;
+        return accountEntityConverter.entityToVO(getById(userId));
     }
 }

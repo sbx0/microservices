@@ -5,15 +5,11 @@ import cn.sbx0.microservices.controller.BaseController;
 import cn.sbx0.microservices.entity.PageQueryDTO;
 import cn.sbx0.microservices.entity.Paging;
 import cn.sbx0.microservices.entity.ResponseVO;
-import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
-import cn.sbx0.microservices.uno.entity.GameRoomEntity;
-import cn.sbx0.microservices.uno.entity.GameRoomInfoVO;
-import cn.sbx0.microservices.uno.entity.GameRoomVO;
+import cn.sbx0.microservices.uno.entity.*;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import cn.sbx0.microservices.uno.service.impl.GameRoomServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +29,8 @@ import java.util.List;
 public class GameRoomController extends BaseController<GameRoomServiceImpl, GameRoomMapper, GameRoomEntity> {
     @Resource
     private IGameRoomUserService gameRoomUserService;
+    @Resource
+    private GameRoomConverter gameRoomConverter;
 
     @GetMapping(value = "/subscribe/{roomCode}", consumes = MediaType.ALL_VALUE)
     public SseEmitter subscribe(@PathVariable("roomCode") String roomCode) {
@@ -64,8 +62,7 @@ public class GameRoomController extends BaseController<GameRoomServiceImpl, Game
     @GetMapping("/list")
     public Paging<GameRoomVO> pagingList(PageQueryDTO dto) {
         Paging<GameRoomEntity> source = super.list(dto);
-        Paging<GameRoomVO> target = new Paging<>();
-        BeanUtils.copyProperties(source, target);
+        Paging<GameRoomVO> target = gameRoomConverter.pagingEntityToVO(source);
         List<GameRoomEntity> data = source.getData();
         List<Object> objects = desensitization(data, GameRoomVO.class);
         List<GameRoomVO> vos = new ArrayList<>();

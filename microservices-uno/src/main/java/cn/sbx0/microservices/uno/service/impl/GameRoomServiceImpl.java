@@ -10,7 +10,6 @@ import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.netflix.appinfo.ApplicationInfoManager;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -45,6 +44,8 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     private ApplicationInfoManager applicationInfoManager;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private GameRoomConverter gameRoomConverter;
     private final static ConcurrentHashMap<String, ConcurrentHashMap<String, SseEmitter>> caches = new ConcurrentHashMap<>();
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 
@@ -68,8 +69,8 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
             return null;
         }
 
-        GameRoomEntity entity = new GameRoomEntity();
-        BeanUtils.copyProperties(dto, entity);
+        GameRoomEntity entity = gameRoomConverter.dtoToEntity(dto);
+
         entity.setRoomCode(UUID.randomUUID().toString());
         entity.setCreateUserId(userId);
         entity.setInstanceId(applicationInfoManager.getInfo().getInstanceId());
@@ -93,8 +94,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
             return null;
         }
         long userId = StpUtil.getLoginIdAsLong();
-        GameRoomInfoVO vo = new GameRoomInfoVO();
-        BeanUtils.copyProperties(room, vo);
+        GameRoomInfoVO vo = gameRoomConverter.entityToVO(room);
         vo.setIsIAmIn(userService.isIAmIn(room.getId(), userId));
         String currentGamerKey = "currentGamer:" + roomCode;
         String currentGamerStr = stringRedisTemplate.opsForValue().get(currentGamerKey);
