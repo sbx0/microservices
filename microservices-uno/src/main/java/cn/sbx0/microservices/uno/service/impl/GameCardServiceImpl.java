@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.io.Serializable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +39,7 @@ public class GameCardServiceImpl implements IGameCardService {
     @Lazy
     @Resource
     private IGameRoomUserService userService;
+    public static final List<CardEntity> EMPTY = new ArrayList<>(0);
 
     @Override
     public void initCardDeck(String roomCode) {
@@ -74,7 +74,8 @@ public class GameCardServiceImpl implements IGameCardService {
     }
 
     @Override
-    public List<CardEntity> drawCard(String roomCode, Serializable userId, int number) {
+    public List<CardEntity> drawCard(String roomCode, Long userId, int number) {
+        String drawKey = "cards:" + roomCode + ":draw";
         String sizeKey = "cards:" + roomCode + ":" + StpUtil.getLoginIdAsString();
         Long size = redisTemplate.opsForList().size(sizeKey);
         String key = "cards:" + roomCode;
@@ -90,12 +91,17 @@ public class GameCardServiceImpl implements IGameCardService {
                 initCardDeck(roomCode);
                 card = redisTemplate.opsForList().rightPop(key);
             }
+            if (card == null) {
+                return null;
+            }
+            card.setUserId(userId);
             pops.add(card);
         }
         if (!CollectionUtils.isEmpty(pops)) {
             cards.addAll(pops);
         }
         redisTemplate.opsForList().leftPushAll(keyPlusUserID, cards);
+        stringRedisTemplate.opsForValue().set(drawKey, userId.toString());
         nonBlockingService.execute(() -> gameRoomService.message(roomCode, "number_of_cards", "*", userId + "=" + size));
         extensionOfTime(key);
         extensionOfTime(keyPlusUserID);
@@ -140,6 +146,9 @@ public class GameCardServiceImpl implements IGameCardService {
 
                 boolean canPlay = false;
                 if (top != null) {
+                    if (userId.equals(top.getUserId().toString())) {
+                        canPlay = true;
+                    }
                     if (top.getColor().equals("black")) {
                         canPlay = true;
                     }
@@ -211,6 +220,20 @@ public class GameCardServiceImpl implements IGameCardService {
             default:
                 step(roomCode, 1);
         }
+    }
+
+    @Override
+    public List<CardEntity> nextPlay(String roomCode) {
+        List<CardEntity> cards = EMPTY;
+        String currentPlayer = StpUtil.getLoginIdAsString();
+        // check last draw user
+        String drawKey = "cards:" + roomCode + ":draw";
+        String lastDrawUser = stringRedisTemplate.opsForValue().get(drawKey);
+        if (!currentPlayer.equals(lastDrawUser)) {
+            cards = drawCard(roomCode, StpUtil.getLoginIdAsLong(), 1);
+        }
+        step(roomCode, 1);
+        return cards;
     }
 
     private void step(String roomCode, int step) {

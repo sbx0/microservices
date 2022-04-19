@@ -21,4 +21,5 @@ public class CardEntity implements Serializable {
     private String uuid;
     private String color;
     private String point;
+    private Long userId;
 }

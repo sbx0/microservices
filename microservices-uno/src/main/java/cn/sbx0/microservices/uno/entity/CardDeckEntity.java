@@ -33,12 +33,12 @@ public class CardDeckEntity {
 
         for (Map.Entry<String, Integer> number : numbers.entrySet()) {
             for (int i = 0; i < 4 * number.getValue(); i++) {
-                CARDS.add(new CardEntity(UUID.randomUUID().toString(), colors[i % 4], number.getKey()));
+                CARDS.add(new CardEntity(UUID.randomUUID().toString(), colors[i % 4], number.getKey(), 0L));
             }
         }
         for (int i = 0; i < 4; i++) {
-            CARDS.add(new CardEntity(UUID.randomUUID().toString(), "black", "wild"));
-            CARDS.add(new CardEntity(UUID.randomUUID().toString(), "black", "wild draw four"));
+            CARDS.add(new CardEntity(UUID.randomUUID().toString(), "black", "wild", 0L));
+            CARDS.add(new CardEntity(UUID.randomUUID().toString(), "black", "wild draw four", 0L));
         }
     }
 

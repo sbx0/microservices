@@ -63,6 +63,12 @@ public class GameCardController {
         return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 
+    @GetMapping("/next/{roomCode}")
+    public ResponseVO<List<CardEntity>> nextPlay(@PathVariable("roomCode") String roomCode) {
+        List<CardEntity> result = service.nextPlay(roomCode);
+        return new ResponseVO<>(result != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+    }
+
     /**
      * 弃牌堆
      *
