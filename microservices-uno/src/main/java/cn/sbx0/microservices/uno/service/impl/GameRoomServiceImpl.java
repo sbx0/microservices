@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.Resource;
@@ -100,6 +101,18 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
             currentGamerStr = "0";
         }
         vo.setCurrentGamer(Integer.parseInt(currentGamerStr));
+        String penaltyCardsKey = "penaltyCards:" + roomCode;
+        String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
+        if (!StringUtils.hasText(penaltyCards)) {
+            penaltyCards = "0";
+        }
+        vo.setPenaltyCards(Integer.parseInt(penaltyCards));
+        String directionKey = "direction:" + roomCode;
+        String direction = stringRedisTemplate.opsForValue().get(directionKey);
+        if (!StringUtils.hasText(direction)) {
+            direction = "normal";
+        }
+        vo.setDirection(direction);
         return vo;
     }
 

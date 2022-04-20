@@ -78,6 +78,7 @@ public class GameCardServiceImpl implements IGameCardService {
             size = Integer.parseInt(penaltyCards);
         }
         stringRedisTemplate.opsForValue().set(key, "0");
+        nonBlockingService.execute(() -> gameRoomService.message(roomCode, "penalty_cards", "*", "0"));
         return drawCard(roomCode, StpUtil.getLoginIdAsLong(), size);
     }
 
@@ -157,10 +158,10 @@ public class GameCardServiceImpl implements IGameCardService {
                     if (userId.equals(top.getUserId().toString())) {
                         canPlay = true;
                     }
-                    if (top.getColor().equals("black")) {
+                    if ("wild".equals(card.getPoint())) {
                         canPlay = true;
                     }
-                    if (card.getColor().equals("black")) {
+                    if ("wild draw four".equals(card.getPoint())) {
                         canPlay = true;
                     }
                     if (card.getColor().equals(top.getColor())) {
@@ -206,6 +207,8 @@ public class GameCardServiceImpl implements IGameCardService {
                     direction = "normal";
                 }
                 stringRedisTemplate.opsForValue().set(key, direction);
+                String finalDirection = direction;
+                nonBlockingService.execute(() -> gameRoomService.message(roomCode, "direction", "*", finalDirection));
                 extensionOfTime(key);
                 step(roomCode, 1);
                 return;
@@ -219,12 +222,15 @@ public class GameCardServiceImpl implements IGameCardService {
                 }
                 int number = Integer.parseInt(numberStr);
                 number += size;
-                stringRedisTemplate.opsForValue().set(key, String.valueOf(number));
+                String value = String.valueOf(number);
+                stringRedisTemplate.opsForValue().set(key, value);
+                nonBlockingService.execute(() -> gameRoomService.message(roomCode, "penalty_cards", "*", value));
                 extensionOfTime(key);
                 step(roomCode, 1);
                 return;
             case "skip":
                 step(roomCode, 2);
+                return;
             default:
                 step(roomCode, 1);
         }

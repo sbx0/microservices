@@ -2,14 +2,13 @@ package cn.sbx0.microservices.account.service.impl;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.sbx0.microservices.account.entity.AccountConverter;
 import cn.sbx0.microservices.account.mapper.AccountMapper;
 import cn.sbx0.microservices.account.service.IAccountService;
-import cn.sbx0.microservices.entity.AccountConverter;
 import cn.sbx0.microservices.entity.AccountEntity;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.entity.LoginDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -62,8 +61,8 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
     }
 
     @Override
-    @Cacheable(cacheNames = "loginInfo", key = "#userId")
     public AccountVO loginInfo(Long userId) {
-        return AccountConverter.INSTANCE.entityToVO(getById(userId));
+        AccountEntity entity = getById(userId);
+        return AccountConverter.INSTANCE.entityToVO(entity);
     }
 }

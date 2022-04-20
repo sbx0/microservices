@@ -1,6 +1,8 @@
-package cn.sbx0.microservices.entity;
+package cn.sbx0.microservices.account.entity;
 
 
+import cn.sbx0.microservices.entity.AccountEntity;
+import cn.sbx0.microservices.entity.AccountVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

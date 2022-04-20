@@ -46,4 +46,8 @@ public class GameRoomInfoVO implements Serializable {
 
     private Integer currentGamer;
 
+    private Integer penaltyCards;
+
+    private String direction;
+
 }
