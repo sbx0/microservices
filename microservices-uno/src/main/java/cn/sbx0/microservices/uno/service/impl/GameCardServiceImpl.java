@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.time.Duration;
@@ -70,7 +71,14 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public List<CardEntity> drawCard(String roomCode, int number) {
-        return drawCard(roomCode, StpUtil.getLoginIdAsLong(), number);
+        String key = "penaltyCards:" + roomCode;
+        String penaltyCards = stringRedisTemplate.opsForValue().get(key);
+        int size = number;
+        if (StringUtils.hasText(penaltyCards)) {
+            size = Integer.parseInt(penaltyCards);
+        }
+        stringRedisTemplate.opsForValue().set(key, "0");
+        return drawCard(roomCode, StpUtil.getLoginIdAsLong(), size);
     }
 
     @Override
