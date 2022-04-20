@@ -13,8 +13,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 /**
  * <p>
  * 服务实现类
@@ -25,9 +23,6 @@ import javax.annotation.Resource;
  */
 @Service
 public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity> implements IAccountService {
-    @Resource
-    private AccountConverter accountEntityConverter;
-
     public static void main(String[] args) {
         System.out.println(BCrypt.hashpw("test", BCrypt.gensalt()));
     }
@@ -69,6 +64,6 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
     @Override
     @Cacheable(cacheNames = "loginInfo", key = "#userId")
     public AccountVO loginInfo(Long userId) {
-        return accountEntityConverter.entityToVO(getById(userId));
+        return AccountConverter.INSTANCE.entityToVO(getById(userId));
     }
 }

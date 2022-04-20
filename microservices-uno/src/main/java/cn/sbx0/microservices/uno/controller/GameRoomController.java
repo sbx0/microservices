@@ -29,8 +29,6 @@ import java.util.List;
 public class GameRoomController extends BaseController<GameRoomServiceImpl, GameRoomMapper, GameRoomEntity> {
     @Resource
     private IGameRoomUserService gameRoomUserService;
-    @Resource
-    private GameRoomConverter gameRoomConverter;
 
     @GetMapping(value = "/subscribe/{roomCode}", consumes = MediaType.ALL_VALUE)
     public SseEmitter subscribe(@PathVariable("roomCode") String roomCode) {
@@ -62,7 +60,7 @@ public class GameRoomController extends BaseController<GameRoomServiceImpl, Game
     @GetMapping("/list")
     public Paging<GameRoomVO> pagingList(PageQueryDTO dto) {
         Paging<GameRoomEntity> source = super.list(dto);
-        Paging<GameRoomVO> target = gameRoomConverter.pagingEntityToVO(source);
+        Paging<GameRoomVO> target = GameRoomConverter.INSTANCE.pagingEntityToVO(source);
         List<GameRoomEntity> data = source.getData();
         List<Object> objects = desensitization(data, GameRoomVO.class);
         List<GameRoomVO> vos = new ArrayList<>();

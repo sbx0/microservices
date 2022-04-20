@@ -2,8 +2,8 @@
 # chmod u+x wsl2.sh
 
 set_proxy() {
-  echo export https_proxy="http://win.sbx0.cn:11112"
-  echo export http_proxy="http://win.sbx0.cn:11112"
+  echo export https_proxy="http://win.sbx0.cn:11114"
+  echo export http_proxy="http://win.sbx0.cn:11114"
   echo "vim /root/.bashrc"
   echo "source /root/.bashrc"
 }

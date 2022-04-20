@@ -44,8 +44,6 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     private ApplicationInfoManager applicationInfoManager;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
-    @Resource
-    private GameRoomConverter gameRoomConverter;
     private final static ConcurrentHashMap<String, ConcurrentHashMap<String, SseEmitter>> caches = new ConcurrentHashMap<>();
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 
@@ -69,7 +67,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
             return null;
         }
 
-        GameRoomEntity entity = gameRoomConverter.dtoToEntity(dto);
+        GameRoomEntity entity = GameRoomConverter.INSTANCE.dtoToEntity(dto);
 
         entity.setRoomCode(UUID.randomUUID().toString());
         entity.setCreateUserId(userId);
@@ -94,7 +92,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
             return null;
         }
         long userId = StpUtil.getLoginIdAsLong();
-        GameRoomInfoVO vo = gameRoomConverter.entityToVO(room);
+        GameRoomInfoVO vo = GameRoomConverter.INSTANCE.entityToVO(room);
         vo.setIsIAmIn(userService.isIAmIn(room.getId(), userId));
         String currentGamerKey = "currentGamer:" + roomCode;
         String currentGamerStr = stringRedisTemplate.opsForValue().get(currentGamerKey);
