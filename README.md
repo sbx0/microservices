@@ -4,7 +4,7 @@ This is a java microservice project built by Spring Cloud Framework
 
 # Demo
 
-![uno-game-1.gif](https://s2.loli.net/2022/04/20/Nt312pgbM8adXlL.gif)
+![uno-game-1.gif](https://s2.loli.net/2022/04/21/v5w6YTgM3GLpziO.gif)
 
 # Composition
 
