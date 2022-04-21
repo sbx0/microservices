@@ -11,6 +11,6 @@ public class GameRoomCreateDTO {
     private String roomName;
     private String roomPassword;
     private Integer playersSize;
-    private Integer privacyFlag;
+    private Integer publicFlag;
     private String remark;
 }

@@ -12,11 +12,11 @@ import org.mapstruct.factory.Mappers;
 public interface GameRoomConverter {
     GameRoomConverter INSTANCE = Mappers.getMapper(GameRoomConverter.class);
 
-    GameRoomVO map(GameRoomEntity source);
+    GameRoomVO entityToVO(GameRoomEntity source);
 
     Paging<GameRoomVO> pagingEntityToVO(Paging<GameRoomEntity> source);
 
     GameRoomEntity dtoToEntity(GameRoomCreateDTO source);
 
-    GameRoomInfoVO entityToVO(GameRoomEntity source);
+    GameRoomInfoVO entityToInfoVO(GameRoomEntity source);
 }

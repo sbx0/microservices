@@ -93,7 +93,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
             return null;
         }
         long userId = StpUtil.getLoginIdAsLong();
-        GameRoomInfoVO vo = GameRoomConverter.INSTANCE.entityToVO(room);
+        GameRoomInfoVO vo = GameRoomConverter.INSTANCE.entityToInfoVO(room);
         vo.setIsIAmIn(userService.isIAmIn(room.getId(), userId));
         String currentGamerKey = "currentGamer:" + roomCode;
         String currentGamerStr = stringRedisTemplate.opsForValue().get(currentGamerKey);

@@ -37,7 +37,7 @@ public class GameRoomVO implements Serializable {
 
     private Integer roomStatus;
 
-    private Integer privacyFlag;
+    private Integer publicFlag;
 
     private String remark;
 

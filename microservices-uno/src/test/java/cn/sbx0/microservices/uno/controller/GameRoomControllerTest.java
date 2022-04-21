@@ -39,7 +39,7 @@ class GameRoomControllerTest {
         GameRoomCreateDTO dto = new GameRoomCreateDTO();
         dto.setRoomName("Friendship first");
         dto.setPlayersSize(4);
-        dto.setPrivacyFlag(0);
+        dto.setPublicFlag(0);
         dto.setRemark("test");
         String params = objectMapper.writeValueAsString(dto);
         String response = mockMvc.perform(
