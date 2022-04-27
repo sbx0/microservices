@@ -2,7 +2,7 @@
 
 This is a java microservice project built by Spring Cloud Framework
 
-# [Sponsors](https://jb.gg/OpenSourceSupport)
+# [supported by JetBrains](https://jb.gg/OpenSourceSupport)
 
 ![jetbrains](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)
 

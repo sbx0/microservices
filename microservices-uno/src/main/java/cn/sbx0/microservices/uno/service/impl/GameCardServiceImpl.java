@@ -149,8 +149,11 @@ public class GameCardServiceImpl implements IGameCardService {
         String discardKey = "cards:" + roomCode + ":discard";
         List<CardEntity> cards = myCardList(roomCode);
 
+        boolean find = false;
+
         for (CardEntity card : cards) {
             if (uuid.equals(card.getUuid())) {
+                find = true;
                 CardEntity top = redisTemplate.opsForList().index(discardKey, 0);
 
                 boolean canPlay = false;
@@ -204,7 +207,7 @@ public class GameCardServiceImpl implements IGameCardService {
         if (!CollectionUtils.isEmpty(cards)) {
             redisTemplate.opsForList().leftPushAll(key, cards);
         }
-        return true;
+        return find;
     }
 
     private void functionCard(String roomCode, CardEntity card) {
