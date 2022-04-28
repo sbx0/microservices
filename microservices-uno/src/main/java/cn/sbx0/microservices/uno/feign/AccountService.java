@@ -6,6 +6,7 @@ import lb.CustomLoadBalancerConfiguration;
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @author sbx0
@@ -16,4 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public interface AccountService {
     @GetMapping(value = "/user/loginInfo", produces = "application/json")
     AccountVO loginInfo();
+
+    @GetMapping(value = "/findByUserName", produces = "application/json")
+    AccountVO findByUserName(@RequestParam(value = "name") String name);
 }

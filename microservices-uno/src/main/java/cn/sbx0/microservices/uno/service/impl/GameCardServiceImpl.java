@@ -43,6 +43,98 @@ public class GameCardServiceImpl implements IGameCardService {
     public static final List<CardEntity> EMPTY = new ArrayList<>(0);
 
     @Override
+    public boolean botPlayCard(String roomCode, String uuid, String color, Long id) {
+        String userId = id.toString();
+        String currentGamerKey = "currentGamer:" + roomCode;
+        String currentGamerStr = stringRedisTemplate.opsForValue().get(currentGamerKey);
+        if (currentGamerStr == null) {
+            currentGamerStr = "0";
+        }
+        int index = Integer.parseInt(currentGamerStr);
+        List<AccountVO> gamers = userService.listByGameRoom(roomCode);
+        AccountVO currentGamer = gamers.get(index);
+        if (currentGamer == null) {
+            return false;
+        }
+        if (currentGamer.getId() != Long.parseLong(userId)) {
+            return false;
+        }
+        String key = "cards:" + roomCode + ":" + userId;
+        String discardKey = "cards:" + roomCode + ":discard";
+        List<CardEntity> cards = myCardList(roomCode);
+
+        boolean find = false;
+
+        for (CardEntity card : cards) {
+            if (uuid.equals(card.getUuid())) {
+                find = true;
+                CardEntity top = redisTemplate.opsForList().index(discardKey, 0);
+
+                boolean canPlay = false;
+                if (top != null) {
+                    if (userId.equals(top.getUserId().toString())) {
+                        canPlay = true;
+                    }
+                    if ("wild".equals(card.getPoint())) {
+                        canPlay = true;
+                    }
+                    if ("wild draw four".equals(card.getPoint())) {
+                        canPlay = true;
+                    }
+                    if (card.getColor().equals(top.getColor())) {
+                        canPlay = true;
+                    }
+                    if (card.getPoint().equals(top.getPoint())) {
+                        canPlay = true;
+                    }
+                } else {
+                    canPlay = true;
+                }
+
+                if (canPlay) {
+                    if (top != null) {
+                        if (("wild draw four".equals(top.getPoint()) && !"wild draw four".equals(card.getPoint())) || ("draw two".equals(top.getPoint()) && !"draw two".equals(card.getPoint()) && !"wild draw four".equals(card.getPoint()))) {
+                            String penaltyCardsKey = "penaltyCards:" + roomCode;
+                            String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
+                            int size = 0;
+                            if (StringUtils.hasText(penaltyCards)) {
+                                size = Integer.parseInt(penaltyCards);
+                            }
+                            if (size > 0) {
+                                return false;
+                            }
+                        }
+                    }
+                    functionCard(roomCode, card);
+                    cards.remove(card);
+                    card.setColor(color);
+                    nonBlockingService.execute(() -> gameRoomService.message(roomCode, "number_of_cards", "*", userId + "=" + cards.size()));
+                    discardCard(roomCode, card);
+                    break;
+                } else {
+                    return false;
+                }
+            }
+        }
+        redisTemplate.expire(key, Duration.ZERO);
+        if (!CollectionUtils.isEmpty(cards)) {
+            redisTemplate.opsForList().leftPushAll(key, cards);
+        }
+        return find;
+    }
+
+    @Override
+    public List<CardEntity> botCardList(String roomCode, Long id) {
+        String key = "cards:" + roomCode + ":" + id;
+        Long size = redisTemplate.opsForList().size(key);
+        if (size == null) {
+            size = 0L;
+        }
+        extensionOfTime(key);
+        return redisTemplate.opsForList().range(key, 0, size);
+    }
+
+    @Override
     public void initCardDeck(String roomCode) {
         String key = "cards:" + roomCode;
         List<CardEntity> cards = CardDeckEntity.CARDS;
@@ -179,8 +271,7 @@ public class GameCardServiceImpl implements IGameCardService {
 
                 if (canPlay) {
                     if (top != null) {
-                        if (("wild draw four".equals(top.getPoint()) && !"wild draw four".equals(card.getPoint())) ||
-                                ("draw two".equals(top.getPoint()) && !"draw two".equals(card.getPoint()) && !"wild draw four".equals(card.getPoint()))) {
+                        if (("wild draw four".equals(top.getPoint()) && !"wild draw four".equals(card.getPoint())) || ("draw two".equals(top.getPoint()) && !"draw two".equals(card.getPoint()) && !"wild draw four".equals(card.getPoint()))) {
                             String penaltyCardsKey = "penaltyCards:" + roomCode;
                             String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
                             int size = 0;
@@ -251,6 +342,32 @@ public class GameCardServiceImpl implements IGameCardService {
             default:
                 step(roomCode, 1);
         }
+    }
+
+    @Override
+    public List<CardEntity> botNextPlay(String roomCode, Long id) {
+        List<CardEntity> cards = EMPTY;
+        String penaltyCardsKey = "penaltyCards:" + roomCode;
+        String numberStr = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
+        if (numberStr == null) {
+            numberStr = "0";
+        }
+        int number = Integer.parseInt(numberStr);
+        if (number > 0) {
+            cards = drawCard(roomCode, id, number);
+            stringRedisTemplate.opsForValue().set(penaltyCardsKey, "0");
+            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "penalty_cards", "*", "0"));
+        } else {
+            String currentPlayer = id.toString();
+            // check last draw user
+            String drawKey = "cards:" + roomCode + ":draw";
+            String lastDrawUser = stringRedisTemplate.opsForValue().get(drawKey);
+            if (!currentPlayer.equals(lastDrawUser)) {
+                cards = drawCard(roomCode, id, 1);
+            }
+        }
+        step(roomCode, 1);
+        return cards;
     }
 
     @Override

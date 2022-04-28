@@ -17,6 +17,10 @@ import java.util.List;
 public interface IGameRoomUserService extends IService<GameRoomUserEntity> {
     boolean joinGameRoom(String roomCode);
 
+    boolean botJoinGameRoom(String roomCode, String botName);
+
+    boolean botQuitGameRoom(String roomCode, String botName);
+
     List<AccountVO> listByGameRoom(String roomCode);
 
     Boolean isIAmIn(long roomId, long userId);
@@ -24,5 +28,4 @@ public interface IGameRoomUserService extends IService<GameRoomUserEntity> {
     boolean quitGameRoom(String roomCode);
 
     Integer countByGameRoom(String roomCode);
-
 }

@@ -24,4 +24,6 @@ public interface IAccountService extends IService<AccountEntity> {
     boolean register(LoginDTO dto);
 
     AccountVO loginInfo(Long userId);
+
+    AccountVO findByUserName(String name);
 }

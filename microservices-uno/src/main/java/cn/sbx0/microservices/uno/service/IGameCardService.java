@@ -32,4 +32,10 @@ public interface IGameCardService {
     void initGame(String roomCode);
 
     List<CardEntity> nextPlay(String roomCode);
+
+    List<CardEntity> botCardList(String roomCode, Long id);
+
+    boolean botPlayCard(String roomCode, String uuid, String color, Long id);
+
+    List<CardEntity> botNextPlay(String roomCode, Long id);
 }

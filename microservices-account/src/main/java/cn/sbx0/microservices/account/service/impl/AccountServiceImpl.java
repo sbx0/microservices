@@ -65,4 +65,10 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
         AccountEntity entity = getById(userId);
         return AccountConverter.INSTANCE.entityToVO(entity);
     }
+
+    @Override
+    public AccountVO findByUserName(String name) {
+        AccountEntity entity = getBaseMapper().findByUsername(name);
+        return AccountConverter.INSTANCE.entityToVO(entity);
+    }
 }

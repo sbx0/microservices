@@ -38,8 +38,37 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 
     @Override
-    @Caching(evict = {@CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result"),
-            @CacheEvict(cacheNames = "countByGameRoom", key = "#roomCode", condition = "#result")})
+    public boolean botQuitGameRoom(String roomCode, String botName) {
+        AccountVO account = accountService.findByUserName(botName);
+        boolean result = getBaseMapper().quitGameRoom(account.getId());
+        if (result) {
+            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "quit", "*", account));
+        }
+        return result;
+    }
+
+    @Override
+    public boolean botJoinGameRoom(String roomCode, String botName) {
+        GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
+        if (gameRoom == null || gameRoom.getRoomStatus() > 0) {
+            return false;
+        }
+        GameRoomUserEntity gamer = new GameRoomUserEntity();
+        AccountVO account = accountService.findByUserName(botName);
+        gamer.setRoomId(gameRoom.getId());
+        gamer.setUserId(account.getId());
+        gamer.setUsername(account.getNickname());
+        gamer.setCreateUserId(account.getId());
+        gamer.setRemark("RandomBot");
+        boolean result = getBaseMapper().atomSave(gamer, gameRoom.getPlayersSize());
+        if (result) {
+            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "join", "*", account));
+        }
+        return result;
+    }
+
+    @Override
+    @Caching(evict = {@CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result"), @CacheEvict(cacheNames = "countByGameRoom", key = "#roomCode", condition = "#result")})
     public boolean joinGameRoom(String roomCode) {
         GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
         if (gameRoom == null || gameRoom.getRoomStatus() > 0) {
@@ -59,8 +88,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     }
 
     @Override
-    @Caching(evict = {@CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result"),
-            @CacheEvict(cacheNames = "countByGameRoom", key = "#roomCode", condition = "#result")})
+    @Caching(evict = {@CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result"), @CacheEvict(cacheNames = "countByGameRoom", key = "#roomCode", condition = "#result")})
     public boolean quitGameRoom(String roomCode) {
         String userId = StpUtil.getLoginIdAsString();
         boolean result = getBaseMapper().quitGameRoom(userId);
