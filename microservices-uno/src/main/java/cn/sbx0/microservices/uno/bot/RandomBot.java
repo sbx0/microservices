@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Cautious Bot
+ * Random Bot
+ * <p>
+ * this bot random choose card and color which can play.
  *
  * @author sbx0
  * @since 2022/4/27
@@ -39,30 +41,13 @@ public class RandomBot {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
-    public void initId() {
-        if (this.id == null) {
-            AccountVO bot = accountService.findByUserName(name);
-            if (bot == null) {
-                throw new RuntimeException("RandomBot account not create");
-            }
-            this.id = bot.getId();
-        }
-    }
-
-    public void notify(String roomCode, Long id) {
-        initId();
-        if (this.id.equals(id)) {
-            playCard(roomCode);
-        }
-    }
-
     public void playCard(String roomCode) {
         initId();
         String discardKey = "cards:" + roomCode + ":discard";
         CardEntity top = redisTemplate.opsForList().index(discardKey, 0);
         List<CardEntity> cards = gameCardService.botCardList(roomCode, id);
 
-        // todo remove after debug
+        // todo bot have unlimited cards, will remove after debug
         if (CollectionUtils.isEmpty(cards)) {
             drawCard(roomCode, 7);
             cards = gameCardService.botCardList(roomCode, id);
@@ -70,7 +55,7 @@ public class RandomBot {
 
         List<CardEntity> canPlayCards;
 
-        // first play or no one play
+        // first round or top card belong bot.
         if (top == null || id.equals(top.getUserId())) {
             // free play
             canPlayCards = cards;
@@ -95,6 +80,7 @@ public class RandomBot {
                     }
                 }
             } else {
+                // filter which can play
                 for (CardEntity card : cards) {
                     boolean canPlay = card.getPoint().contains("wild");
                     if (card.getColor().equals(top.getColor())) {
@@ -118,6 +104,8 @@ public class RandomBot {
 
         int index = CardDeckEntity.randomChoose(canPlayCards.size());
         CardEntity card = canPlayCards.get(index);
+
+        // random choose color
         String color;
         if (card.getPoint().contains("wild")) {
             int colorIndex = CardDeckEntity.randomChoose(CardDeckEntity.COLORS.length);
@@ -126,7 +114,9 @@ public class RandomBot {
             color = card.getColor();
         }
 
+        // new thread to play card make sure not stuck main thread
         new Thread(() -> {
+            // add delay to make user feel better, this is why new thread to run
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -139,16 +129,33 @@ public class RandomBot {
         }).start();
     }
 
+    public void initId() {
+        if (this.id == null) {
+            AccountVO bot = accountService.findByUserName(name);
+            if (bot == null) {
+                throw new RuntimeException("RandomBot account not create");
+            }
+            this.id = bot.getId();
+        }
+    }
+
+    public void notify(String roomCode, Long id) {
+        initId();
+        if (this.id.equals(id)) {
+            playCard(roomCode);
+        }
+    }
+
     public void drawCard(String roomCode, int number) {
         initId();
         gameCardService.drawCard(roomCode, id, number);
     }
 
-    public boolean join(String roomCode) {
+    public boolean joinRoom(String roomCode) {
         return gameRoomUserService.botJoinGameRoom(roomCode, name);
     }
 
-    public boolean quit(String roomCode) {
+    public boolean quitRoom(String roomCode) {
         return gameRoomUserService.botQuitGameRoom(roomCode, name);
     }
 

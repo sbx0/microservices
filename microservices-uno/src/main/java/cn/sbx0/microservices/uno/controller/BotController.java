@@ -20,14 +20,14 @@ public class BotController {
     private RandomBot randomBot;
 
     @GetMapping("/add/{roomCode}")
-    public ResponseVO<Boolean> add(@PathVariable("roomCode") String roomCode) {
-        boolean result = randomBot.join(roomCode);
+    public ResponseVO<Boolean> joinRoom(@PathVariable("roomCode") String roomCode) {
+        boolean result = randomBot.joinRoom(roomCode);
         return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 
     @GetMapping("/remove/{roomCode}")
-    public ResponseVO<Boolean> remove(@PathVariable("roomCode") String roomCode) {
-        boolean result = randomBot.quit(roomCode);
+    public ResponseVO<Boolean> quitRoom(@PathVariable("roomCode") String roomCode) {
+        boolean result = randomBot.quitRoom(roomCode);
         return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 }
