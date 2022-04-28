@@ -13,30 +13,33 @@ import java.util.*;
 @Getter
 public class CardDeckEntity {
     public static List<CardEntity> CARDS = new ArrayList<>();
-    private static String[] colors = new String[]{"red", "yellow", "green", "blue"};
+    private static final int STANDARD = 2;
     private static Map<String, Integer> numbers = new HashMap<>();
+    private static final int FUNCTION_STANDARD = 2;
+    private static final int BLACK_STANDARD = 4;
+    public static String[] COLORS = new String[]{"red", "yellow", "green", "blue"};
 
     static {
         numbers.put("0", 1);
-        numbers.put("1", 2);
-        numbers.put("2", 2);
-        numbers.put("3", 2);
-        numbers.put("4", 2);
-        numbers.put("5", 2);
-        numbers.put("6", 2);
-        numbers.put("7", 2);
-        numbers.put("8", 2);
-        numbers.put("9", 2);
-        numbers.put("skip", 2);
-        numbers.put("draw two", 2);
-        numbers.put("reverse", 2);
+        numbers.put("1", STANDARD);
+        numbers.put("2", STANDARD);
+        numbers.put("3", STANDARD);
+        numbers.put("4", STANDARD);
+        numbers.put("5", STANDARD);
+        numbers.put("6", STANDARD);
+        numbers.put("7", STANDARD);
+        numbers.put("8", STANDARD);
+        numbers.put("9", STANDARD);
+        numbers.put("skip", FUNCTION_STANDARD);
+        numbers.put("draw two", FUNCTION_STANDARD);
+        numbers.put("reverse", FUNCTION_STANDARD);
 
         for (Map.Entry<String, Integer> number : numbers.entrySet()) {
             for (int i = 0; i < 4 * number.getValue(); i++) {
-                CARDS.add(new CardEntity(UUID.randomUUID().toString(), colors[i % 4], number.getKey(), 0L));
+                CARDS.add(new CardEntity(UUID.randomUUID().toString(), COLORS[i % 4], number.getKey(), 0L));
             }
         }
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < BLACK_STANDARD; i++) {
             CARDS.add(new CardEntity(UUID.randomUUID().toString(), "black", "wild", 0L));
             CARDS.add(new CardEntity(UUID.randomUUID().toString(), "black", "wild draw four", 0L));
         }
