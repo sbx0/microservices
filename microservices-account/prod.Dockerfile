@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM eclipse-temurin:17
 
 MAINTAINER sbx0
 
