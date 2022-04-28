@@ -2,6 +2,7 @@ package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
+import cn.sbx0.microservices.uno.bot.RandomBot;
 import cn.sbx0.microservices.uno.entity.CardDeckEntity;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.service.IGameCardService;
@@ -40,6 +41,9 @@ public class GameCardServiceImpl implements IGameCardService {
     @Lazy
     @Resource
     private IGameRoomUserService userService;
+    @Lazy
+    @Resource
+    private RandomBot randomBot;
     public static final List<CardEntity> EMPTY = new ArrayList<>(0);
 
     @Override
@@ -61,7 +65,7 @@ public class GameCardServiceImpl implements IGameCardService {
         }
         String key = "cards:" + roomCode + ":" + userId;
         String discardKey = "cards:" + roomCode + ":discard";
-        List<CardEntity> cards = myCardList(roomCode);
+        List<CardEntity> cards = botCardList(roomCode, id);
 
         boolean find = false;
 
@@ -75,10 +79,7 @@ public class GameCardServiceImpl implements IGameCardService {
                     if (userId.equals(top.getUserId().toString())) {
                         canPlay = true;
                     }
-                    if ("wild".equals(card.getPoint())) {
-                        canPlay = true;
-                    }
-                    if ("wild draw four".equals(card.getPoint())) {
+                    if (card.getPoint().contains("wild")) {
                         canPlay = true;
                     }
                     if (card.getColor().equals(top.getColor())) {
@@ -105,11 +106,11 @@ public class GameCardServiceImpl implements IGameCardService {
                             }
                         }
                     }
-                    functionCard(roomCode, card);
                     cards.remove(card);
                     card.setColor(color);
-                    nonBlockingService.execute(() -> gameRoomService.message(roomCode, "number_of_cards", "*", userId + "=" + cards.size()));
                     discardCard(roomCode, card);
+                    functionCard(roomCode, card);
+                    nonBlockingService.execute(() -> gameRoomService.message(roomCode, "number_of_cards", "*", userId + "=" + cards.size()));
                     break;
                 } else {
                     return false;
@@ -283,11 +284,11 @@ public class GameCardServiceImpl implements IGameCardService {
                             }
                         }
                     }
-                    functionCard(roomCode, card);
                     cards.remove(card);
                     card.setColor(color);
-                    nonBlockingService.execute(() -> gameRoomService.message(roomCode, "number_of_cards", "*", userId + "=" + cards.size()));
                     discardCard(roomCode, card);
+                    functionCard(roomCode, card);
+                    nonBlockingService.execute(() -> gameRoomService.message(roomCode, "number_of_cards", "*", userId + "=" + cards.size()));
                     break;
                 } else {
                     return false;
@@ -397,6 +398,7 @@ public class GameCardServiceImpl implements IGameCardService {
     }
 
     private void step(String roomCode, int step) {
+        String drawKey = "cards:" + roomCode + ":draw";
         String key = "currentGamer:" + roomCode;
         String currentGamer = stringRedisTemplate.opsForValue().get(key);
         if (currentGamer == null) {
@@ -414,6 +416,8 @@ public class GameCardServiceImpl implements IGameCardService {
         stringRedisTemplate.opsForValue().set(key, String.valueOf(newIndex));
         int finalNewIndex = newIndex;
         nonBlockingService.execute(() -> gameRoomService.message(roomCode, "who_turn", "*", String.valueOf(finalNewIndex)));
+        randomBot.notify(roomCode, gamers.get(newIndex).getId());
+        stringRedisTemplate.expire(drawKey, 1, TimeUnit.MICROSECONDS);
         extensionOfTime(key);
     }
 

@@ -8,8 +8,10 @@ import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import lombok.Data;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -34,6 +36,8 @@ public class RandomBot {
     private IGameCardService gameCardService;
     @Resource
     private RedisTemplate<String, CardEntity> redisTemplate;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     public void initId() {
         if (this.id == null) {
@@ -42,6 +46,13 @@ public class RandomBot {
                 throw new RuntimeException("RandomBot account not create");
             }
             this.id = bot.getId();
+        }
+    }
+
+    public void notify(String roomCode, Long id) {
+        initId();
+        if (this.id.equals(id)) {
+            playCard(roomCode);
         }
     }
 
@@ -66,20 +77,37 @@ public class RandomBot {
         } else {
             // match play
             canPlayCards = new ArrayList<>();
-            for (CardEntity card : cards) {
-                if (card.getPoint().contains("wild")) {
-                    canPlayCards.add(card);
-                    continue;
+            // see penalty cards
+            String penaltyCardsKey = "penaltyCards:" + roomCode;
+            String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
+            int size = 0;
+            if (StringUtils.hasText(penaltyCards)) {
+                size = Integer.parseInt(penaltyCards);
+            }
+            if (size > 0) {
+                // see can plus ?
+                for (CardEntity card : cards) {
+                    if ("wild draw four".equals(card.getPoint())) {
+                        canPlayCards.add(card);
+                    }
+                    if ("draw two".equals(card.getPoint()) && "draw two".equals(top.getPoint())) {
+                        canPlayCards.add(card);
+                    }
                 }
-                if (top.getPoint().equals(card.getPoint())) {
-                    canPlayCards.add(card);
-                    continue;
-                }
-                if (top.getColor().equals(card.getColor())) {
-                    canPlayCards.add(card);
+            } else {
+                for (CardEntity card : cards) {
+                    boolean canPlay = card.getPoint().contains("wild");
+                    if (card.getColor().equals(top.getColor())) {
+                        canPlay = true;
+                    }
+                    if (card.getPoint().equals(top.getPoint())) {
+                        canPlay = true;
+                    }
+                    if (canPlay) {
+                        canPlayCards.add(card);
+                    }
                 }
             }
-
         }
 
         if (canPlayCards == null || canPlayCards.size() < 1) {
@@ -98,12 +126,17 @@ public class RandomBot {
             color = card.getColor();
         }
 
-        boolean result = gameCardService.botPlayCard(roomCode, card.getUuid(), color, id);
-
-        if (!result) {
-            throw new RuntimeException("bot choose card which can't play");
-        }
-
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            boolean result = gameCardService.botPlayCard(roomCode, card.getUuid(), color, id);
+            if (!result) {
+                throw new RuntimeException("bot choose card " + card.getUuid() + " which can't play");
+            }
+        }).start();
     }
 
     public void drawCard(String roomCode, int number) {
