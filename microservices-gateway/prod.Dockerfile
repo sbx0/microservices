@@ -4,7 +4,7 @@ MAINTAINER sbx0
 
 ADD /*.jar /bootstrap.jar
 
-RUN apt update && apt install curl && apt install tzdata
+RUN apt update && apt -y install curl && apt -y install tzdata
 
 HEALTHCHECK --interval=5s --timeout=30s CMD curl -f http://localhost:$GATEWAY_PORT/actuator/health || exit 1
 
