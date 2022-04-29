@@ -26,4 +26,6 @@ public class AccountVO implements Serializable {
 
     private String email;
 
+    private Integer numberOfCards;
+
 }

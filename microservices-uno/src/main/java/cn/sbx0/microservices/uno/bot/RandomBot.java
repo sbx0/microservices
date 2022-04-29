@@ -45,12 +45,12 @@ public class RandomBot {
         initId();
         String discardKey = "cards:" + roomCode + ":discard";
         CardEntity top = redisTemplate.opsForList().index(discardKey, 0);
-        List<CardEntity> cards = gameCardService.botCardList(roomCode, id);
+        List<CardEntity> cards = gameCardService.getCardListById(roomCode, id);
 
         // todo bot have unlimited cards, will remove after debug
         if (CollectionUtils.isEmpty(cards)) {
             drawCard(roomCode, 7);
-            cards = gameCardService.botCardList(roomCode, id);
+            cards = gameCardService.getCardListById(roomCode, id);
         }
 
         List<CardEntity> canPlayCards;
@@ -98,7 +98,14 @@ public class RandomBot {
 
         if (canPlayCards == null || canPlayCards.size() < 1) {
             // no card can play
-            gameCardService.botNextPlay(roomCode, id);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                gameCardService.botNextPlay(roomCode, id);
+            }).start();
             return;
         }
 
@@ -124,6 +131,7 @@ public class RandomBot {
             }
             boolean result = gameCardService.botPlayCard(roomCode, card.getUuid(), color, id);
             if (!result) {
+                gameCardService.botNextPlay(roomCode, id);
                 throw new RuntimeException("bot choose card " + card.getUuid() + " which can't play");
             }
         }).start();

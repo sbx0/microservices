@@ -65,7 +65,7 @@ public class GameCardServiceImpl implements IGameCardService {
         }
         String key = "cards:" + roomCode + ":" + userId;
         String discardKey = "cards:" + roomCode + ":discard";
-        List<CardEntity> cards = botCardList(roomCode, id);
+        List<CardEntity> cards = getCardListById(roomCode, id);
 
         boolean find = false;
 
@@ -125,7 +125,7 @@ public class GameCardServiceImpl implements IGameCardService {
     }
 
     @Override
-    public List<CardEntity> botCardList(String roomCode, Long id) {
+    public List<CardEntity> getCardListById(String roomCode, Long id) {
         String key = "cards:" + roomCode + ":" + id;
         Long size = redisTemplate.opsForList().size(key);
         if (size == null) {
@@ -178,8 +178,6 @@ public class GameCardServiceImpl implements IGameCardService {
     @Override
     public List<CardEntity> drawCard(String roomCode, Long userId, int number) {
         String drawKey = "cards:" + roomCode + ":draw";
-        String sizeKey = "cards:" + roomCode + ":" + StpUtil.getLoginIdAsString();
-        Long size = redisTemplate.opsForList().size(sizeKey);
         String key = "cards:" + roomCode;
         String keyPlusUserID = key + ":" + userId;
         if (number < 1) {
@@ -204,6 +202,8 @@ public class GameCardServiceImpl implements IGameCardService {
         }
         redisTemplate.opsForList().leftPushAll(keyPlusUserID, cards);
         stringRedisTemplate.opsForValue().set(drawKey, userId.toString());
+        String sizeKey = "cards:" + roomCode + ":" + userId;
+        Long size = redisTemplate.opsForList().size(sizeKey);
         nonBlockingService.execute(() -> gameRoomService.message(roomCode, "number_of_cards", "*", userId + "=" + size));
         extensionOfTime(key);
         extensionOfTime(keyPlusUserID);
@@ -428,7 +428,7 @@ public class GameCardServiceImpl implements IGameCardService {
         if (size == null) {
             size = 0L;
         }
-        if (size > 10) {
+        if (size > 5) {
             redisTemplate.opsForList().rightPop(key);
         }
         redisTemplate.opsForList().leftPush(key, card);

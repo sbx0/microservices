@@ -9,9 +9,7 @@ import cn.sbx0.microservices.uno.mapper.GameRoomUserMapper;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -35,6 +33,8 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     private IGameRoomService gameRoomService;
     @Resource
     private AccountService accountService;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 
     @Override
@@ -60,15 +60,15 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         gamer.setUsername(account.getNickname());
         gamer.setCreateUserId(account.getId());
         gamer.setRemark("RandomBot");
-        boolean result = getBaseMapper().atomSave(gamer, gameRoom.getPlayersSize());
-        if (result) {
+        int result = getBaseMapper().insert(gamer);
+        if (result > 0) {
             nonBlockingService.execute(() -> gameRoomService.message(roomCode, "join", "*", account));
+            return true;
         }
-        return result;
+        return false;
     }
 
     @Override
-    @Caching(evict = {@CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result"), @CacheEvict(cacheNames = "countByGameRoom", key = "#roomCode", condition = "#result")})
     public boolean joinGameRoom(String roomCode) {
         GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
         if (gameRoom == null || gameRoom.getRoomStatus() > 0) {
@@ -88,7 +88,6 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     }
 
     @Override
-    @Caching(evict = {@CacheEvict(cacheNames = "listByGameRoom", key = "#roomCode", condition = "#result"), @CacheEvict(cacheNames = "countByGameRoom", key = "#roomCode", condition = "#result")})
     public boolean quitGameRoom(String roomCode) {
         String userId = StpUtil.getLoginIdAsString();
         boolean result = getBaseMapper().quitGameRoom(userId);
@@ -100,7 +99,6 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     }
 
     @Override
-    @Cacheable(cacheNames = "listByGameRoom", key = "#roomCode")
     public List<AccountVO> listByGameRoom(String roomCode) {
         GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
         if (gameRoom == null) {
@@ -112,12 +110,17 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
             account.setId(one.getUserId());
             account.setUsername(one.getUsername());
             account.setNickname(one.getUsername());
+            String sizeKey = "cards:" + roomCode + ":" + one.getUserId();
+            Long size = stringRedisTemplate.opsForList().size(sizeKey);
+            if (size == null) {
+                size = 0L;
+            }
+            account.setNumberOfCards(Math.toIntExact(size));
             return account;
         }).collect(Collectors.toList());
     }
 
     @Override
-    @Cacheable(cacheNames = "countByGameRoom", key = "#roomCode")
     public Integer countByGameRoom(String roomCode) {
         GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
         if (gameRoom == null) {

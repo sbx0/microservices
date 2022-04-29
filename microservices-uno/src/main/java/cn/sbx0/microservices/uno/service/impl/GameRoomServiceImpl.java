@@ -2,6 +2,7 @@ package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
+import cn.sbx0.microservices.uno.bot.RandomBot;
 import cn.sbx0.microservices.uno.entity.*;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.service.IGameCardService;
@@ -45,6 +46,9 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     private ApplicationInfoManager applicationInfoManager;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Lazy
+    @Resource
+    private RandomBot randomBot;
     private final static ConcurrentHashMap<String, ConcurrentHashMap<String, SseEmitter>> caches = new ConcurrentHashMap<>();
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 
@@ -129,6 +133,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
                 List<CardEntity> cardEntities = cardService.drawCard(roomCode, gamer.getId(), 7);
                 nonBlockingService.execute(() -> message(roomCode, "draw_card", gamer.getId().toString(), cardEntities));
             }
+            randomBot.notify(roomCode, gamers.get(0).getId());
         }
         return result;
     }
