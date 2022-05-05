@@ -19,12 +19,18 @@ public class ResponseVO<T> {
 
     public ResponseVO(String code, T data) {
         this.code = code;
+        this.data = data;
         if (SUCCESS.equals(code)) {
             this.message = "success";
         } else {
             this.message = "failed";
         }
+    }
+
+    public ResponseVO(String code, T data, String message) {
+        this.code = code;
         this.data = data;
+        this.message = message;
     }
 
 }

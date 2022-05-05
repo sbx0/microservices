@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.sbx0.microservices.entity.AccountEntity;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.entity.LoginDTO;
+import cn.sbx0.microservices.entity.ResponseVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -17,7 +18,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface IAccountService extends IService<AccountEntity> {
     AccountEntity findByUsername(String username);
 
-    SaTokenInfo login(LoginDTO dto);
+    ResponseVO<SaTokenInfo> login(LoginDTO dto);
 
     void logout();
 

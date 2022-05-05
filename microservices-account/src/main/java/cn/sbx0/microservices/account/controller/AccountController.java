@@ -9,6 +9,7 @@ import cn.sbx0.microservices.controller.BaseController;
 import cn.sbx0.microservices.entity.AccountEntity;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.entity.LoginDTO;
+import cn.sbx0.microservices.entity.ResponseVO;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -19,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/")
 public class AccountController extends BaseController<AccountServiceImpl, AccountMapper, AccountEntity> {
 
-    @PostMapping("/login")
-    public SaTokenInfo login(@RequestBody LoginDTO dto) {
+    @PostMapping("login")
+    public ResponseVO<SaTokenInfo> login(@RequestBody LoginDTO dto) {
         return service.login(dto);
     }
 

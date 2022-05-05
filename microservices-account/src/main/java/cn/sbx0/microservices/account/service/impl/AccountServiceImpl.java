@@ -8,6 +8,7 @@ import cn.sbx0.microservices.account.service.IAccountService;
 import cn.sbx0.microservices.entity.AccountEntity;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.entity.LoginDTO;
+import cn.sbx0.microservices.entity.ResponseVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -32,15 +33,17 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
     }
 
     @Override
-    public SaTokenInfo login(LoginDTO dto) {
+    public ResponseVO<SaTokenInfo> login(LoginDTO dto) {
         AccountEntity account = getBaseMapper().findByUsername(dto.getUsername());
         if (account != null && account.getId() > 0) {
             if (BCrypt.checkpw(dto.getPassword(), account.getPassword())) {
                 StpUtil.login(account.getId());
-                return StpUtil.getTokenInfo();
+                return new ResponseVO<>(ResponseVO.SUCCESS, StpUtil.getTokenInfo());
+            } else {
+                return new ResponseVO<>(ResponseVO.FAILED, null, "wrong password");
             }
         }
-        return null;
+        return new ResponseVO<>(ResponseVO.FAILED, null, "account not found");
     }
 
     @Override

@@ -1,94 +1,108 @@
 package cn.sbx0.microservices.account.controller;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
-import cn.sbx0.microservices.account.AccountApplication;
+import cn.dev33.satoken.stp.StpUtil;
+import cn.sbx0.microservices.account.mapper.AccountMapper;
+import cn.sbx0.microservices.account.mapper.ClientConfigMapper;
+import cn.sbx0.microservices.account.service.impl.AccountServiceImpl;
 import cn.sbx0.microservices.entity.AccountEntity;
+import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.entity.LoginDTO;
+import cn.sbx0.microservices.entity.ResponseVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author sbx0
  * @since 2022/3/15
  */
-@SpringBootTest(classes = AccountApplication.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@ActiveProfiles("dev")
-@AutoConfigureMockMvc
+
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(controllers = AccountController.class)
+
+@ActiveProfiles("test")
 class AccountControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final List<LoginDTO> users = new ArrayList<>();
+
     @Autowired
-    private MockMvc mockMvc;
-    private String token = "";
+    MockMvc mvc;
 
-    {
-        users.add(new LoginDTO("sbx00", "test"));
-        users.add(new LoginDTO("sbx01", "test"));
-        users.add(new LoginDTO("sbx02", "test"));
-        users.add(new LoginDTO("sbx03", "test"));
-        users.add(new LoginDTO("sbx04", "test"));
-    }
+    @MockBean
+    AccountServiceImpl service;
 
-    @Test
-    void register() throws Exception {
-        String params = objectMapper.writeValueAsString(users.get(0));
-        String response = mockMvc.perform(
-                MockMvcRequestBuilders.post("/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(params)
-        ).andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print())
-                .andReturn()
-                .getResponse()
-                .getContentAsString(StandardCharsets.UTF_8);
-        Assertions.assertEquals("false", response);
-    }
+    @MockBean
+    AccountMapper mapper;
+
+    @MockBean
+    ClientConfigMapper clientConfigMapper;
+
+    @MockBean
+    StpUtil stpUtil;
 
     @Test
     void login() throws Exception {
-        String params = objectMapper.writeValueAsString(users.get(0));
-        String response = mockMvc.perform(
-                MockMvcRequestBuilders.post("/login")
+        LoginDTO loginDTO = new LoginDTO();
+        loginDTO.setUsername("test");
+        loginDTO.setPassword("test");
+
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setId(1L);
+        accountEntity.setUsername("test");
+        accountEntity.setPassword(BCrypt.hashpw("test", BCrypt.gensalt()));
+
+        SaTokenInfo saTokenInfo = new SaTokenInfo();
+        saTokenInfo.setTokenName("token");
+        saTokenInfo.setTokenValue("token");
+        saTokenInfo.setIsLogin(true);
+        saTokenInfo.setLoginId(1);
+        saTokenInfo.setLoginType("test");
+
+        given(service.login(BDDMockito.any())).willReturn(new ResponseVO<>(ResponseVO.SUCCESS, saTokenInfo));
+
+        String response = mvc.perform(
+                post("/login")
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(params)
-        ).andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print())
-                .andReturn()
-                .getResponse()
-                .getContentAsString(StandardCharsets.UTF_8);
-        SaTokenInfo saTokenInfo = objectMapper.readValue(response, SaTokenInfo.class);
-        Assertions.assertNotNull(saTokenInfo);
-        token = saTokenInfo.getTokenValue();
+                        .content(objectMapper.writeValueAsString(loginDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("code").value("0"))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("response = " + response);
     }
 
     @Test
-    void loginInfo() throws Exception {
-        login();
-        String response = mockMvc.perform(
-                MockMvcRequestBuilders.get("/user/loginInfo")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("satoken", token)
-                        .header("version", "dev")
-        ).andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print())
-                .andReturn()
-                .getResponse()
-                .getContentAsString(StandardCharsets.UTF_8);
-        AccountEntity account = objectMapper.readValue(response, AccountEntity.class);
-        Assertions.assertNotNull(account);
+    void findByUserName() throws Exception {
+        AccountVO account = new AccountVO();
+        account.setId(1L);
+        account.setUsername("test");
+        given(service.findByUserName("test")).willReturn(account);
+
+        String response = mvc.perform(
+                get("/findByUserName?name=" + account.getUsername())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(account.getId()))
+                .andExpect(jsonPath("username").value(account.getUsername()))
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println("response = " + response);
     }
+
 }
