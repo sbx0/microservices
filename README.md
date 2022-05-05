@@ -1,5 +1,8 @@
 # microservices [under construction]
 
+[![Build Status](https://github.com/sbx0/microservices/actions/workflows/maven.yml/badge.svg)](https://github.com/sbx0/microservices/actions/workflows/maven.yml)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 This is a java microservice project built by Spring Cloud Framework
 
 # [supported by JetBrains](https://jb.gg/OpenSourceSupport)
