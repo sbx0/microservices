@@ -28,3 +28,12 @@ jobs:
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh)
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+      - name: Upload Report to Server
+        uses: wlixcc/SFTP-Deploy-Action@v1.0
+        with:
+          username: 'root'
+          server: '${{ secrets.SSH_IP }}'
+          ssh_private_key: ${{ secrets.SSH_TOKEN }}
+          local_path: './code-coverage/target/site/jacoco-aggregate/*'
+          remote_path: '/root/microservices/code-coverage/target/site/jacoco-aggregate'
+          args: '-o ConnectTimeout=5'
