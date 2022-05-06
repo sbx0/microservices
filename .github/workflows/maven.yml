@@ -35,5 +35,5 @@ jobs:
           server: '${{ secrets.SSH_IP }}'
           ssh_private_key: ${{ secrets.SSH_TOKEN }}
           local_path: './code-coverage/target/site/jacoco-aggregate/*'
-          remote_path: '/root/microservices/code-coverage/target/site/jacoco-aggregate'
+          remote_path: '/root/static/jacoco-aggregate'
           args: '-o ConnectTimeout=5'
