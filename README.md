@@ -53,3 +53,7 @@ This is a java microservice project built by Spring Cloud Framework
 `java -jar arthas-boot.jar`
 
 `watch cn.sbx0.microservices.uno.service.impl.GameRoomServiceImpl message {params} -x 2`
+
+# Code Coverage
+
+`mvn clean verify`

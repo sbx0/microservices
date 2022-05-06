@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: uno
+  cloud:
+    inetutils:
+      preferred-networks: 192.168.1\.(.*)
+    config:
+      enabled: false
