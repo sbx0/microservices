@@ -1,4 +1,5 @@
 drop table if exists game_room;
+drop table if exists game_room_user;
 
 create table game_room
 (
@@ -18,8 +19,6 @@ create table game_room
     update_time    datetime on update now()       null comment '修改时间',
     constraint code unique (room_code)
 );
-
-drop table if exists game_room_user;
 
 create table game_room_user
 (

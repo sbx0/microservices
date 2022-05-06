@@ -61,9 +61,7 @@ public class BaseController<S extends ServiceImpl<M, T>, M extends BaseMapper<T>
     }
 
     public List<T> desensitization(List<T> list) {
-        for (int i = 0; i < list.size(); i++) {
-            list.set(i, desensitization(list.get(i)));
-        }
+        list.replaceAll(this::desensitization);
         return list;
     }
 

@@ -1,4 +1,4 @@
-name: Build And Generate Code Coverage Report Workflows
+name: Build Workflows
 
 on:
   push:

@@ -19,7 +19,7 @@
         </dependency>
         <dependency>
             <groupId>cn.sbx0</groupId>
-            <artifactId>microservices-account</artifactId>
+            <artifactId>microservices-uno</artifactId>
             <version>${microservices.version}</version>
         </dependency>
     </dependencies>

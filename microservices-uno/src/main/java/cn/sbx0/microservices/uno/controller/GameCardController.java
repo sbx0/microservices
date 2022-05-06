@@ -20,10 +20,7 @@ public class GameCardController {
     private IGameCardService service;
 
     /**
-     * 查询当前登录用户手牌
-     *
-     * @param roomCode 房间编号
-     * @return 手牌列表
+     * query the hand card of the current user
      */
     @GetMapping("/my/{roomCode}")
     public ResponseVO<List<CardEntity>> myCardList(@PathVariable("roomCode") String roomCode) {
@@ -32,10 +29,7 @@ public class GameCardController {
     }
 
     /**
-     * 抽牌
-     *
-     * @param roomCode 房间编号
-     * @return 抽到的牌列表
+     * draw card
      */
     @GetMapping("/draw/{roomCode}")
     public ResponseVO<List<CardEntity>> drawCard(
@@ -46,12 +40,12 @@ public class GameCardController {
     }
 
     /**
-     * 出牌
+     * play card
      *
-     * @param roomCode 房间编号
-     * @param uuid     牌唯一编号
-     * @param color    【可选】可变色牌指定颜色
-     * @return 是否成功
+     * @param roomCode unique room code
+     * @param uuid     unique card number
+     * @param color    [Optional] The color of the color plate can be specified
+     * @return message
      */
     @GetMapping("/play/{roomCode}/{uuid}")
     public ResponseVO<Boolean> playCard(
@@ -63,6 +57,9 @@ public class GameCardController {
         return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 
+    /**
+     * turn to next player
+     */
     @GetMapping("/next/{roomCode}")
     public ResponseVO<List<CardEntity>> nextPlay(@PathVariable("roomCode") String roomCode) {
         List<CardEntity> result = service.nextPlay(roomCode);
@@ -70,10 +67,7 @@ public class GameCardController {
     }
 
     /**
-     * 弃牌堆
-     *
-     * @param roomCode 房间编号
-     * @return 弃牌堆列表
+     * discard pile
      */
     @GetMapping("/discard/{roomCode}")
     public ResponseVO<List<CardEntity>> discardCardList(@PathVariable("roomCode") String roomCode) {

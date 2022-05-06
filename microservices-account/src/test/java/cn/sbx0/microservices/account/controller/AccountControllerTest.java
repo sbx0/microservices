@@ -35,7 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = AccountController.class)
-
 @ActiveProfiles("test")
 class AccountControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -75,8 +74,7 @@ class AccountControllerTest {
 
         given(service.login(BDDMockito.any())).willReturn(new ResponseVO<>(ResponseVO.SUCCESS, saTokenInfo));
 
-        String response = mvc.perform(
-                post("/login")
+        String response = mvc.perform(post("/login")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginDTO)))
@@ -94,8 +92,7 @@ class AccountControllerTest {
         account.setUsername("test");
         given(service.findByUserName("test")).willReturn(account);
 
-        String response = mvc.perform(
-                get("/findByUserName?name=" + account.getUsername())
+        String response = mvc.perform(get("/findByUserName?name=" + account.getUsername())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(account.getId()))
