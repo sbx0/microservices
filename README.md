@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Build Status](https://github.com/sbx0/microservices/actions/workflows/maven.yml/badge.svg)](https://github.com/sbx0/microservices/actions/workflows/maven.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/3de16d0630364cb9b3fe7a43a98fe6ba)](https://www.codacy.com/gh/sbx0/microservices/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=sbx0/microservices&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/3de16d0630364cb9b3fe7a43a98fe6ba)](https://www.codacy.com/gh/sbx0/microservices/dashboard?utm_source=github.com&utm_medium=referral&utm_content=sbx0/microservices&utm_campaign=Badge_Coverage)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/3de16d0630364cb9b3fe7a43a98fe6ba)](http://c.sbx0.cn/)
 
 This is a java microservice project built by Spring Cloud Framework
 
