@@ -20,9 +20,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      - name: Generate test coverage report
+      - name: Generate Test Coverage Report
         run: mvn clean verify
-      - name: export CODACY_PROJECT_TOKEN
-        run: export CODACY_PROJECT_TOKEN=${{ secrets.CODACY_PROJECT_TOKEN }}
-      - name: Upload
+      - name: Upload Report
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh)
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
