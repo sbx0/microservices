@@ -46,6 +46,27 @@ public class GameCardServiceImpl implements IGameCardService {
     private RandomBot randomBot;
     public static final List<CardEntity> EMPTY = new ArrayList<>(0);
 
+    public static boolean judgeIsCanPlay(CardEntity previous, CardEntity current, Long currentUserId) {
+        boolean canPlay = false;
+        if (previous != null) {
+            if (currentUserId.equals(previous.getUserId())) {
+                canPlay = true;
+            }
+            if (current.getPoint().contains("wild")) {
+                canPlay = true;
+            }
+            if (current.getColor().equals(previous.getColor())) {
+                canPlay = true;
+            }
+            if (current.getPoint().equals(previous.getPoint())) {
+                canPlay = true;
+            }
+        } else {
+            canPlay = true;
+        }
+        return canPlay;
+    }
+
     @Override
     public boolean botPlayCard(String roomCode, String uuid, String color, Long id) {
         String userId = id.toString();
@@ -56,6 +77,9 @@ public class GameCardServiceImpl implements IGameCardService {
         }
         int index = Integer.parseInt(currentGamerStr);
         List<AccountVO> gamers = userService.listByGameRoom(roomCode);
+        if (CollectionUtils.isEmpty(gamers)) {
+            return false;
+        }
         AccountVO currentGamer = gamers.get(index);
         if (currentGamer == null) {
             return false;
@@ -63,65 +87,55 @@ public class GameCardServiceImpl implements IGameCardService {
         if (currentGamer.getId() != Long.parseLong(userId)) {
             return false;
         }
-        String key = "cards:" + roomCode + ":" + userId;
-        String discardKey = "cards:" + roomCode + ":discard";
         List<CardEntity> cards = getCardListById(roomCode, id);
 
-        boolean find = false;
+        CardEntity currentCard = cards.stream()
+                .filter(c -> uuid.equals(c.getUuid()))
+                .findAny()
+                .orElse(null);
 
-        for (CardEntity card : cards) {
-            if (uuid.equals(card.getUuid())) {
-                find = true;
-                CardEntity top = redisTemplate.opsForList().index(discardKey, 0);
-
-                boolean canPlay = false;
-                if (top != null) {
-                    if (userId.equals(top.getUserId().toString())) {
-                        canPlay = true;
-                    }
-                    if (card.getPoint().contains("wild")) {
-                        canPlay = true;
-                    }
-                    if (card.getColor().equals(top.getColor())) {
-                        canPlay = true;
-                    }
-                    if (card.getPoint().equals(top.getPoint())) {
-                        canPlay = true;
-                    }
-                } else {
-                    canPlay = true;
-                }
-
-                if (canPlay) {
-                    if (top != null) {
-                        if (("wild draw four".equals(top.getPoint()) && !"wild draw four".equals(card.getPoint())) || ("draw two".equals(top.getPoint()) && !"draw two".equals(card.getPoint()) && !"wild draw four".equals(card.getPoint()))) {
-                            String penaltyCardsKey = "penaltyCards:" + roomCode;
-                            String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
-                            int size = 0;
-                            if (StringUtils.hasText(penaltyCards)) {
-                                size = Integer.parseInt(penaltyCards);
-                            }
-                            if (size > 0) {
-                                return false;
-                            }
-                        }
-                    }
-                    cards.remove(card);
-                    card.setColor(color);
-                    discardCard(roomCode, card);
-                    functionCard(roomCode, card);
-                    nonBlockingService.execute(() -> gameRoomService.message(roomCode, "number_of_cards", "*", userId + "=" + cards.size()));
-                    break;
-                } else {
-                    return false;
-                }
-            }
+        if (currentCard == null) {
+            return false;
         }
+
+        String discardKey = "cards:" + roomCode + ":discard";
+        CardEntity previousCard = redisTemplate.opsForList().index(discardKey, 0);
+
+        boolean canPlay = judgeIsCanPlay(previousCard, currentCard, id);
+        if (canPlay) {
+            canPlay = judgePenaltyCards(previousCard, currentCard, roomCode);
+        }
+        if (canPlay) {
+            cards.remove(currentCard);
+            currentCard.setColor(color);
+            discardCard(roomCode, currentCard);
+            functionCard(roomCode, currentCard);
+            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "number_of_cards", "*", userId + "=" + cards.size()));
+        } else {
+            return false;
+        }
+
+        String key = "cards:" + roomCode + ":" + userId;
         redisTemplate.expire(key, Duration.ZERO);
         if (!CollectionUtils.isEmpty(cards)) {
             redisTemplate.opsForList().leftPushAll(key, cards);
         }
-        return find;
+        return true;
+    }
+
+    public boolean judgePenaltyCards(CardEntity previous, CardEntity current, String roomCode) {
+        if (previous != null) {
+            if (("wild draw four".equals(previous.getPoint()) && !"wild draw four".equals(current.getPoint())) || ("draw two".equals(previous.getPoint()) && !"draw two".equals(current.getPoint()) && !"wild draw four".equals(current.getPoint()))) {
+                String penaltyCardsKey = "penaltyCards:" + roomCode;
+                String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
+                int size = 0;
+                if (StringUtils.hasText(penaltyCards)) {
+                    size = Integer.parseInt(penaltyCards);
+                }
+                return size <= 0;
+            }
+        }
+        return true;
     }
 
     @Override
