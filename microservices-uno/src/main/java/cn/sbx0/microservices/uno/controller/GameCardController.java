@@ -1,6 +1,7 @@
 package cn.sbx0.microservices.uno.controller;
 
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.ResponseVO;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.service.IGameCardService;
@@ -53,7 +54,7 @@ public class GameCardController {
             @PathVariable("uuid") String uuid,
             @RequestParam(value = "color", required = false) String color
     ) {
-        Boolean result = service.playCard(roomCode, uuid, color);
+        Boolean result = service.botPlayCard(roomCode, uuid, color, StpUtil.getLoginIdAsLong());
         return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 

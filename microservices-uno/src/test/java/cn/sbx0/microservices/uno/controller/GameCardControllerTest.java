@@ -1,11 +1,13 @@
 package cn.sbx0.microservices.uno.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.mapper.GameRoomUserMapper;
 import cn.sbx0.microservices.uno.service.impl.GameCardServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mockStatic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -96,7 +99,10 @@ class GameCardControllerTest {
         String uuid = "d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a";
         String color = "red";
 
-        given(service.playCard(roomCode, uuid, color)).willReturn(true);
+        MockedStatic<StpUtil> stpUtilMock = mockStatic(StpUtil.class);
+        stpUtilMock.when(StpUtil::getLoginIdAsLong).thenReturn(0L);
+
+        given(service.botPlayCard(roomCode, uuid, color, 0L)).willReturn(true);
 
         mvc.perform(get("/uno/card/play/" + roomCode + "/" + uuid)
                         .queryParam("color", "red")
