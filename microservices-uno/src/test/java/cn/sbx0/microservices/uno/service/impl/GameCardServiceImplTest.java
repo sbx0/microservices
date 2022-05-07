@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mockStatic;
@@ -47,8 +48,8 @@ class GameCardServiceImplTest {
     public final static List<AccountVO> GAMERS = new ArrayList<>();
     public final static List<CardEntity> CARDS = new ArrayList<>();
     public final static String[] UUIDS = new String[10];
-    public final static String[] POINTS = {"1", "2", "3", "4", "5", "6", "7", "draw two", "9", "draw two"};
-    public final static String[] COLORS = {"red", "red", "blue", "yellow", "green", "red", "green", "black", "red", "red"};
+    public final static String[] POINTS = {"1", "2", "3", "4", "5", "skip", "wild draw four", "draw two", "reverse", "draw two"};
+    public final static String[] COLORS = {"red", "red", "blue", "yellow", "blue", "blue", "blue", "blue", "blue", "blue"};
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private IGameCardService service;
@@ -183,6 +184,32 @@ class GameCardServiceImplTest {
         // canPlay true
         result = service.playCard(ROOM_CODE, UUIDS[7], "blue", 0L);
         assertTrue(result);
+
+        given(valueOperations.get(GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, ROOM_CODE)))
+                .willReturn("0");
+
+        // reverse
+        result = service.playCard(ROOM_CODE, UUIDS[8], "blue", 0L);
+        assertTrue(result);
+
+        // wild draw four
+        result = service.playCard(ROOM_CODE, UUIDS[6], "blue", 0L);
+        assertTrue(result);
+
+        // skip
+        result = service.playCard(ROOM_CODE, UUIDS[5], "blue", 0L);
+        assertTrue(result);
+
+        // normal
+        previousCard = new CardEntity();
+        previousCard.setUuid(UUID.randomUUID().toString());
+        previousCard.setPoint("2");
+        previousCard.setColor("blue");
+        previousCard.setUserId(USER_ID);
+        given(listOperations.index(GameRedisKeyConstant.ROOM_DISCARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, ROOM_CODE), 0))
+                .willReturn(previousCard);
+        result = service.playCard(ROOM_CODE, UUIDS[4], "blue", 0L);
+        assertTrue(result);
     }
 
     @Test
@@ -204,6 +231,35 @@ class GameCardServiceImplTest {
         given(valueOperations.get(drawKey)).willReturn("1");
         cards = service.nextPlay(ROOM_CODE, USER_ID);
         assertEquals(0, cards.size());
+    }
+
+    @Test
+    void myCardList() {
+        given(listOperations.size(anyString())).willReturn(null);
+        given(listOperations.range(anyString(), anyLong(), anyLong())).willReturn(CARDS);
+        List<CardEntity> cards = service.myCardList(ROOM_CODE);
+        assertEquals(CARDS.size(), cards.size());
+        given(listOperations.size(anyString())).willReturn((long) CARDS.size());
+        given(listOperations.range(anyString(), anyLong(), anyLong())).willReturn(CARDS);
+        cards = service.myCardList(ROOM_CODE);
+        assertEquals(CARDS.size(), cards.size());
+    }
+
+    @Test
+    void initGame() {
+        service.initGame(ROOM_CODE);
+    }
+
+    @Test
+    void discardCardList() {
+        given(listOperations.size(anyString())).willReturn(null);
+        given(listOperations.range(anyString(), anyLong(), anyLong())).willReturn(CARDS);
+        List<CardEntity> cards = service.discardCardList(ROOM_CODE);
+        assertEquals(CARDS.size(), cards.size());
+        given(listOperations.size(anyString())).willReturn((long) CARDS.size());
+        given(listOperations.range(anyString(), anyLong(), anyLong())).willReturn(CARDS);
+        cards = service.discardCardList(ROOM_CODE);
+        assertEquals(CARDS.size(), cards.size());
     }
 
     @TestConfiguration

@@ -57,4 +57,4 @@ This is a java microservice project built by Spring Cloud Framework
 
 # Code Coverage
 
-`mvn clean verify`
+`mvn -T 1C clean verify`
