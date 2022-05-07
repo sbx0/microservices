@@ -187,7 +187,12 @@ public class GameCardServiceImpl implements IGameCardService {
         String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyKey);
         int size = number;
         if (StringUtils.hasText(penaltyCards)) {
-            size = Integer.parseInt(penaltyCards);
+            int penalty = Integer.parseInt(penaltyCards);
+            if (penalty > size) {
+                size = penalty;
+            } else {
+                size += penalty;
+            }
         }
         stringRedisTemplate.opsForValue().set(penaltyKey, "0");
         nonBlockingService.execute(() -> gameRoomService.message(roomCode, "penalty_cards", "*", "0"));

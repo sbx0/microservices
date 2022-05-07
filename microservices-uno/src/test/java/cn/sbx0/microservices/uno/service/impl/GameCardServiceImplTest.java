@@ -30,8 +30,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mockStatic;
 
@@ -39,6 +39,7 @@ import static org.mockito.Mockito.mockStatic;
  * @author sbx0
  * @since 2022/5/6
  */
+@SuppressWarnings({"unchecked", "rawtypes", "SpringJavaAutowiredMembersInspection"})
 @ExtendWith(SpringExtension.class)
 class GameCardServiceImplTest {
     public final static String ROOM_CODE = "d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a";
@@ -69,6 +70,8 @@ class GameCardServiceImplTest {
     @BeforeEach
     public void beforeEach() {
         stpUtilMock = mockStatic(StpUtil.class);
+        given(stringRedisTemplate.opsForValue()).willReturn(valueOperations);
+        given(redisTemplate.opsForList()).willReturn(listOperations);
     }
 
     @AfterEach
@@ -100,9 +103,34 @@ class GameCardServiceImplTest {
     }
 
     @Test
-    void botPlayCard() {
-        given(stringRedisTemplate.opsForValue()).willReturn(valueOperations);
+    void drawCard() {
+        stpUtilMock.when(StpUtil::getLoginIdAsLong).thenReturn(0L);
 
+        given(listOperations.rightPop(anyString())).willReturn(CARDS.get(0));
+
+        List<CardEntity> cards = service.drawCard(ROOM_CODE);
+
+        assertNotNull(cards);
+        assertEquals(7, cards.size());
+
+        given(valueOperations.get(anyString())).willReturn("4");
+        cards = service.drawCard(ROOM_CODE, 1);
+        assertNotNull(cards);
+        assertEquals(4, cards.size());
+
+        given(valueOperations.get(anyString())).willReturn("4");
+        cards = service.drawCard(ROOM_CODE, 7);
+        assertNotNull(cards);
+        assertEquals(11, cards.size());
+
+        given(valueOperations.get(anyString())).willReturn("0");
+        given(listOperations.rightPop(anyString())).willReturn(null);
+        cards = service.drawCard(ROOM_CODE, 0L, 0);
+        assertNull(cards);
+    }
+
+    @Test
+    void playCard() {
         // currentGamerStr is null
         String key = GameRedisKeyConstant.CURRENT_GAMER.replaceAll(GameRedisKeyConstant.ROOM_CODE, ROOM_CODE);
         given(valueOperations.get(key)).willReturn(null);
@@ -125,8 +153,6 @@ class GameCardServiceImplTest {
         given(userService.listByGameRoom(ROOM_CODE)).willReturn(GAMERS);
         result = service.playCard(ROOM_CODE, "test", "red", 2L);
         assertFalse(result);
-
-        given(redisTemplate.opsForList()).willReturn(listOperations);
 
         // currentCard is null
         String userCards = GameRedisKeyConstant.USER_CARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, ROOM_CODE)
@@ -156,53 +182,6 @@ class GameCardServiceImplTest {
         // canPlay true
         result = service.playCard(ROOM_CODE, UUIDS[7], "blue", 0L);
         assertTrue(result);
-    }
-
-    @Test
-    void getCardListById() {
-    }
-
-    @Test
-    void initCardDeck() {
-    }
-
-    @Test
-    void drawCard() {
-
-        stpUtilMock.when(StpUtil::getLoginIdAsLong).thenReturn(0L);
-
-    }
-
-    @Test
-    void testDrawCard() {
-    }
-
-    @Test
-    void myCardList() {
-    }
-
-    @Test
-    void playCard() {
-    }
-
-    @Test
-    void botNextPlay() {
-    }
-
-    @Test
-    void nextPlay() {
-    }
-
-    @Test
-    void discardCard() {
-    }
-
-    @Test
-    void discardCardList() {
-    }
-
-    @Test
-    void initGame() {
     }
 
     @TestConfiguration
