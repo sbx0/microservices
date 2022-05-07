@@ -54,7 +54,7 @@ public class GameCardController {
             @PathVariable("uuid") String uuid,
             @RequestParam(value = "color", required = false) String color
     ) {
-        Boolean result = service.botPlayCard(roomCode, uuid, color, StpUtil.getLoginIdAsLong());
+        Boolean result = service.playCard(roomCode, uuid, color, StpUtil.getLoginIdAsLong());
         return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 

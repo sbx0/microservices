@@ -102,7 +102,7 @@ class GameCardControllerTest {
         MockedStatic<StpUtil> stpUtilMock = mockStatic(StpUtil.class);
         stpUtilMock.when(StpUtil::getLoginIdAsLong).thenReturn(0L);
 
-        given(service.botPlayCard(roomCode, uuid, color, 0L)).willReturn(true);
+        given(service.playCard(roomCode, uuid, color, 0L)).willReturn(true);
 
         mvc.perform(get("/uno/card/play/" + roomCode + "/" + uuid)
                         .queryParam("color", "red")

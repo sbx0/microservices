@@ -1,5 +1,6 @@
 package cn.sbx0.microservices.uno.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.bot.RandomBot;
 import cn.sbx0.microservices.uno.entity.CardEntity;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,6 +30,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mockStatic;
 
 /**
  * @author sbx0
@@ -88,24 +91,24 @@ class GameCardServiceImplTest {
 
         // currentGamerStr is null
         given(valueOperations.get("currentGamer:" + ROOM_CODE)).willReturn(null);
-        boolean result = service.botPlayCard(ROOM_CODE, "test", "red", 1L);
+        boolean result = service.playCard(ROOM_CODE, "test", "red", 1L);
         assertFalse(result);
 
         // gamers are null
         given(userService.listByGameRoom(ROOM_CODE)).willReturn(Collections.emptyList());
-        result = service.botPlayCard(ROOM_CODE, "test", "red", 1L);
+        result = service.playCard(ROOM_CODE, "test", "red", 1L);
         assertFalse(result);
 
         // currentGamer is null
         List<AccountVO> nullList = new ArrayList<>();
         nullList.add(null);
         given(userService.listByGameRoom(ROOM_CODE)).willReturn(nullList);
-        result = service.botPlayCard(ROOM_CODE, "test", "red", 1L);
+        result = service.playCard(ROOM_CODE, "test", "red", 1L);
         assertFalse(result);
 
         // currentGamer is not bot
         given(userService.listByGameRoom(ROOM_CODE)).willReturn(GAMERS);
-        result = service.botPlayCard(ROOM_CODE, "test", "red", 2L);
+        result = service.playCard(ROOM_CODE, "test", "red", 2L);
         assertFalse(result);
 
         given(redisTemplate.opsForList()).willReturn(listOperations);
@@ -113,7 +116,7 @@ class GameCardServiceImplTest {
         // currentCard is null
         given(listOperations.size("cards:" + ROOM_CODE + ":" + 0L)).willReturn(7L);
         given(listOperations.range("cards:" + ROOM_CODE + ":" + 0, 0, 7)).willReturn(CARDS);
-        result = service.botPlayCard(ROOM_CODE, "test", "red", 0L);
+        result = service.playCard(ROOM_CODE, "test", "red", 0L);
         assertFalse(result);
 
         // judgeIsCanPlay false
@@ -123,16 +126,16 @@ class GameCardServiceImplTest {
         previousCard.setColor("blue");
         previousCard.setUserId(1L);
         given(listOperations.index("cards:" + ROOM_CODE + ":discard", 0)).willReturn(previousCard);
-        result = service.botPlayCard(ROOM_CODE, UUIDS[0], "red", 0L);
+        result = service.playCard(ROOM_CODE, UUIDS[0], "red", 0L);
         assertFalse(result);
 
         // judgePenaltyCards false
         given(valueOperations.get("penaltyCards:" + ROOM_CODE)).willReturn("4");
-        result = service.botPlayCard(ROOM_CODE, UUIDS[2], "blue", 0L);
+        result = service.playCard(ROOM_CODE, UUIDS[2], "blue", 0L);
         assertFalse(result);
 
         // canPlay true
-        result = service.botPlayCard(ROOM_CODE, UUIDS[7], "blue", 0L);
+        result = service.playCard(ROOM_CODE, UUIDS[7], "blue", 0L);
         assertTrue(result);
     }
 
@@ -146,6 +149,10 @@ class GameCardServiceImplTest {
 
     @Test
     void drawCard() {
+
+        MockedStatic<StpUtil> stpUtilMock = mockStatic(StpUtil.class);
+        stpUtilMock.when(StpUtil::getLoginIdAsLong).thenReturn(0L);
+
     }
 
     @Test
