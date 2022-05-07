@@ -63,7 +63,7 @@ public class GameCardController {
      */
     @GetMapping("/next/{roomCode}")
     public ResponseVO<List<CardEntity>> nextPlay(@PathVariable("roomCode") String roomCode) {
-        List<CardEntity> result = service.nextPlay(roomCode);
+        List<CardEntity> result = service.nextPlay(roomCode, StpUtil.getLoginIdAsLong());
         return new ResponseVO<>(result != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 

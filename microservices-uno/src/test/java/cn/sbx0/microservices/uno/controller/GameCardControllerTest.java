@@ -47,6 +47,7 @@ class GameCardControllerTest {
     @MockBean
     GameRoomUserMapper gameRoomUserMapper;
     private MockedStatic<StpUtil> stpUtilMock;
+    public final static Long USER_ID = 1L;
 
     @BeforeEach
     public void beforeEach() {
@@ -127,6 +128,7 @@ class GameCardControllerTest {
 
     @Test
     void nextPlay() throws Exception {
+        stpUtilMock.when(StpUtil::getLoginIdAsLong).thenReturn(USER_ID);
         String roomCode = "d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a";
 
         List<CardEntity> cards = new ArrayList<>();
@@ -138,7 +140,7 @@ class GameCardControllerTest {
         card.setPoint("4");
         cards.add(card);
 
-        given(service.nextPlay(roomCode)).willReturn(cards);
+        given(service.nextPlay(roomCode, 1L)).willReturn(cards);
 
         mvc.perform(get("/uno/card/next/" + roomCode)
                         .accept(MediaType.APPLICATION_JSON))

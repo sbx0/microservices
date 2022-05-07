@@ -294,7 +294,7 @@ public class GameCardServiceImpl implements IGameCardService {
     }
 
     @Override
-    public List<CardEntity> botNextPlay(String roomCode, Long id) {
+    public List<CardEntity> nextPlay(String roomCode, Long id) {
         String penaltyCardsKey = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
         List<CardEntity> cards = EMPTY;
         int number = getPenaltyCardsNumber(roomCode);
@@ -309,28 +309,6 @@ public class GameCardServiceImpl implements IGameCardService {
             String lastDrawUser = stringRedisTemplate.opsForValue().get(drawKey);
             if (!currentPlayer.equals(lastDrawUser)) {
                 cards = drawCard(roomCode, id, 1);
-            }
-        }
-        step(roomCode, 1);
-        return cards;
-    }
-
-    @Override
-    public List<CardEntity> nextPlay(String roomCode) {
-        String penaltyCardsKey = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
-        List<CardEntity> cards = EMPTY;
-        int number = getPenaltyCardsNumber(roomCode);
-        if (number > 0) {
-            cards = drawCard(roomCode, StpUtil.getLoginIdAsLong(), number);
-            stringRedisTemplate.opsForValue().set(penaltyCardsKey, "0");
-            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "penalty_cards", "*", "0"));
-        } else {
-            String currentPlayer = StpUtil.getLoginIdAsString();
-            // check last draw user
-            String drawKey = GameRedisKeyConstant.ROOM_DRAW.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
-            String lastDrawUser = stringRedisTemplate.opsForValue().get(drawKey);
-            if (!currentPlayer.equals(lastDrawUser)) {
-                cards = drawCard(roomCode, StpUtil.getLoginIdAsLong(), 1);
             }
         }
         step(roomCode, 1);

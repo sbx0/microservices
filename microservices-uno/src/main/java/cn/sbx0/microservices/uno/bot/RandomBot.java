@@ -104,7 +104,7 @@ public class RandomBot {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                gameCardService.botNextPlay(roomCode, id);
+                gameCardService.nextPlay(roomCode, id);
             }).start();
             return;
         }
@@ -131,7 +131,7 @@ public class RandomBot {
             }
             boolean result = gameCardService.playCard(roomCode, card.getUuid(), color, id);
             if (!result) {
-                gameCardService.botNextPlay(roomCode, id);
+                gameCardService.nextPlay(roomCode, id);
                 throw new RuntimeException("bot choose card " + card.getUuid() + " which can't play");
             }
         }).start();
