@@ -3,6 +3,7 @@ package cn.sbx0.microservices.uno.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.bot.RandomBot;
+import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
 import cn.sbx0.microservices.uno.entity.*;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.service.IGameCardService;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -99,19 +101,19 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
         long userId = StpUtil.getLoginIdAsLong();
         GameRoomInfoVO vo = GameRoomConverter.INSTANCE.entityToInfoVO(room);
         vo.setIsIAmIn(userService.isIAmIn(room.getId(), userId));
-        String currentGamerKey = "currentGamer:" + roomCode;
+        String currentGamerKey = GameRedisKeyConstant.CURRENT_GAMER.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
         String currentGamerStr = stringRedisTemplate.opsForValue().get(currentGamerKey);
         if (currentGamerStr == null) {
             currentGamerStr = "0";
         }
         vo.setCurrentGamer(Integer.parseInt(currentGamerStr));
-        String penaltyCardsKey = "penaltyCards:" + roomCode;
+        String penaltyCardsKey = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
         String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
         if (!StringUtils.hasText(penaltyCards)) {
             penaltyCards = "0";
         }
         vo.setPenaltyCards(Integer.parseInt(penaltyCards));
-        String directionKey = "direction:" + roomCode;
+        String directionKey = GameRedisKeyConstant.ROOM_DIRECTION.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
         String direction = stringRedisTemplate.opsForValue().get(directionKey);
         if (!StringUtils.hasText(direction)) {
             direction = "normal";
@@ -123,11 +125,17 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     @Override
     public Boolean start(String roomCode) {
         GameRoomEntity room = getOneByRoomCode(roomCode);
+        if (room == null) {
+            return false;
+        }
         room.setRoomStatus(GameRoomStatusEnum.BEGINNING.getValue());
         boolean result = updateById(room);
         if (result) {
             cardService.initCardDeck(roomCode);
             List<AccountVO> gamers = userService.listByGameRoom(roomCode);
+            if (CollectionUtils.isEmpty(gamers)) {
+                return false;
+            }
             cardService.initGame(roomCode);
             for (AccountVO gamer : gamers) {
                 List<CardEntity> cardEntities = cardService.drawCard(roomCode, gamer.getId(), 7);
