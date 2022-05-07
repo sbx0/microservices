@@ -23,12 +23,15 @@ jobs:
       - name: Build with Maven
         run: mvn -DskipTests clean package
       - name: Generate Test Coverage Report
+        if: github.ref == 'refs/heads/master'
         run: mvn clean verify
       - name: Upload Report
+        if: github.ref == 'refs/heads/master'
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh)
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
       - name: Upload Report to Server
+        if: github.ref == 'refs/heads/master'
         uses: wlixcc/SFTP-Deploy-Action@v1.0
         with:
           username: 'root'

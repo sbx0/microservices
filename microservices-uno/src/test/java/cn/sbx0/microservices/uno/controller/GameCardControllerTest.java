@@ -5,6 +5,8 @@ import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.mapper.GameRoomUserMapper;
 import cn.sbx0.microservices.uno.service.impl.GameCardServiceImpl;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -44,6 +46,17 @@ class GameCardControllerTest {
 
     @MockBean
     GameRoomUserMapper gameRoomUserMapper;
+    private MockedStatic<StpUtil> stpUtilMock;
+
+    @BeforeEach
+    public void beforeEach() {
+        stpUtilMock = mockStatic(StpUtil.class);
+    }
+
+    @AfterEach
+    public void afterEach() {
+        stpUtilMock.close();
+    }
 
     @Test
     void myCardList() throws Exception {
@@ -99,7 +112,6 @@ class GameCardControllerTest {
         String uuid = "d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a";
         String color = "red";
 
-        MockedStatic<StpUtil> stpUtilMock = mockStatic(StpUtil.class);
         stpUtilMock.when(StpUtil::getLoginIdAsLong).thenReturn(0L);
 
         given(service.playCard(roomCode, uuid, color, 0L)).willReturn(true);
