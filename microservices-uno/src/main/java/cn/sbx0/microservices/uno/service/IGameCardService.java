@@ -33,7 +33,7 @@ public interface IGameCardService {
 
     List<CardEntity> getCardListById(String roomCode, Long id);
 
-    boolean botPlayCard(String roomCode, String uuid, String color, Long id);
+    boolean playCard(String roomCode, String uuid, String color, Long id);
 
     List<CardEntity> botNextPlay(String roomCode, Long id);
 }

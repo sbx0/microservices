@@ -129,7 +129,7 @@ public class RandomBot {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            boolean result = gameCardService.botPlayCard(roomCode, card.getUuid(), color, id);
+            boolean result = gameCardService.playCard(roomCode, card.getUuid(), color, id);
             if (!result) {
                 gameCardService.botNextPlay(roomCode, id);
                 throw new RuntimeException("bot choose card " + card.getUuid() + " which can't play");
