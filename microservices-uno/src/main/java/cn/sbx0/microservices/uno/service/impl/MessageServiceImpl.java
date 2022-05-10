@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 @Service
-public class MessageService implements IMessageService {
+public class MessageServiceImpl implements IMessageService {
     private final static ConcurrentHashMap<String, ConcurrentHashMap<String, SseEmitter>> caches = new ConcurrentHashMap<>();
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 

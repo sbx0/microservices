@@ -211,21 +211,6 @@ public class GameCardServiceImpl implements IGameCardService {
         return cards;
     }
 
-
-    @Override
-    public void discardCard(String roomCode, CardEntity card) {
-        String key = GameRedisKeyConstant.ROOM_DISCARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
-        Long size = redisTemplate.opsForList().size(key);
-        if (size == null) {
-            size = 0L;
-        }
-        if (size > 5) {
-            redisTemplate.opsForList().rightPop(key);
-        }
-        redisTemplate.opsForList().leftPush(key, card);
-        nonBlockingService.execute(() -> messageService.send(roomCode, "discard_cards", "*", card));
-    }
-
     @Override
     public List<CardEntity> discardCardList(String roomCode) {
         String key = GameRedisKeyConstant.ROOM_DISCARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
