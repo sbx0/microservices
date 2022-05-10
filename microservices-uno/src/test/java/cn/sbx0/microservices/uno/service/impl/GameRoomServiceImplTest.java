@@ -11,6 +11,7 @@ import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
+import cn.sbx0.microservices.uno.service.IMessageService;
 import com.netflix.appinfo.ApplicationInfoManager;
 import com.netflix.appinfo.InstanceInfo;
 import org.junit.jupiter.api.AfterEach;
@@ -29,7 +30,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +71,8 @@ class GameRoomServiceImplTest {
     @MockBean
     private RandomBot randomBot;
     private MockedStatic<StpUtil> stpUtilMock;
+    @MockBean
+    private IMessageService messageService;
 
     @BeforeAll
     static void beforeAll() {
@@ -165,17 +167,6 @@ class GameRoomServiceImplTest {
         given(userService.listByGameRoom(ROOM_CODE)).willReturn(GAMERS);
         result = service.start(ROOM_CODE);
         assertTrue(result);
-    }
-
-    @Test
-    void subscribe() {
-        SseEmitter subscribe = service.subscribe(ROOM_CODE);
-        assertNotNull(subscribe);
-    }
-
-    @Test
-    void message() {
-        service.message(ROOM_CODE, "type", "userId", "message");
     }
 
     @TestConfiguration

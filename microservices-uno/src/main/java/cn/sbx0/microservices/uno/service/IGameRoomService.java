@@ -4,7 +4,6 @@ import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomInfoVO;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
  * <p>
@@ -22,10 +21,6 @@ public interface IGameRoomService extends IService<GameRoomEntity> {
     GameRoomInfoVO info(String roomCode);
 
     Boolean start(String roomCode);
-
-    void message(String roomCode, String type, String userId, Object message);
-
-    SseEmitter subscribe(String roomCode);
 
     String choose(String roomCode);
 }

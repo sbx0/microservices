@@ -1,6 +1,6 @@
 package cn.sbx0.microservices.uno.scheduled;
 
-import cn.sbx0.microservices.uno.service.IGameRoomService;
+import cn.sbx0.microservices.uno.service.IMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,10 +15,10 @@ import javax.annotation.Resource;
 @Component
 public class ServerSideEventScheduled {
     @Resource
-    private IGameRoomService roomService;
+    private IMessageService messageService;
 
     @Scheduled(fixedDelay = 5000)
     public void heartbeat() {
-        roomService.message("*", "message", "*", "heartbeat");
+        messageService.send("*", "message", "*", "heartbeat");
     }
 }

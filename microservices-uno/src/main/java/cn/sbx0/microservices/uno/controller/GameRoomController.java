@@ -8,6 +8,7 @@ import cn.sbx0.microservices.entity.ResponseVO;
 import cn.sbx0.microservices.uno.entity.*;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
+import cn.sbx0.microservices.uno.service.IMessageService;
 import cn.sbx0.microservices.uno.service.impl.GameRoomServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -29,10 +30,12 @@ import java.util.List;
 public class GameRoomController extends BaseController<GameRoomServiceImpl, GameRoomMapper, GameRoomEntity> {
     @Resource
     private IGameRoomUserService gameRoomUserService;
+    @Resource
+    private IMessageService messageService;
 
     @GetMapping(value = "/subscribe/{roomCode}", consumes = MediaType.ALL_VALUE)
     public SseEmitter subscribe(@PathVariable("roomCode") String roomCode) {
-        return service.subscribe(roomCode);
+        return messageService.subscribe(roomCode);
     }
 
     @ResponseBody
