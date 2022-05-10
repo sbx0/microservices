@@ -1,17 +1,12 @@
 package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import cn.sbx0.microservices.entity.AccountVO;
-import cn.sbx0.microservices.uno.bot.RandomBot;
 import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
 import cn.sbx0.microservices.uno.entity.CardDeckEntity;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.logic.BasicGameRule;
 import cn.sbx0.microservices.uno.service.IGameCardService;
-import cn.sbx0.microservices.uno.service.IGameRoomService;
-import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import cn.sbx0.microservices.uno.service.IMessageService;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -37,15 +32,6 @@ public class GameCardServiceImpl implements IGameCardService {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
-    @Lazy
-    @Resource
-    private IGameRoomService gameRoomService;
-    @Lazy
-    @Resource
-    private IGameRoomUserService userService;
-    @Lazy
-    @Resource
-    private RandomBot randomBot;
     @Resource
     private BasicGameRule gameRule;
     @Resource
@@ -78,8 +64,8 @@ public class GameCardServiceImpl implements IGameCardService {
         if (canPlay) {
             cards.remove(currentCard);
             currentCard.setColor(color);
-            discardCard(roomCode, currentCard);
-            functionCard(roomCode, currentCard);
+            gameRule.discardCard(roomCode, currentCard);
+            gameRule.functionCard(roomCode, currentCard);
             nonBlockingService.execute(() -> messageService.send(roomCode, "number_of_cards", "*", userId + "=" + cards.size()));
         } else {
             return false;
@@ -194,47 +180,6 @@ public class GameCardServiceImpl implements IGameCardService {
         return redisTemplate.opsForList().range(userCardsKey, 0, size);
     }
 
-    private void functionCard(String roomCode, CardEntity card) {
-        String key;
-        String direction;
-        int size = 2;
-        switch (card.getPoint()) {
-            case "reverse":
-                key = GameRedisKeyConstant.ROOM_DIRECTION.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
-                direction = stringRedisTemplate.opsForValue().get(key);
-                if ("normal".equals(direction)) {
-                    direction = "reverse";
-                } else {
-                    direction = "normal";
-                }
-                stringRedisTemplate.opsForValue().set(key, direction);
-                String finalDirection = direction;
-                nonBlockingService.execute(() -> messageService.send(roomCode, "direction", "*", finalDirection));
-                step(roomCode, 1);
-                return;
-            case "wild draw four":
-                size = 4;
-            case "draw two":
-                key = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
-                String numberStr = stringRedisTemplate.opsForValue().get(key);
-                if (numberStr == null) {
-                    numberStr = "0";
-                }
-                int number = Integer.parseInt(numberStr);
-                number += size;
-                String value = String.valueOf(number);
-                stringRedisTemplate.opsForValue().set(key, value);
-                nonBlockingService.execute(() -> messageService.send(roomCode, "penalty_cards", "*", value));
-                step(roomCode, 1);
-                return;
-            case "skip":
-                step(roomCode, 2);
-                return;
-            default:
-                step(roomCode, 1);
-        }
-    }
-
     private int getPenaltyCardsNumber(String roomCode) {
         String penaltyCardsKey = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
         String numberStr = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
@@ -262,32 +207,10 @@ public class GameCardServiceImpl implements IGameCardService {
                 cards = drawCard(roomCode, id, 1);
             }
         }
-        step(roomCode, 1);
+        gameRule.step(roomCode, 1);
         return cards;
     }
 
-    private void step(String roomCode, int step) {
-        String drawKey = GameRedisKeyConstant.ROOM_DRAW.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
-        String key = GameRedisKeyConstant.CURRENT_GAMER.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
-        String currentGamer = stringRedisTemplate.opsForValue().get(key);
-        if (currentGamer == null) {
-            currentGamer = "0";
-        }
-        List<AccountVO> gamers = userService.listByGameRoom(roomCode);
-        String directionKey = GameRedisKeyConstant.ROOM_DIRECTION.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
-        String direction = stringRedisTemplate.opsForValue().get(directionKey);
-        int newIndex = Integer.parseInt(currentGamer);
-        if ("normal".equals(direction)) {
-            newIndex = (newIndex + step) % gamers.size();
-        } else {
-            newIndex = (newIndex - step + gamers.size()) % gamers.size();
-        }
-        stringRedisTemplate.opsForValue().set(key, String.valueOf(newIndex));
-        int finalNewIndex = newIndex;
-        nonBlockingService.execute(() -> messageService.send(roomCode, "who_turn", "*", String.valueOf(finalNewIndex)));
-        randomBot.notify(roomCode, gamers.get(newIndex).getId());
-        stringRedisTemplate.expire(drawKey, Duration.ZERO);
-    }
 
     @Override
     public void discardCard(String roomCode, CardEntity card) {
