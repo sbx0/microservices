@@ -2,6 +2,7 @@ package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.uno.service.IMessageService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,11 @@ class MessageServiceTest {
         stpUtilMock = mockStatic(StpUtil.class);
         stpUtilMock.when(StpUtil::getLoginIdAsLong).thenReturn(0L);
         stpUtilMock.when(StpUtil::getLoginIdAsString).thenReturn("0");
+    }
+
+    @AfterEach
+    public void afterEach() {
+        stpUtilMock.close();
     }
 
     @Test

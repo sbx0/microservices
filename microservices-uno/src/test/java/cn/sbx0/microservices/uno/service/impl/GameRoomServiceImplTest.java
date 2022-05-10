@@ -2,13 +2,16 @@ package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
+import cn.sbx0.microservices.uno.bot.RandomBot;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomInfoVO;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
+import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
+import cn.sbx0.microservices.uno.service.IMessageService;
 import com.netflix.appinfo.ApplicationInfoManager;
 import com.netflix.appinfo.InstanceInfo;
 import org.junit.jupiter.api.AfterEach;
@@ -64,6 +67,12 @@ class GameRoomServiceImplTest {
     @MockBean
     private ListOperations listOperations;
     private MockedStatic<StpUtil> stpUtilMock;
+    @MockBean
+    private IGameCardService gameCardService;
+    @MockBean
+    private RandomBot randomBot;
+    @MockBean
+    private IMessageService messageService;
 
     @BeforeAll
     static void beforeAll() {
