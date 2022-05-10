@@ -9,6 +9,7 @@ import cn.sbx0.microservices.uno.feign.AccountService;
 import cn.sbx0.microservices.uno.mapper.GameRoomUserMapper;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
+import cn.sbx0.microservices.uno.service.IMessageService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -37,13 +38,14 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
+    private IMessageService messageService;
 
     @Override
     public boolean botQuitGameRoom(String roomCode, String botName) {
         AccountVO account = accountService.findByUserName(botName);
         boolean result = getBaseMapper().quitGameRoom(account.getId());
         if (result) {
-            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "quit", "*", account));
+            nonBlockingService.execute(() -> messageService.send(roomCode, "quit", "*", account));
         }
         return result;
     }
@@ -63,7 +65,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         gamer.setRemark("RandomBot");
         int result = getBaseMapper().insert(gamer);
         if (result > 0) {
-            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "join", "*", account));
+            nonBlockingService.execute(() -> messageService.send(roomCode, "join", "*", account));
             return true;
         }
         return false;
@@ -83,7 +85,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         gamer.setCreateUserId(account.getId());
         boolean result = getBaseMapper().atomSave(gamer, gameRoom.getPlayersSize());
         if (result) {
-            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "join", "*", account));
+            nonBlockingService.execute(() -> messageService.send(roomCode, "join", "*", account));
         }
         return result;
     }
@@ -94,7 +96,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         boolean result = getBaseMapper().quitGameRoom(userId);
         if (result) {
             AccountVO account = accountService.loginInfo();
-            nonBlockingService.execute(() -> gameRoomService.message(roomCode, "quit", "*", account));
+            nonBlockingService.execute(() -> messageService.send(roomCode, "quit", "*", account));
         }
         return result;
     }

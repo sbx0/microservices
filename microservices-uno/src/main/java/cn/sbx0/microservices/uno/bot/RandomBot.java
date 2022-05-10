@@ -45,12 +45,12 @@ public class RandomBot {
         initId();
         String discardKey = "cards:" + roomCode + ":discard";
         CardEntity top = redisTemplate.opsForList().index(discardKey, 0);
-        List<CardEntity> cards = gameCardService.getCardListById(roomCode, id);
+        List<CardEntity> cards = gameCardService.getCardsByUserId(roomCode, id);
 
         // todo bot have unlimited cards, will remove after debug
         if (CollectionUtils.isEmpty(cards)) {
             drawCard(roomCode, 7);
-            cards = gameCardService.getCardListById(roomCode, id);
+            cards = gameCardService.getCardsByUserId(roomCode, id);
         }
 
         List<CardEntity> canPlayCards;

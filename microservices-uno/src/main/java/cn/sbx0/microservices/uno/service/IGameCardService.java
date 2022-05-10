@@ -23,13 +23,11 @@ public interface IGameCardService {
 
     List<CardEntity> myCardList(String roomCode);
 
-    void discardCard(String roomCode, CardEntity card);
-
     List<CardEntity> discardCardList(String roomCode);
 
     void initGame(String roomCode);
 
-    List<CardEntity> getCardListById(String roomCode, Long id);
+    List<CardEntity> getCardsByUserId(String roomCode, Long id);
 
     boolean playCard(String roomCode, String uuid, String color, Long id);
 

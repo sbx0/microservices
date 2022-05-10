@@ -5,6 +5,7 @@ import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomInfoVO;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.mapper.GameRoomUserMapper;
+import cn.sbx0.microservices.uno.service.IMessageService;
 import cn.sbx0.microservices.uno.service.impl.GameRoomServiceImpl;
 import cn.sbx0.microservices.uno.service.impl.GameRoomUserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,11 +53,14 @@ class GameRoomControllerTest {
     @MockBean
     GameRoomUserMapper gameRoomUserMapper;
 
+    @MockBean
+    private IMessageService messageService;
+
     @Test
     void subscribe() throws Exception {
         String roomCode = "d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a";
 
-        given(service.subscribe(roomCode)).willReturn(new SseEmitter());
+        given(messageService.subscribe(roomCode)).willReturn(new SseEmitter());
 
         mvc.perform(get("/uno/room/subscribe/" + roomCode)
                         .accept(MediaType.APPLICATION_JSON))
