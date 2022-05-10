@@ -58,7 +58,7 @@ public class GameCardServiceImpl implements IGameCardService {
             return false;
         }
 
-        List<CardEntity> cards = getCardListById(roomCode, userId);
+        List<CardEntity> cards = getCardsByUserId(roomCode, userId);
         CardEntity currentCard = cards.stream()
                 .filter(c -> uuid.equals(c.getUuid()))
                 .findAny()
@@ -95,7 +95,7 @@ public class GameCardServiceImpl implements IGameCardService {
     }
 
     @Override
-    public List<CardEntity> getCardListById(String roomCode, Long id) {
+    public List<CardEntity> getCardsByUserId(String roomCode, Long id) {
         String userCardsKey = GameRedisKeyConstant.USER_CARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode)
                 .replaceAll(GameRedisKeyConstant.USER_ID, id.toString());
         Long size = redisTemplate.opsForList().size(userCardsKey);

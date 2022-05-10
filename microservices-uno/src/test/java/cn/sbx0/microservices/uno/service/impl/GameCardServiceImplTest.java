@@ -31,8 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mockStatic;
 
@@ -47,9 +46,21 @@ class GameCardServiceImplTest {
     public final static Long USER_ID = 1L;
     public final static List<AccountVO> GAMERS = new ArrayList<>();
     public final static List<CardEntity> CARDS = new ArrayList<>();
-    public final static String[] UUIDS = new String[10];
-    public final static String[] POINTS = {"1", "2", "3", "4", "5", "skip", "wild draw four", "draw two", "reverse", "draw two"};
-    public final static String[] COLORS = {"red", "red", "blue", "yellow", "blue", "blue", "blue", "blue", "blue", "blue"};
+    public final static String[] UUIDS = new String[24];
+    public final static String[] POINTS = {
+            "1", "2", "1", "2", "1", "2", "1", "2",
+            "reverse", "reverse", "reverse", "reverse",
+            "skip", "skip", "skip", "skip",
+            "draw two", "draw two", "draw two", "draw two",
+            "wild draw four", "wild draw four", "wild draw four", "wild draw four"
+    };
+    public final static String[] COLORS = {
+            "red", "red", "yellow", "yellow", "blue", "blue", "green", "green",
+            "red", "yellow", "blue", "green",
+            "red", "yellow", "blue", "green",
+            "red", "yellow", "blue", "green",
+            "red", "yellow", "blue", "green"
+    };
     @Autowired
     private IGameCardService service;
     @MockBean
@@ -96,7 +107,7 @@ class GameCardServiceImplTest {
             GAMERS.add(account);
         }
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 24; i++) {
             CardEntity card = new CardEntity();
             UUIDS[i] = UUID.randomUUID().toString();
             card.setUuid(UUIDS[i]);
@@ -135,8 +146,18 @@ class GameCardServiceImplTest {
     }
 
     @Test
-    void playCard() {
+    void playCardMain() {
+        given(gameRule.canIPlayNow(any(), any())).willReturn(true);
+        given(gameRule.judgeIsCanPlay(any(), any(), any())).willReturn(true);
+        given(gameRule.judgePenaltyCards(any(), any(), any())).willReturn(true);
 
+        given(listOperations.size(any())).willReturn((long) CARDS.size());
+        given(listOperations.range(any(), anyLong(), anyLong())).willReturn(CARDS);
+        given(listOperations.index(any(), anyLong())).willReturn(CARDS.get(1));
+
+        given(userService.listByGameRoom(anyString())).willReturn(GAMERS);
+
+        service.playCard(ROOM_CODE, CARDS.get(0).getUuid(), CARDS.get(0).getColor(), USER_ID);
     }
 
     @Test
