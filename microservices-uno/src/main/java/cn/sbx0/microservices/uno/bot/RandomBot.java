@@ -1,12 +1,12 @@
 package cn.sbx0.microservices.uno.bot;
 
 import cn.sbx0.microservices.entity.AccountVO;
+import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
 import cn.sbx0.microservices.uno.entity.CardDeckEntity;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.feign.AccountService;
 import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
-import lombok.Data;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -25,7 +25,6 @@ import java.util.List;
  * @author sbx0
  * @since 2022/4/27
  */
-@Data
 @Component
 public class RandomBot {
     private Long id;
@@ -43,8 +42,8 @@ public class RandomBot {
 
     public void playCard(String roomCode) {
         initId();
-        String discardKey = "cards:" + roomCode + ":discard";
-        CardEntity top = redisTemplate.opsForList().index(discardKey, 0);
+        String discardKey = GameRedisKeyConstant.ROOM_DISCARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        CardEntity previousCard = redisTemplate.opsForList().index(discardKey, 0);
         List<CardEntity> cards = gameCardService.getCardsByUserId(roomCode, id);
 
         // todo bot have unlimited cards, will remove after debug
@@ -56,15 +55,15 @@ public class RandomBot {
         List<CardEntity> canPlayCards;
 
         // first round or top card belong bot.
-        if (top == null || id.equals(top.getUserId())) {
+        if (previousCard == null || id.equals(previousCard.getUserId())) {
             // free play
             canPlayCards = cards;
         } else {
             // match play
             canPlayCards = new ArrayList<>();
             // see penalty cards
-            String penaltyCardsKey = "penaltyCards:" + roomCode;
-            String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
+            String penaltyKey = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+            String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyKey);
             int size = 0;
             if (StringUtils.hasText(penaltyCards)) {
                 size = Integer.parseInt(penaltyCards);
@@ -75,7 +74,7 @@ public class RandomBot {
                     if ("wild draw four".equals(card.getPoint())) {
                         canPlayCards.add(card);
                     }
-                    if ("draw two".equals(card.getPoint()) && "draw two".equals(top.getPoint())) {
+                    if ("draw two".equals(card.getPoint()) && "draw two".equals(previousCard.getPoint())) {
                         canPlayCards.add(card);
                     }
                 }
@@ -83,10 +82,10 @@ public class RandomBot {
                 // filter which can play
                 for (CardEntity card : cards) {
                     boolean canPlay = card.getPoint().contains("wild");
-                    if (card.getColor().equals(top.getColor())) {
+                    if (card.getColor().equals(previousCard.getColor())) {
                         canPlay = true;
                     }
-                    if (card.getPoint().equals(top.getPoint())) {
+                    if (card.getPoint().equals(previousCard.getPoint())) {
                         canPlay = true;
                     }
                     if (canPlay) {

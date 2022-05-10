@@ -56,7 +56,6 @@ public class GameCardServiceImpl implements IGameCardService {
 
         String discardKey = GameRedisKeyConstant.ROOM_DISCARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
         CardEntity previousCard = redisTemplate.opsForList().index(discardKey, 0);
-
         boolean canPlay = gameRule.judgeIsCanPlay(previousCard, currentCard, userId);
         if (canPlay) {
             canPlay = gameRule.judgePenaltyCards(previousCard, currentCard, roomCode);
