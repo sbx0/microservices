@@ -23,7 +23,7 @@ public class MessageServiceImpl implements IMessageService {
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 
     @Override
-    public SseEmitter subscribe(String roomCode) {
+    public SseEmitter subscribe(String code) {
         String userId = StpUtil.getLoginIdAsString();
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
@@ -49,12 +49,12 @@ public class MessageServiceImpl implements IMessageService {
 
         });
 
-        ConcurrentHashMap<String, SseEmitter> cache = caches.get(roomCode);
+        ConcurrentHashMap<String, SseEmitter> cache = caches.get(code);
         if (cache == null) {
             cache = new ConcurrentHashMap<>();
         }
         cache.put(userId, sseEmitter);
-        caches.put(roomCode, cache);
+        caches.put(code, cache);
 
         return sseEmitter;
     }
@@ -74,7 +74,7 @@ public class MessageServiceImpl implements IMessageService {
         });
     }
 
-    private void sendMessage(String roomCode, String type, String userId, Object message, ConcurrentHashMap<String, SseEmitter> cache) {
+    private void sendMessage(String code, String type, String userId, Object message, ConcurrentHashMap<String, SseEmitter> cache) {
         if (cache == null) {
             return;
         }
@@ -93,7 +93,7 @@ public class MessageServiceImpl implements IMessageService {
             } catch (IOException e) {
                 sse.completeWithError(e);
                 cache.remove(c.getKey());
-                caches.put(roomCode, cache);
+                caches.put(code, cache);
             }
         }
     }

@@ -20,4 +20,7 @@ public interface AccountService {
 
     @GetMapping(value = "/findByUserName", produces = "application/json")
     AccountVO findByUserName(@RequestParam(value = "name") String name);
+
+    @GetMapping(value = "/findById", produces = "application/json")
+    AccountVO findById(@RequestParam(value = "id") Long id);
 }
