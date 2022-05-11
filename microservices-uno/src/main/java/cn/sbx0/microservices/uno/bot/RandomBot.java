@@ -7,6 +7,7 @@ import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.feign.AccountService;
 import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -31,8 +32,10 @@ public class RandomBot {
     private String name = "RandomBot";
     @Resource
     private AccountService accountService;
+    @Lazy
     @Resource
     private IGameRoomUserService gameRoomUserService;
+    @Lazy
     @Resource
     private IGameCardService gameCardService;
     @Resource
