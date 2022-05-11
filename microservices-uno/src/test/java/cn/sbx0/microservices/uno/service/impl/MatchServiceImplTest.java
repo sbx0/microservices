@@ -2,11 +2,14 @@ package cn.sbx0.microservices.uno.service.impl;
 
 import cn.sbx0.microservices.entity.ResponseVO;
 import cn.sbx0.microservices.uno.entity.MatchExpectDTO;
+import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import cn.sbx0.microservices.uno.service.IMatchService;
+import cn.sbx0.microservices.uno.service.IMessageService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -22,6 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class MatchServiceImplTest {
     @Autowired
     private IMatchService service;
+    @MockBean
+    private IMessageService messageService;
+    @MockBean
+    private IGameRoomUserService gameRoomUserService;
 
     @Test
     void joinOne() {
@@ -58,6 +65,11 @@ class MatchServiceImplTest {
         ResponseVO<Boolean> quitResponse = service.quit(1L);
         assertEquals(ResponseVO.FAILED, quitResponse.getCode());
         assertEquals(false, quitResponse.getData());
+    }
+
+    @Test
+    void match() {
+        service.match();
     }
 
     @TestConfiguration

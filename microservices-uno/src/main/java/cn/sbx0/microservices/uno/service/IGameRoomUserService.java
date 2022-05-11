@@ -28,4 +28,6 @@ public interface IGameRoomUserService extends IService<GameRoomUserEntity> {
     boolean quitGameRoom(String roomCode);
 
     Integer countByGameRoom(String roomCode);
+
+    String createGameRoomByUserIds(List<Long> ids);
 }

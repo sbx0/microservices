@@ -3,6 +3,7 @@ package cn.sbx0.microservices.uno.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
+import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomUserEntity;
 import cn.sbx0.microservices.uno.feign.AccountService;
@@ -138,5 +139,27 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         GameRoomUserEntity alreadyJoin = getBaseMapper().alreadyJoinByCreateUserId(userId);
         if (alreadyJoin == null) return false;
         return alreadyJoin.getRoomId() == roomId;
+    }
+
+    @Override
+    public String createGameRoomByUserIds(List<Long> ids) {
+        // todo @Transactional
+        GameRoomCreateDTO dto = new GameRoomCreateDTO();
+        dto.setRoomName("Auto Create");
+        dto.setRemark("Auto Match Create");
+        dto.setPlayersSize(ids.size());
+        dto.setPublicFlag(0);
+        String roomCode = gameRoomService.create(dto);
+        GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
+        for (Long id : ids) {
+            GameRoomUserEntity gamer = new GameRoomUserEntity();
+            gamer.setRoomId(gameRoom.getId());
+            gamer.setUserId(id);
+            AccountVO account = accountService.findById(id);
+            gamer.setUsername(account.getNickname());
+            gamer.setCreateUserId(id);
+            getBaseMapper().atomSave(gamer, gameRoom.getPlayersSize());
+        }
+        return roomCode;
     }
 }

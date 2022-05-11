@@ -44,4 +44,9 @@ public class AccountController extends BaseController<AccountServiceImpl, Accoun
     public AccountVO findByUserName(@RequestParam(value = "name") String name) {
         return service.findByUserName(name);
     }
+
+    @GetMapping(value = "/findById")
+    AccountVO findById(@RequestParam(value = "id") Long id) {
+        return service.loginInfo(id);
+    }
 }

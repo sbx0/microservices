@@ -16,4 +16,7 @@ public interface IMatchService {
 
     // get match queue info
     ResponseVO<Integer> getQueueInfo();
+
+    // match and put it to one room
+    void match();
 }
