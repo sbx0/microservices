@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -64,8 +65,8 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         gamer.setUsername(account.getNickname());
         gamer.setCreateUserId(account.getId());
         gamer.setRemark("RandomBot");
-        int result = getBaseMapper().insert(gamer);
-        if (result > 0) {
+        boolean result = getBaseMapper().atomSave(gamer, gameRoom.getPlayersSize());
+        if (result) {
             nonBlockingService.execute(() -> messageService.send(roomCode, "join", "*", account));
             return true;
         }
@@ -142,14 +143,23 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     }
 
     @Override
-    public String createGameRoomByUserIds(List<Long> ids) {
+    public String whereAmI(Long userId) {
+        GameRoomUserEntity alreadyJoin = getBaseMapper().alreadyJoinByCreateUserId(userId);
+        if (alreadyJoin == null) return null;
+        Long roomId = alreadyJoin.getRoomId();
+        GameRoomEntity gameRoom = gameRoomService.getById(roomId);
+        return gameRoom.getRoomCode();
+    }
+
+    @Override
+    public String createGameRoomByUserIds(Set<Long> ids) {
         // todo @Transactional
         GameRoomCreateDTO dto = new GameRoomCreateDTO();
         dto.setRoomName("Auto Create");
         dto.setRemark("Auto Match Create");
         dto.setPlayersSize(ids.size());
         dto.setPublicFlag(0);
-        String roomCode = gameRoomService.create(dto);
+        String roomCode = gameRoomService.create(dto, 0);
         GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
         for (Long id : ids) {
             GameRoomUserEntity gamer = new GameRoomUserEntity();

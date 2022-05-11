@@ -5,6 +5,7 @@ import cn.sbx0.microservices.uno.entity.GameRoomUserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -29,5 +30,7 @@ public interface IGameRoomUserService extends IService<GameRoomUserEntity> {
 
     Integer countByGameRoom(String roomCode);
 
-    String createGameRoomByUserIds(List<Long> ids);
+    String createGameRoomByUserIds(Set<Long> ids);
+
+    String whereAmI(Long userId);
 }

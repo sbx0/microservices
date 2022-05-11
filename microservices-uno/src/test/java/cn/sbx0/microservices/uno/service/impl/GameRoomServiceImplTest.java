@@ -122,7 +122,7 @@ class GameRoomServiceImplTest {
         given(mapper.alreadyCreatedButUnusedRoomsByCreateUserId(USER_ID)).willReturn(null);
         given(mapper.insert(any())).willReturn(1);
         given(applicationInfoManager.getInfo()).willReturn(InstanceInfo.Builder.newBuilder().setAppName("test").build());
-        String roomCode = service.create(dto);
+        String roomCode = service.create(dto, 0);
         assertTrue(StringUtils.hasText(roomCode));
     }
 

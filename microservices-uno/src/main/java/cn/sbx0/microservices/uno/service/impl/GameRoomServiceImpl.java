@@ -66,13 +66,13 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     }
 
     @Override
-    public String create(GameRoomCreateDTO dto) {
-        long userId = StpUtil.getLoginIdAsLong();
+    public String create(GameRoomCreateDTO dto, long userId) {
+        if (userId != 0) {
+            List<GameRoomEntity> alreadyCreatedButUnusedRooms = getBaseMapper().alreadyCreatedButUnusedRoomsByCreateUserId(userId);
 
-        List<GameRoomEntity> alreadyCreatedButUnusedRooms = getBaseMapper().alreadyCreatedButUnusedRoomsByCreateUserId(userId);
-
-        if (alreadyCreatedButUnusedRooms != null && alreadyCreatedButUnusedRooms.size() > 0) {
-            return null;
+            if (alreadyCreatedButUnusedRooms != null && alreadyCreatedButUnusedRooms.size() > 0) {
+                return null;
+            }
         }
 
         GameRoomEntity entity = GameRoomConverter.INSTANCE.dtoToEntity(dto);

@@ -1,6 +1,7 @@
 package cn.sbx0.microservices.uno.controller;
 
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.controller.BaseController;
 import cn.sbx0.microservices.entity.PageQueryDTO;
 import cn.sbx0.microservices.entity.Paging;
@@ -41,7 +42,7 @@ public class GameRoomController extends BaseController<GameRoomServiceImpl, Game
     @ResponseBody
     @PostMapping("/create")
     public ResponseVO<String> create(@RequestBody GameRoomCreateDTO dto) {
-        String code = service.create(dto);
+        String code = service.create(dto, StpUtil.getLoginIdAsLong());
         return new ResponseVO<>(code != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, code);
     }
 

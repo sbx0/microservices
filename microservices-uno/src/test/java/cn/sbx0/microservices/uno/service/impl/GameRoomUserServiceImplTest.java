@@ -32,8 +32,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mockStatic;
 
@@ -125,6 +124,7 @@ class GameRoomUserServiceImplTest {
 
         GameRoomEntity room = new GameRoomEntity();
         room.setRoomStatus(1);
+        room.setPlayersSize(2);
         given(gameRoomService.getOneByRoomCode(ROOM_CODE)).willReturn(room);
         result = service.botJoinGameRoom(ROOM_CODE, "botName");
         assertFalse(result);
@@ -132,11 +132,11 @@ class GameRoomUserServiceImplTest {
         room.setRoomStatus(0);
         given(gameRoomService.getOneByRoomCode(ROOM_CODE)).willReturn(room);
         given(accountService.findByUserName(anyString())).willReturn(GAMERS.get(0));
-        given(mapper.insert(any())).willReturn(0);
+        given(mapper.atomSave(any(), anyInt())).willReturn(false);
         result = service.botJoinGameRoom(ROOM_CODE, "botName");
         assertFalse(result);
 
-        given(mapper.insert(any())).willReturn(1);
+        given(mapper.atomSave(any(), anyInt())).willReturn(true);
         result = service.botJoinGameRoom(ROOM_CODE, "botName");
         assertTrue(result);
     }

@@ -2,6 +2,7 @@ package cn.sbx0.microservices.uno.service;
 
 import cn.sbx0.microservices.entity.ResponseVO;
 import cn.sbx0.microservices.uno.entity.MatchExpectDTO;
+import cn.sbx0.microservices.uno.entity.QueueInfoVO;
 
 /**
  * @author sbx0
@@ -15,7 +16,7 @@ public interface IMatchService {
     ResponseVO<Boolean> quit(Long userId);
 
     // get match queue info
-    ResponseVO<Integer> getQueueInfo();
+    ResponseVO<QueueInfoVO> getQueueInfo();
 
     // match and put it to one room
     void match();
