@@ -3,11 +3,9 @@ package cn.sbx0.microservices.uno.controller;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.ResponseVO;
 import cn.sbx0.microservices.uno.entity.MatchExpectDTO;
+import cn.sbx0.microservices.uno.entity.QueueInfoVO;
 import cn.sbx0.microservices.uno.service.IMatchService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -23,6 +21,7 @@ public class MatchController {
 
     @PostMapping("/join")
     public ResponseVO<Boolean> join(@RequestBody MatchExpectDTO dto) {
+        dto.setUserId(StpUtil.getLoginIdAsLong());
         return matchService.join(dto);
     }
 
@@ -31,8 +30,8 @@ public class MatchController {
         return matchService.quit(StpUtil.getLoginIdAsLong());
     }
 
-    @PostMapping("/info")
-    public ResponseVO<Integer> info() {
+    @GetMapping("/info")
+    public ResponseVO<QueueInfoVO> info() {
         return matchService.getQueueInfo();
     }
 }

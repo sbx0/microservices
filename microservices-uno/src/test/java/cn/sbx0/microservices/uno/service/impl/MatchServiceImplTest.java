@@ -1,12 +1,17 @@
 package cn.sbx0.microservices.uno.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.ResponseVO;
 import cn.sbx0.microservices.uno.entity.MatchExpectDTO;
+import cn.sbx0.microservices.uno.entity.QueueInfoVO;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import cn.sbx0.microservices.uno.service.IMatchService;
 import cn.sbx0.microservices.uno.service.IMessageService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -16,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mockStatic;
 
 /**
  * @author sbx0
@@ -29,6 +35,19 @@ class MatchServiceImplTest {
     private IMessageService messageService;
     @MockBean
     private IGameRoomUserService gameRoomUserService;
+    private MockedStatic<StpUtil> stpUtilMock;
+
+    @BeforeEach
+    public void beforeEach() {
+        stpUtilMock = mockStatic(StpUtil.class);
+        stpUtilMock.when(StpUtil::getLoginIdAsLong).thenReturn(0L);
+        stpUtilMock.when(StpUtil::getLoginIdAsString).thenReturn("0");
+    }
+
+    @AfterEach
+    public void afterEach() {
+        stpUtilMock.close();
+    }
 
     @Test
     void joinOne() {
@@ -37,9 +56,9 @@ class MatchServiceImplTest {
         assertEquals(ResponseVO.SUCCESS, joinResponse.getCode());
         assertEquals(true, joinResponse.getData());
 
-        ResponseVO<Integer> response = service.getQueueInfo();
+        ResponseVO<QueueInfoVO> response = service.getQueueInfo();
         assertEquals(ResponseVO.SUCCESS, response.getCode());
-        assertEquals(1, response.getData());
+        assertEquals(1, response.getData().getSize());
 
         ResponseVO<Boolean> quitResponse = service.quit(dto.getUserId());
         assertEquals(ResponseVO.SUCCESS, quitResponse.getCode());
@@ -55,16 +74,16 @@ class MatchServiceImplTest {
             assertEquals(ResponseVO.SUCCESS, joinResponse.getCode());
             assertEquals(true, joinResponse.getData());
         }
-        ResponseVO<Integer> response = service.getQueueInfo();
+        ResponseVO<QueueInfoVO> response = service.getQueueInfo();
         assertEquals(ResponseVO.SUCCESS, response.getCode());
-        assertEquals(size, response.getData());
+        assertEquals(size, response.getData().getSize());
     }
 
     @Test
     void quitFailed() {
         ResponseVO<Boolean> quitResponse = service.quit(1L);
-        assertEquals(ResponseVO.FAILED, quitResponse.getCode());
-        assertEquals(false, quitResponse.getData());
+        assertEquals(ResponseVO.SUCCESS, quitResponse.getCode());
+        assertEquals(true, quitResponse.getData());
     }
 
     @Test

@@ -7,8 +7,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author sbx0
@@ -19,17 +17,16 @@ import java.util.concurrent.Executors;
 public class ServerSideEventScheduled {
     @Resource
     private IMessageService messageService;
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
     @Resource
     private IMatchService matchService;
 
     @Scheduled(fixedDelay = 5000)
     public void heartbeat() {
-        executorService.execute(() -> messageService.send("*", "message", "*", "heartbeat"));
+        messageService.send("*", "message", "*", "heartbeat");
     }
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 1000)
     public void match() {
-        executorService.execute(() -> matchService.match());
+        matchService.match();
     }
 }
