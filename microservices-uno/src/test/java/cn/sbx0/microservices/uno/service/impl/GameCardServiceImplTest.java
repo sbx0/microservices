@@ -4,6 +4,8 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.bot.RandomBot;
 import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
+import cn.sbx0.microservices.uno.entity.CarColor;
+import cn.sbx0.microservices.uno.entity.CarPoint;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.logic.BasicGameRule;
 import cn.sbx0.microservices.uno.service.IGameCardService;
@@ -49,17 +51,17 @@ class GameCardServiceImplTest {
     public final static String[] UUIDS = new String[24];
     public final static String[] POINTS = {
             "1", "2", "1", "2", "1", "2", "1", "2",
-            "reverse", "reverse", "reverse", "reverse",
-            "skip", "skip", "skip", "skip",
-            "draw two", "draw two", "draw two", "draw two",
-            "wild draw four", "wild draw four", "wild draw four", "wild draw four"
+            CarPoint.REVERSE, CarPoint.REVERSE, CarPoint.REVERSE, CarPoint.REVERSE,
+            CarPoint.SKIP, CarPoint.SKIP, CarPoint.SKIP, CarPoint.SKIP,
+            CarPoint.DRAW_TWO, CarPoint.DRAW_TWO, CarPoint.DRAW_TWO, CarPoint.DRAW_TWO,
+            CarPoint.WILD_DRAW_FOUR, CarPoint.WILD_DRAW_FOUR, CarPoint.WILD_DRAW_FOUR, CarPoint.WILD_DRAW_FOUR
     };
     public final static String[] COLORS = {
-            "red", "red", "yellow", "yellow", "blue", "blue", "green", "green",
-            "red", "yellow", "blue", "green",
-            "red", "yellow", "blue", "green",
-            "red", "yellow", "blue", "green",
-            "red", "yellow", "blue", "green"
+            CarColor.RED, CarColor.RED, CarColor.YELLOW, CarColor.YELLOW, CarColor.BLUE, CarColor.BLUE, CarColor.GREEN, CarColor.GREEN,
+            CarColor.RED, CarColor.YELLOW, CarColor.BLUE, CarColor.GREEN,
+            CarColor.RED, CarColor.YELLOW, CarColor.BLUE, CarColor.GREEN,
+            CarColor.RED, CarColor.YELLOW, CarColor.BLUE, CarColor.GREEN,
+            CarColor.RED, CarColor.YELLOW, CarColor.BLUE, CarColor.GREEN
     };
     @Autowired
     private IGameCardService service;

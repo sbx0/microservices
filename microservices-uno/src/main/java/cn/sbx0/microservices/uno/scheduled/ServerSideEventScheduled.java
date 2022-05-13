@@ -1,5 +1,6 @@
 package cn.sbx0.microservices.uno.scheduled;
 
+import cn.sbx0.microservices.uno.entity.MessageChannel;
 import cn.sbx0.microservices.uno.service.IMatchService;
 import cn.sbx0.microservices.uno.service.IMessageService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class ServerSideEventScheduled {
 
     @Scheduled(fixedDelay = 5000)
     public void heartbeat() {
-        messageService.send("*", "message", "*", "heartbeat");
+        messageService.send("*", MessageChannel.MESSAGE, "*", "heartbeat");
     }
 
     @Scheduled(fixedDelay = 1000)

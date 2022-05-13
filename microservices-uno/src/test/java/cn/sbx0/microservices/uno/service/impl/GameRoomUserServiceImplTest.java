@@ -3,9 +3,7 @@ package cn.sbx0.microservices.uno.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.bot.RandomBot;
-import cn.sbx0.microservices.uno.entity.CardEntity;
-import cn.sbx0.microservices.uno.entity.GameRoomEntity;
-import cn.sbx0.microservices.uno.entity.GameRoomUserEntity;
+import cn.sbx0.microservices.uno.entity.*;
 import cn.sbx0.microservices.uno.feign.AccountService;
 import cn.sbx0.microservices.uno.mapper.GameRoomUserMapper;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
@@ -47,8 +45,8 @@ class GameRoomUserServiceImplTest {
     public final static List<AccountVO> GAMERS = new ArrayList<>();
     public final static List<CardEntity> CARDS = new ArrayList<>();
     public final static String[] UUIDS = new String[10];
-    public final static String[] POINTS = {"1", "2", "3", "4", "5", "skip", "wild draw four", "draw two", "reverse", "draw two"};
-    public final static String[] COLORS = {"red", "red", "blue", "yellow", "blue", "blue", "blue", "blue", "blue", "blue"};
+    public final static String[] POINTS = {"1", "2", "3", "4", "5", CarPoint.SKIP, CarPoint.WILD_DRAW_FOUR, CarPoint.DRAW_TWO, CarPoint.REVERSE, CarPoint.DRAW_TWO};
+    public final static String[] COLORS = {CarColor.RED, CarColor.RED, CarColor.BLUE, CarColor.YELLOW, CarColor.BLUE, CarColor.BLUE, CarColor.BLUE, CarColor.BLUE, CarColor.BLUE, CarColor.BLUE};
     @Autowired
     private IGameRoomUserService service;
     @MockBean

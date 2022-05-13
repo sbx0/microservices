@@ -27,16 +27,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = BotController.class)
 class BotControllerTest {
     @Autowired
-    MockMvc mvc;
+    private MockMvc mvc;
 
     @MockBean
-    RandomBot service;
+    private RandomBot service;
 
     @MockBean
-    GameRoomMapper gameRoomMapper;
+    private GameRoomMapper gameRoomMapper;
 
     @MockBean
-    GameRoomUserMapper gameRoomUserMapper;
+    private GameRoomUserMapper gameRoomUserMapper;
 
     @Test
     void joinRoom() throws Exception {

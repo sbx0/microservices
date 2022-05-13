@@ -2,8 +2,10 @@ package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
+import cn.sbx0.microservices.uno.entity.CarPoint;
 import cn.sbx0.microservices.uno.entity.CardDeckEntity;
 import cn.sbx0.microservices.uno.entity.CardEntity;
+import cn.sbx0.microservices.uno.entity.MessageChannel;
 import cn.sbx0.microservices.uno.logic.BasicGameRule;
 import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IMessageService;
@@ -65,7 +67,7 @@ public class GameCardServiceImpl implements IGameCardService {
             currentCard.setColor(color);
             gameRule.discardCard(roomCode, currentCard);
             gameRule.functionCard(roomCode, currentCard);
-            nonBlockingService.execute(() -> messageService.send(roomCode, "number_of_cards", "*", userId + "=" + cards.size()));
+            nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.NUMBER_OF_CARDS, "*", userId + "=" + cards.size()));
         } else {
             return false;
         }
@@ -131,7 +133,7 @@ public class GameCardServiceImpl implements IGameCardService {
             }
         }
         stringRedisTemplate.opsForValue().set(penaltyKey, "0");
-        nonBlockingService.execute(() -> messageService.send(roomCode, "penalty_cards", "*", "0"));
+        nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.PENALTY_CARDS, "*", "0"));
         return drawCard(roomCode, StpUtil.getLoginIdAsLong(), size);
     }
 
@@ -164,7 +166,7 @@ public class GameCardServiceImpl implements IGameCardService {
         redisTemplate.opsForList().leftPushAll(userCardsKey, cards);
         stringRedisTemplate.opsForValue().set(drawKey, userId.toString());
         Long size = redisTemplate.opsForList().size(userCardsKey);
-        nonBlockingService.execute(() -> messageService.send(roomCode, "number_of_cards", "*", userId + "=" + size));
+        nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.NUMBER_OF_CARDS, "*", userId + "=" + size));
         return cards;
     }
 
@@ -196,7 +198,7 @@ public class GameCardServiceImpl implements IGameCardService {
         if (number > 0) {
             cards = drawCard(roomCode, id, number);
             stringRedisTemplate.opsForValue().set(penaltyCardsKey, "0");
-            nonBlockingService.execute(() -> messageService.send(roomCode, "penalty_cards", "*", "0"));
+            nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.PENALTY_CARDS, "*", "0"));
         } else {
             String currentPlayer = id.toString();
             // check last draw user
@@ -223,7 +225,7 @@ public class GameCardServiceImpl implements IGameCardService {
     @Override
     public void initGame(String roomCode) {
         // normal reverse
-        stringRedisTemplate.opsForValue().set(GameRedisKeyConstant.ROOM_DIRECTION.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode), "normal");
+        stringRedisTemplate.opsForValue().set(GameRedisKeyConstant.ROOM_DIRECTION.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode), CarPoint.NORMAL);
         stringRedisTemplate.opsForValue().set(GameRedisKeyConstant.CURRENT_GAMER.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode), "0");
         stringRedisTemplate.opsForValue().set(GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode), "0");
     }

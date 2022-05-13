@@ -1,6 +1,7 @@
 package cn.sbx0.microservices.uno.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.sbx0.microservices.uno.entity.CarColor;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.mapper.GameRoomUserMapper;
@@ -67,7 +68,7 @@ class GameCardControllerTest {
 
         CardEntity card = new CardEntity();
         card.setUuid("d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a");
-        card.setColor("red");
+        card.setColor(CarColor.RED);
         card.setUserId(1L);
         card.setPoint("4");
         cards.add(card);
@@ -78,7 +79,7 @@ class GameCardControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value("0"))
-                .andExpect(jsonPath("$.data[0].color").value("red"))
+                .andExpect(jsonPath("$.data[0].color").value(CarColor.RED))
                 .andExpect(jsonPath("$.data[0].point").value(4))
                 .andReturn().getResponse().getContentAsString();
     }
@@ -91,7 +92,7 @@ class GameCardControllerTest {
 
         CardEntity card = new CardEntity();
         card.setUuid("d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a");
-        card.setColor("red");
+        card.setColor(CarColor.RED);
         card.setUserId(1L);
         card.setPoint("4");
         cards.add(card);
@@ -102,7 +103,7 @@ class GameCardControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value("0"))
-                .andExpect(jsonPath("$.data[0].color").value("red"))
+                .andExpect(jsonPath("$.data[0].color").value(CarColor.RED))
                 .andExpect(jsonPath("$.data[0].point").value(4))
                 .andReturn().getResponse().getContentAsString();
     }
@@ -111,14 +112,14 @@ class GameCardControllerTest {
     void playCard() throws Exception {
         String roomCode = "d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a";
         String uuid = "d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a";
-        String color = "red";
+        String color = CarColor.RED;
 
         stpUtilMock.when(StpUtil::getLoginIdAsLong).thenReturn(0L);
 
         given(service.playCard(roomCode, uuid, color, 0L)).willReturn(true);
 
         mvc.perform(get("/uno/card/play/" + roomCode + "/" + uuid)
-                        .queryParam("color", "red")
+                        .queryParam("color", CarColor.RED)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value("0"))
@@ -135,7 +136,7 @@ class GameCardControllerTest {
 
         CardEntity card = new CardEntity();
         card.setUuid("d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a");
-        card.setColor("red");
+        card.setColor(CarColor.RED);
         card.setUserId(1L);
         card.setPoint("4");
         cards.add(card);
@@ -146,7 +147,7 @@ class GameCardControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value("0"))
-                .andExpect(jsonPath("$.data[0].color").value("red"))
+                .andExpect(jsonPath("$.data[0].color").value(CarColor.RED))
                 .andExpect(jsonPath("$.data[0].point").value(4))
                 .andReturn().getResponse().getContentAsString();
     }
@@ -159,7 +160,7 @@ class GameCardControllerTest {
 
         CardEntity card = new CardEntity();
         card.setUuid("d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a");
-        card.setColor("red");
+        card.setColor(CarColor.RED);
         card.setUserId(1L);
         card.setPoint("4");
         cards.add(card);
@@ -170,7 +171,7 @@ class GameCardControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value("0"))
-                .andExpect(jsonPath("$.data[0].color").value("red"))
+                .andExpect(jsonPath("$.data[0].color").value(CarColor.RED))
                 .andExpect(jsonPath("$.data[0].point").value(4))
                 .andReturn().getResponse().getContentAsString();
     }
