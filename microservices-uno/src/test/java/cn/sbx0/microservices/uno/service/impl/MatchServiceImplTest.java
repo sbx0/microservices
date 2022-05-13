@@ -1,53 +1,40 @@
 package cn.sbx0.microservices.uno.service.impl;
 
-import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.ResponseVO;
+import cn.sbx0.microservices.uno.bot.RandomBot;
 import cn.sbx0.microservices.uno.entity.MatchExpectDTO;
 import cn.sbx0.microservices.uno.entity.QueueInfoVO;
+import cn.sbx0.microservices.uno.logic.BasicGameRule;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import cn.sbx0.microservices.uno.service.IMatchService;
 import cn.sbx0.microservices.uno.service.IMessageService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mockStatic;
 
 /**
  * @author sbx0
  * @since 2022/5/10
  */
-@ExtendWith(SpringExtension.class)
-class MatchServiceImplTest {
+@SuppressWarnings({"SpringJavaAutowiredMembersInspection"})
+@MockBean(classes = {IGameRoomUserService.class, RandomBot.class, BasicGameRule.class, IMessageService.class})
+class MatchServiceImplTest extends BaseServiceImplTest {
+    @TestConfiguration
+    static class Configuration {
+        @Bean
+        public IMatchService service() {
+            return new MatchServiceImpl();
+        }
+    }
+
     @Autowired
     private IMatchService service;
-    @MockBean
-    private IMessageService messageService;
-    @MockBean
-    private IGameRoomUserService gameRoomUserService;
-    private MockedStatic<StpUtil> stpUtilMock;
-
-    @BeforeEach
-    public void beforeEach() {
-        stpUtilMock = mockStatic(StpUtil.class);
-        stpUtilMock.when(StpUtil::getLoginIdAsLong).thenReturn(0L);
-        stpUtilMock.when(StpUtil::getLoginIdAsString).thenReturn("0");
-    }
-
-    @AfterEach
-    public void afterEach() {
-        stpUtilMock.close();
-    }
 
     @Test
     void joinOne() {
@@ -89,13 +76,5 @@ class MatchServiceImplTest {
     @Test
     void match() {
         service.match();
-    }
-
-    @TestConfiguration
-    static class Configuration {
-        @Bean
-        public IMatchService service() {
-            return new MatchServiceImpl();
-        }
     }
 }

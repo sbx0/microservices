@@ -14,6 +14,7 @@ import static org.mockito.BDDMockito.given;
  * @author sbx0
  * @since 2022/5/13
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class RedisTestSetup {
     @MockBean
     protected RedisTemplate<String, CardEntity> redisTemplate;
