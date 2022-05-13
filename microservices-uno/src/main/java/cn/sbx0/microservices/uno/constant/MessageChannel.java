@@ -1,4 +1,4 @@
-package cn.sbx0.microservices.uno.entity;
+package cn.sbx0.microservices.uno.constant;
 
 /**
  * @author sbx0
