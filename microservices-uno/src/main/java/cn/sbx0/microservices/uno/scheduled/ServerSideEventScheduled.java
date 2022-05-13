@@ -1,6 +1,6 @@
 package cn.sbx0.microservices.uno.scheduled;
 
-import cn.sbx0.microservices.uno.entity.MessageChannel;
+import cn.sbx0.microservices.uno.constant.MessageChannel;
 import cn.sbx0.microservices.uno.service.IMatchService;
 import cn.sbx0.microservices.uno.service.IMessageService;
 import lombok.extern.slf4j.Slf4j;

@@ -4,7 +4,7 @@ package cn.sbx0.microservices.uno.constant;
  * @author sbx0
  * @since 2022/5/7
  */
-public class GameRedisKeyConstant {
+public class GameRedisKey {
     public static final String ROOM_CODE = "\\{room_code\\}";
     public static final String USER_ID = "\\{user_id\\}";
     public static final String ROOM_CARDS = "game:" + ROOM_CODE + ":cards:room";

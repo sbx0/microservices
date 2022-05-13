@@ -2,7 +2,7 @@ package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.uno.bot.RandomBot;
-import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
+import cn.sbx0.microservices.uno.constant.GameRedisKey;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.logic.BasicGameRule;
 import cn.sbx0.microservices.uno.service.IGameCardService;
@@ -96,7 +96,7 @@ class GameCardServiceImplTest extends BaseServiceImplTest {
         assertEquals(1, cards.size());
 
         given(valueOperations.get(anyString())).willReturn("0");
-        String drawKey = GameRedisKeyConstant.ROOM_DRAW.replaceAll(GameRedisKeyConstant.ROOM_CODE, ROOM_CODE);
+        String drawKey = GameRedisKey.ROOM_DRAW.replaceAll(GameRedisKey.ROOM_CODE, ROOM_CODE);
         given(valueOperations.get(drawKey)).willReturn("2");
         cards = service.nextPlay(ROOM_CODE, USER_ID);
         assertNotNull(cards);

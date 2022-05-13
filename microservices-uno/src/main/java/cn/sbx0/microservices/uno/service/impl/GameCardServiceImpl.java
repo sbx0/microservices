@@ -1,11 +1,11 @@
 package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
-import cn.sbx0.microservices.uno.entity.CarPoint;
+import cn.sbx0.microservices.uno.constant.CardPoint;
+import cn.sbx0.microservices.uno.constant.GameRedisKey;
+import cn.sbx0.microservices.uno.constant.MessageChannel;
 import cn.sbx0.microservices.uno.entity.CardDeckEntity;
 import cn.sbx0.microservices.uno.entity.CardEntity;
-import cn.sbx0.microservices.uno.entity.MessageChannel;
 import cn.sbx0.microservices.uno.logic.BasicGameRule;
 import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IMessageService;
@@ -56,7 +56,7 @@ public class GameCardServiceImpl implements IGameCardService {
             return false;
         }
 
-        String discardKey = GameRedisKeyConstant.ROOM_DISCARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String discardKey = GameRedisKey.ROOM_DISCARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         CardEntity previousCard = redisTemplate.opsForList().index(discardKey, 0);
         boolean canPlay = gameRule.judgeIsCanPlay(previousCard, currentCard, userId);
         if (canPlay) {
@@ -72,8 +72,8 @@ public class GameCardServiceImpl implements IGameCardService {
             return false;
         }
 
-        String userCardsKey = GameRedisKeyConstant.USER_CARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode)
-                .replaceAll(GameRedisKeyConstant.USER_ID, userId.toString());
+        String userCardsKey = GameRedisKey.USER_CARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode)
+                .replaceAll(GameRedisKey.USER_ID, userId.toString());
         redisTemplate.expire(userCardsKey, Duration.ZERO);
         if (!CollectionUtils.isEmpty(cards)) {
             redisTemplate.opsForList().leftPushAll(userCardsKey, cards);
@@ -83,8 +83,8 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public List<CardEntity> getCardsByUserId(String roomCode, Long id) {
-        String userCardsKey = GameRedisKeyConstant.USER_CARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode)
-                .replaceAll(GameRedisKeyConstant.USER_ID, id.toString());
+        String userCardsKey = GameRedisKey.USER_CARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode)
+                .replaceAll(GameRedisKey.USER_ID, id.toString());
         Long size = redisTemplate.opsForList().size(userCardsKey);
         if (size == null) {
             size = 0L;
@@ -94,7 +94,7 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public void initCardDeck(String roomCode) {
-        String roomCards = GameRedisKeyConstant.ROOM_CARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String roomCards = GameRedisKey.ROOM_CARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         List<CardEntity> cards = CardDeckEntity.CARDS;
         Collections.shuffle(cards);
         redisTemplate.opsForList().leftPushAll(roomCards, cards);
@@ -102,9 +102,9 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public List<CardEntity> drawCard(String roomCode) {
-        String roomCardsKey = GameRedisKeyConstant.ROOM_CARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
-        String userCardsKey = GameRedisKeyConstant.USER_CARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode)
-                .replaceAll(GameRedisKeyConstant.USER_ID, StpUtil.getLoginIdAsString());
+        String roomCardsKey = GameRedisKey.ROOM_CARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
+        String userCardsKey = GameRedisKey.USER_CARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode)
+                .replaceAll(GameRedisKey.USER_ID, StpUtil.getLoginIdAsString());
         List<CardEntity> cards = new ArrayList<>();
         List<CardEntity> pops = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
@@ -121,7 +121,7 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public List<CardEntity> drawCard(String roomCode, int number) {
-        String penaltyKey = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String penaltyKey = GameRedisKey.ROOM_PENALTY.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyKey);
         int size = number;
         if (StringUtils.hasText(penaltyCards)) {
@@ -139,10 +139,10 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public List<CardEntity> drawCard(String roomCode, Long userId, int number) {
-        String drawKey = GameRedisKeyConstant.ROOM_DRAW.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
-        String key = GameRedisKeyConstant.ROOM_CARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
-        String userCardsKey = GameRedisKeyConstant.USER_CARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode)
-                .replaceAll(GameRedisKeyConstant.USER_ID, userId.toString());
+        String drawKey = GameRedisKey.ROOM_DRAW.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
+        String key = GameRedisKey.ROOM_CARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
+        String userCardsKey = GameRedisKey.USER_CARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode)
+                .replaceAll(GameRedisKey.USER_ID, userId.toString());
         if (number < 1) {
             number = 1;
         }
@@ -172,8 +172,8 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public List<CardEntity> myCardList(String roomCode) {
-        String userCardsKey = GameRedisKeyConstant.USER_CARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode)
-                .replaceAll(GameRedisKeyConstant.USER_ID, StpUtil.getLoginIdAsString());
+        String userCardsKey = GameRedisKey.USER_CARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode)
+                .replaceAll(GameRedisKey.USER_ID, StpUtil.getLoginIdAsString());
         Long size = redisTemplate.opsForList().size(userCardsKey);
         if (size == null) {
             size = 0L;
@@ -182,7 +182,7 @@ public class GameCardServiceImpl implements IGameCardService {
     }
 
     private int getPenaltyCardsNumber(String roomCode) {
-        String penaltyCardsKey = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String penaltyCardsKey = GameRedisKey.ROOM_PENALTY.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         String numberStr = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
         if (numberStr == null) {
             numberStr = "0";
@@ -192,7 +192,7 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public List<CardEntity> nextPlay(String roomCode, Long id) {
-        String penaltyCardsKey = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String penaltyCardsKey = GameRedisKey.ROOM_PENALTY.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         List<CardEntity> cards = EMPTY;
         int number = getPenaltyCardsNumber(roomCode);
         if (number > 0) {
@@ -202,7 +202,7 @@ public class GameCardServiceImpl implements IGameCardService {
         } else {
             String currentPlayer = id.toString();
             // check last draw user
-            String drawKey = GameRedisKeyConstant.ROOM_DRAW.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+            String drawKey = GameRedisKey.ROOM_DRAW.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
             String lastDrawUser = stringRedisTemplate.opsForValue().get(drawKey);
             if (!currentPlayer.equals(lastDrawUser)) {
                 cards = drawCard(roomCode, id, 1);
@@ -214,7 +214,7 @@ public class GameCardServiceImpl implements IGameCardService {
 
     @Override
     public List<CardEntity> discardCardList(String roomCode) {
-        String key = GameRedisKeyConstant.ROOM_DISCARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String key = GameRedisKey.ROOM_DISCARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         Long size = redisTemplate.opsForList().size(key);
         if (size == null) {
             size = 0L;
@@ -225,8 +225,8 @@ public class GameCardServiceImpl implements IGameCardService {
     @Override
     public void initGame(String roomCode) {
         // normal reverse
-        stringRedisTemplate.opsForValue().set(GameRedisKeyConstant.ROOM_DIRECTION.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode), CarPoint.NORMAL);
-        stringRedisTemplate.opsForValue().set(GameRedisKeyConstant.CURRENT_GAMER.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode), "0");
-        stringRedisTemplate.opsForValue().set(GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode), "0");
+        stringRedisTemplate.opsForValue().set(GameRedisKey.ROOM_DIRECTION.replaceAll(GameRedisKey.ROOM_CODE, roomCode), CardPoint.NORMAL);
+        stringRedisTemplate.opsForValue().set(GameRedisKey.CURRENT_GAMER.replaceAll(GameRedisKey.ROOM_CODE, roomCode), "0");
+        stringRedisTemplate.opsForValue().set(GameRedisKey.ROOM_PENALTY.replaceAll(GameRedisKey.ROOM_CODE, roomCode), "0");
     }
 }

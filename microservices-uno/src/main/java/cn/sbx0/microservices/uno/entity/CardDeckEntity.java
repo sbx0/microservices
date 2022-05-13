@@ -1,5 +1,7 @@
 package cn.sbx0.microservices.uno.entity;
 
+import cn.sbx0.microservices.uno.constant.CardColor;
+import cn.sbx0.microservices.uno.constant.CardPoint;
 import lombok.Data;
 
 import java.util.*;
@@ -15,22 +17,22 @@ public class CardDeckEntity {
     private static Map<String, Integer> numbers = new HashMap<>();
     private static final int FUNCTION_STANDARD = 2;
     private static final int BLACK_STANDARD = 4;
-    public static String[] COLORS = new String[]{CarColor.RED, CarColor.YELLOW, CarColor.GREEN, CarColor.BLUE};
+    public static String[] COLORS = new String[]{CardColor.RED, CardColor.YELLOW, CardColor.GREEN, CardColor.BLUE};
 
     static {
-        numbers.put(CarPoint.ZERO, 1);
-        numbers.put(CarPoint.ONE, STANDARD);
-        numbers.put(CarPoint.TWO, STANDARD);
-        numbers.put(CarPoint.THREE, STANDARD);
-        numbers.put(CarPoint.FOUR, STANDARD);
-        numbers.put(CarPoint.FIVE, STANDARD);
-        numbers.put(CarPoint.SIX, STANDARD);
-        numbers.put(CarPoint.SEVEN, STANDARD);
-        numbers.put(CarPoint.EIGHT, STANDARD);
-        numbers.put(CarPoint.NINE, STANDARD);
-        numbers.put(CarPoint.SKIP, FUNCTION_STANDARD);
-        numbers.put(CarPoint.DRAW_TWO, FUNCTION_STANDARD);
-        numbers.put(CarPoint.REVERSE, FUNCTION_STANDARD);
+        numbers.put(CardPoint.ZERO, 1);
+        numbers.put(CardPoint.ONE, STANDARD);
+        numbers.put(CardPoint.TWO, STANDARD);
+        numbers.put(CardPoint.THREE, STANDARD);
+        numbers.put(CardPoint.FOUR, STANDARD);
+        numbers.put(CardPoint.FIVE, STANDARD);
+        numbers.put(CardPoint.SIX, STANDARD);
+        numbers.put(CardPoint.SEVEN, STANDARD);
+        numbers.put(CardPoint.EIGHT, STANDARD);
+        numbers.put(CardPoint.NINE, STANDARD);
+        numbers.put(CardPoint.SKIP, FUNCTION_STANDARD);
+        numbers.put(CardPoint.DRAW_TWO, FUNCTION_STANDARD);
+        numbers.put(CardPoint.REVERSE, FUNCTION_STANDARD);
 
         for (Map.Entry<String, Integer> number : numbers.entrySet()) {
             for (int i = 0; i < 4 * number.getValue(); i++) {
@@ -38,8 +40,8 @@ public class CardDeckEntity {
             }
         }
         for (int i = 0; i < BLACK_STANDARD; i++) {
-            CARDS.add(new CardEntity(UUID.randomUUID().toString(), CarColor.BLACK, CarPoint.WILD, 0L));
-            CARDS.add(new CardEntity(UUID.randomUUID().toString(), CarColor.BLACK, CarPoint.WILD_DRAW_FOUR, 0L));
+            CARDS.add(new CardEntity(UUID.randomUUID().toString(), CardColor.BLACK, CardPoint.WILD, 0L));
+            CARDS.add(new CardEntity(UUID.randomUUID().toString(), CardColor.BLACK, CardPoint.WILD_DRAW_FOUR, 0L));
         }
     }
 
