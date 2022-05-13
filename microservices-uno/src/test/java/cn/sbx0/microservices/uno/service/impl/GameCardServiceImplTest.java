@@ -1,7 +1,6 @@
 package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.bot.RandomBot;
 import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
 import cn.sbx0.microservices.uno.entity.CardEntity;
@@ -10,117 +9,36 @@ import cn.sbx0.microservices.uno.service.IGameCardService;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import cn.sbx0.microservices.uno.service.IMessageService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
+import static cn.sbx0.microservices.uno.TestDataProvider.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mockStatic;
 
 /**
  * @author sbx0
  * @since 2022/5/6
  */
-@SuppressWarnings({"unchecked", "rawtypes", "SpringJavaAutowiredMembersInspection"})
-@ExtendWith(SpringExtension.class)
-class GameCardServiceImplTest {
-    public final static String ROOM_CODE = "d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a";
-    public final static Long USER_ID = 1L;
-    public final static List<AccountVO> GAMERS = new ArrayList<>();
-    public final static List<CardEntity> CARDS = new ArrayList<>();
-    public final static String[] UUIDS = new String[24];
-    public final static String[] POINTS = {
-            "1", "2", "1", "2", "1", "2", "1", "2",
-            "reverse", "reverse", "reverse", "reverse",
-            "skip", "skip", "skip", "skip",
-            "draw two", "draw two", "draw two", "draw two",
-            "wild draw four", "wild draw four", "wild draw four", "wild draw four"
-    };
-    public final static String[] COLORS = {
-            "red", "red", "yellow", "yellow", "blue", "blue", "green", "green",
-            "red", "yellow", "blue", "green",
-            "red", "yellow", "blue", "green",
-            "red", "yellow", "blue", "green",
-            "red", "yellow", "blue", "green"
-    };
+@SuppressWarnings({"unchecked", "SpringJavaAutowiredMembersInspection"})
+@MockBean(classes = {IGameRoomUserService.class, IGameRoomService.class, RandomBot.class, BasicGameRule.class, IMessageService.class})
+class GameCardServiceImplTest extends BaseServiceImplTest {
+    @Autowired
+    private IGameRoomUserService userService;
     @Autowired
     private IGameCardService service;
-    @MockBean
-    private RedisTemplate<String, CardEntity> redisTemplate;
-    @MockBean
-    private StringRedisTemplate stringRedisTemplate;
-    @MockBean
-    private ValueOperations valueOperations;
-    @MockBean
-    private ListOperations listOperations;
-    @MockBean
-    private IGameRoomUserService userService;
-    @MockBean
-    private IGameRoomService gameRoomService;
-    @MockBean
-    private RandomBot randomBot;
-    private MockedStatic<StpUtil> stpUtilMock;
-    @MockBean
+    @Autowired
     private BasicGameRule gameRule;
-    @MockBean
-    private IMessageService messageService;
-
-    @BeforeEach
-    public void beforeEach() {
-        stpUtilMock = mockStatic(StpUtil.class);
-        given(stringRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(redisTemplate.opsForList()).willReturn(listOperations);
-    }
-
-    @AfterEach
-    public void afterEach() {
-        stpUtilMock.close();
-    }
-
-    @BeforeAll
-    static void beforeAll() {
-        for (int i = 0; i < 6; i++) {
-            AccountVO account = new AccountVO();
-            account.setId((long) i);
-            account.setUsername("username" + i);
-            account.setNickname("nickname" + i);
-            account.setNumberOfCards(10);
-            account.setEmail("email" + i + "@sbx0.cn");
-            GAMERS.add(account);
-        }
-
-        for (int i = 0; i < 24; i++) {
-            CardEntity card = new CardEntity();
-            UUIDS[i] = UUID.randomUUID().toString();
-            card.setUuid(UUIDS[i]);
-            card.setPoint(POINTS[i]);
-            card.setColor(COLORS[i]);
-            card.setUserId(0L);
-            CARDS.add(card);
-        }
-    }
 
     @Test
     void drawCard() {
-        stpUtilMock.when(StpUtil::getLoginIdAsLong).thenReturn(USER_ID);
+        stpUtil.when(StpUtil::getLoginIdAsLong).thenReturn(USER_ID);
 
         given(listOperations.rightPop(anyString())).willReturn(CARDS.get(0));
 
@@ -143,6 +61,14 @@ class GameCardServiceImplTest {
         given(listOperations.rightPop(anyString())).willReturn(null);
         cards = service.drawCard(ROOM_CODE, 0L, 0);
         assertNull(cards);
+    }
+
+    @TestConfiguration
+    static class Configuration {
+        @Bean
+        public IGameCardService service() {
+            return new GameCardServiceImpl();
+        }
     }
 
     @Test
@@ -208,13 +134,5 @@ class GameCardServiceImplTest {
         given(listOperations.range(anyString(), anyLong(), anyLong())).willReturn(CARDS);
         cards = service.discardCardList(ROOM_CODE);
         assertEquals(CARDS.size(), cards.size());
-    }
-
-    @TestConfiguration
-    static class GameCardServiceImplTestConfiguration {
-        @Bean
-        public IGameCardService service() {
-            return new GameCardServiceImpl();
-        }
     }
 }

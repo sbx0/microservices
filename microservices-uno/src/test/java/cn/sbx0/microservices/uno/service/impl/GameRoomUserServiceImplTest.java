@@ -1,112 +1,54 @@
 package cn.sbx0.microservices.uno.service.impl;
 
-import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.bot.RandomBot;
-import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomUserEntity;
 import cn.sbx0.microservices.uno.feign.AccountService;
 import cn.sbx0.microservices.uno.mapper.GameRoomUserMapper;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
+import static cn.sbx0.microservices.uno.TestDataProvider.GAMERS;
+import static cn.sbx0.microservices.uno.TestDataProvider.ROOM_CODE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mockStatic;
 
 /**
  * @author sbx0
  * @since 2022/5/7
  */
-@ExtendWith(SpringExtension.class)
-class GameRoomUserServiceImplTest {
-    public final static String ROOM_CODE = "d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a";
-    public final static Long USER_ID = 1L;
-    public final static List<AccountVO> GAMERS = new ArrayList<>();
-    public final static List<CardEntity> CARDS = new ArrayList<>();
-    public final static String[] UUIDS = new String[10];
-    public final static String[] POINTS = {"1", "2", "3", "4", "5", "skip", "wild draw four", "draw two", "reverse", "draw two"};
-    public final static String[] COLORS = {"red", "red", "blue", "yellow", "blue", "blue", "blue", "blue", "blue", "blue"};
+@SuppressWarnings({"unchecked", "SpringJavaAutowiredMembersInspection"})
+@MockBean(classes = {IGameRoomService.class, RandomBot.class, RandomBot.class, AccountService.class, GameRoomUserMapper.class})
+class GameRoomUserServiceImplTest extends BaseServiceImplTest {
+    @Autowired
+    private IGameRoomService gameRoomService;
+
     @Autowired
     private IGameRoomUserService service;
-    @MockBean
-    private RedisTemplate<String, CardEntity> redisTemplate;
-    @MockBean
-    private StringRedisTemplate stringRedisTemplate;
-    @MockBean
-    private ValueOperations valueOperations;
-    @MockBean
-    private ListOperations listOperations;
-    @MockBean
-    private IGameRoomService gameRoomService;
-    @MockBean
-    private RandomBot randomBot;
-    private MockedStatic<StpUtil> stpUtilMock;
-    @MockBean
+    @Autowired
     private AccountService accountService;
+
+    @TestConfiguration
+    static class GameRoomUserServiceImplTestConfiguration {
+        @Bean
+        public IGameRoomUserService service() {
+            return new GameRoomUserServiceImpl();
+        }
+    }
+
     @MockBean
     private GameRoomUserMapper mapper;
-
-    @BeforeAll
-    static void beforeAll() {
-        for (int i = 0; i < 6; i++) {
-            AccountVO account = new AccountVO();
-            account.setId((long) i);
-            account.setUsername("username" + i);
-            account.setNickname("nickname" + i);
-            account.setNumberOfCards(10);
-            account.setEmail("email" + i + "@sbx0.cn");
-            GAMERS.add(account);
-        }
-
-        for (int i = 0; i < 10; i++) {
-            CardEntity card = new CardEntity();
-            UUIDS[i] = UUID.randomUUID().toString();
-            card.setUuid(UUIDS[i]);
-            card.setPoint(POINTS[i]);
-            card.setColor(COLORS[i]);
-            card.setUserId(0L);
-            CARDS.add(card);
-        }
-    }
-
-    @BeforeEach
-    public void beforeEach() {
-        stpUtilMock = mockStatic(StpUtil.class);
-        stpUtilMock.when(StpUtil::getLoginIdAsLong).thenReturn(0L);
-        stpUtilMock.when(StpUtil::getLoginIdAsString).thenReturn("0");
-        given(stringRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(stringRedisTemplate.opsForList()).willReturn(listOperations);
-        given(redisTemplate.opsForValue()).willReturn(valueOperations);
-        given(redisTemplate.opsForList()).willReturn(listOperations);
-    }
-
-    @AfterEach
-    public void afterEach() {
-        stpUtilMock.close();
-    }
 
     @Test
     void botQuitGameRoom() {
@@ -214,13 +156,5 @@ class GameRoomUserServiceImplTest {
         given(mapper.alreadyJoinByCreateUserId(any())).willReturn(t);
         result = service.isIAmIn(1L, 1L);
         assertTrue(result);
-    }
-
-    @TestConfiguration
-    static class GameRoomUserServiceImplTestConfiguration {
-        @Bean
-        public IGameRoomUserService service() {
-            return new GameRoomUserServiceImpl();
-        }
     }
 }

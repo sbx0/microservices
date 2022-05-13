@@ -3,7 +3,9 @@ package cn.sbx0.microservices.uno.logic;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.bot.RandomBot;
 import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
+import cn.sbx0.microservices.uno.entity.CarPoint;
 import cn.sbx0.microservices.uno.entity.CardEntity;
+import cn.sbx0.microservices.uno.entity.MessageChannel;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import cn.sbx0.microservices.uno.service.IMessageService;
 import org.springframework.context.annotation.Lazy;
@@ -67,7 +69,7 @@ public class BasicGameRule {
             if (currentUserId.equals(previous.getUserId())) {
                 canPlay = true;
             }
-            if (current.getPoint().contains("wild")) {
+            if (current.getPoint().contains(CarPoint.WILD)) {
                 canPlay = true;
             }
             if (current.getColor().equals(previous.getColor())) {
@@ -84,7 +86,7 @@ public class BasicGameRule {
 
     public boolean judgePenaltyCards(CardEntity previous, CardEntity current, String roomCode) {
         if (previous != null) {
-            if (("wild draw four".equals(previous.getPoint()) && !"wild draw four".equals(current.getPoint())) || ("draw two".equals(previous.getPoint()) && !"draw two".equals(current.getPoint()) && !"wild draw four".equals(current.getPoint()))) {
+            if ((CarPoint.WILD_DRAW_FOUR.equals(previous.getPoint()) && !CarPoint.WILD_DRAW_FOUR.equals(current.getPoint())) || (CarPoint.DRAW_TWO.equals(previous.getPoint()) && !CarPoint.DRAW_TWO.equals(current.getPoint()) && !CarPoint.WILD_DRAW_FOUR.equals(current.getPoint()))) {
                 String penaltyCardsKey = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
                 String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
                 int size = 0;
@@ -107,7 +109,7 @@ public class BasicGameRule {
             redisTemplate.opsForList().rightPop(key);
         }
         redisTemplate.opsForList().leftPush(key, card);
-        nonBlockingService.execute(() -> messageService.send(roomCode, "discard_cards", "*", card));
+        nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.DISCARD_CARDS, "*", card));
     }
 
     public void functionCard(String roomCode, CardEntity card) {
@@ -115,22 +117,22 @@ public class BasicGameRule {
         String direction;
         int size = 2;
         switch (card.getPoint()) {
-            case "reverse":
+            case CarPoint.REVERSE:
                 key = GameRedisKeyConstant.ROOM_DIRECTION.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
                 direction = stringRedisTemplate.opsForValue().get(key);
-                if ("normal".equals(direction)) {
-                    direction = "reverse";
+                if (CarPoint.NORMAL.equals(direction)) {
+                    direction = CarPoint.REVERSE;
                 } else {
-                    direction = "normal";
+                    direction = CarPoint.NORMAL;
                 }
                 stringRedisTemplate.opsForValue().set(key, direction);
                 String finalDirection = direction;
-                nonBlockingService.execute(() -> messageService.send(roomCode, "direction", "*", finalDirection));
+                nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.DIRECTION, "*", finalDirection));
                 step(roomCode, 1);
                 return;
-            case "wild draw four":
+            case CarPoint.WILD_DRAW_FOUR:
                 size = 4;
-            case "draw two":
+            case CarPoint.DRAW_TWO:
                 key = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
                 String numberStr = stringRedisTemplate.opsForValue().get(key);
                 if (numberStr == null) {
@@ -140,10 +142,10 @@ public class BasicGameRule {
                 number += size;
                 String value = String.valueOf(number);
                 stringRedisTemplate.opsForValue().set(key, value);
-                nonBlockingService.execute(() -> messageService.send(roomCode, "penalty_cards", "*", value));
+                nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.PENALTY_CARDS, "*", value));
                 step(roomCode, 1);
                 return;
-            case "skip":
+            case CarPoint.SKIP:
                 step(roomCode, 2);
                 return;
             default:
@@ -162,14 +164,14 @@ public class BasicGameRule {
         String directionKey = GameRedisKeyConstant.ROOM_DIRECTION.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
         String direction = stringRedisTemplate.opsForValue().get(directionKey);
         int newIndex = Integer.parseInt(currentGamer);
-        if ("normal".equals(direction)) {
+        if (CarPoint.NORMAL.equals(direction)) {
             newIndex = (newIndex + step) % gamers.size();
         } else {
             newIndex = (newIndex - step + gamers.size()) % gamers.size();
         }
         stringRedisTemplate.opsForValue().set(key, String.valueOf(newIndex));
         int finalNewIndex = newIndex;
-        nonBlockingService.execute(() -> messageService.send(roomCode, "who_turn", "*", String.valueOf(finalNewIndex)));
+        nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.WHO_TURN, "*", String.valueOf(finalNewIndex)));
         randomBot.notify(roomCode, gamers.get(newIndex).getId());
         stringRedisTemplate.expire(drawKey, Duration.ZERO);
     }

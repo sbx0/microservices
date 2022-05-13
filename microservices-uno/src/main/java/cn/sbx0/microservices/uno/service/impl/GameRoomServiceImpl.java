@@ -117,7 +117,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
         String directionKey = GameRedisKeyConstant.ROOM_DIRECTION.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
         String direction = stringRedisTemplate.opsForValue().get(directionKey);
         if (!StringUtils.hasText(direction)) {
-            direction = "normal";
+            direction = CarPoint.NORMAL;
         }
         vo.setDirection(direction);
         return vo;
@@ -140,7 +140,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
             cardService.initGame(roomCode);
             for (AccountVO gamer : gamers) {
                 List<CardEntity> cardEntities = cardService.drawCard(roomCode, gamer.getId(), 7);
-                nonBlockingService.execute(() -> messageService.send(roomCode, "draw_card", gamer.getId().toString(), cardEntities));
+                nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.DRAW_CARD, gamer.getId().toString(), cardEntities));
             }
             randomBot.notify(roomCode, gamers.get(0).getId());
         }

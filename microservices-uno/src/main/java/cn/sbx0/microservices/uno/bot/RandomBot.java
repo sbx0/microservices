@@ -2,6 +2,7 @@ package cn.sbx0.microservices.uno.bot;
 
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
+import cn.sbx0.microservices.uno.entity.CarPoint;
 import cn.sbx0.microservices.uno.entity.CardDeckEntity;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.feign.AccountService;
@@ -74,17 +75,17 @@ public class RandomBot {
             if (size > 0) {
                 // see can plus ?
                 for (CardEntity card : cards) {
-                    if ("wild draw four".equals(card.getPoint())) {
+                    if (CarPoint.WILD_DRAW_FOUR.equals(card.getPoint())) {
                         canPlayCards.add(card);
                     }
-                    if ("draw two".equals(card.getPoint()) && "draw two".equals(previousCard.getPoint())) {
+                    if (CarPoint.DRAW_TWO.equals(card.getPoint()) && CarPoint.DRAW_TWO.equals(previousCard.getPoint())) {
                         canPlayCards.add(card);
                     }
                 }
             } else {
                 // filter which can play
                 for (CardEntity card : cards) {
-                    boolean canPlay = card.getPoint().contains("wild");
+                    boolean canPlay = card.getPoint().contains(CarPoint.WILD);
                     if (card.getColor().equals(previousCard.getColor())) {
                         canPlay = true;
                     }
@@ -116,7 +117,7 @@ public class RandomBot {
 
         // random choose color
         String color;
-        if (card.getPoint().contains("wild")) {
+        if (card.getPoint().contains(CarPoint.WILD)) {
             int colorIndex = CardDeckEntity.randomChoose(CardDeckEntity.COLORS.length);
             color = CardDeckEntity.COLORS[colorIndex];
         } else {
