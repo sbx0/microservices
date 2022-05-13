@@ -2,8 +2,8 @@ package cn.sbx0.microservices.uno;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
-import cn.sbx0.microservices.uno.entity.CarColor;
-import cn.sbx0.microservices.uno.entity.CarPoint;
+import cn.sbx0.microservices.uno.constant.CardColor;
+import cn.sbx0.microservices.uno.constant.CardPoint;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import org.mockito.MockedStatic;
 
@@ -22,18 +22,18 @@ public class TestDataProvider {
     public final static List<CardEntity> CARDS = new ArrayList<>();
     public final static String[] UUIDS = new String[24];
     public final static String[] POINTS = {
-            "1", "2", "1", "2", "1", "2", "1", "2",
-            CarPoint.REVERSE, CarPoint.REVERSE, CarPoint.REVERSE, CarPoint.REVERSE,
-            CarPoint.SKIP, CarPoint.SKIP, CarPoint.SKIP, CarPoint.SKIP,
-            CarPoint.DRAW_TWO, CarPoint.DRAW_TWO, CarPoint.DRAW_TWO, CarPoint.DRAW_TWO,
-            CarPoint.WILD_DRAW_FOUR, CarPoint.WILD_DRAW_FOUR, CarPoint.WILD_DRAW_FOUR, CarPoint.WILD_DRAW_FOUR
+            CardPoint.ONE, CardPoint.TWO, CardPoint.ONE, CardPoint.TWO, CardPoint.ONE, CardPoint.TWO, CardPoint.ONE, CardPoint.TWO,
+            CardPoint.REVERSE, CardPoint.REVERSE, CardPoint.REVERSE, CardPoint.REVERSE,
+            CardPoint.SKIP, CardPoint.SKIP, CardPoint.SKIP, CardPoint.SKIP,
+            CardPoint.DRAW_TWO, CardPoint.DRAW_TWO, CardPoint.DRAW_TWO, CardPoint.DRAW_TWO,
+            CardPoint.WILD_DRAW_FOUR, CardPoint.WILD_DRAW_FOUR, CardPoint.WILD_DRAW_FOUR, CardPoint.WILD_DRAW_FOUR
     };
     public final static String[] COLORS = {
-            CarColor.RED, CarColor.RED, CarColor.YELLOW, CarColor.YELLOW, CarColor.BLUE, CarColor.BLUE, CarColor.GREEN, CarColor.GREEN,
-            CarColor.RED, CarColor.YELLOW, CarColor.BLUE, CarColor.GREEN,
-            CarColor.RED, CarColor.YELLOW, CarColor.BLUE, CarColor.GREEN,
-            CarColor.RED, CarColor.YELLOW, CarColor.BLUE, CarColor.GREEN,
-            CarColor.RED, CarColor.YELLOW, CarColor.BLUE, CarColor.GREEN
+            CardColor.RED, CardColor.RED, CardColor.YELLOW, CardColor.YELLOW, CardColor.BLUE, CardColor.BLUE, CardColor.GREEN, CardColor.GREEN,
+            CardColor.RED, CardColor.YELLOW, CardColor.BLUE, CardColor.GREEN,
+            CardColor.RED, CardColor.YELLOW, CardColor.BLUE, CardColor.GREEN,
+            CardColor.RED, CardColor.YELLOW, CardColor.BLUE, CardColor.GREEN,
+            CardColor.RED, CardColor.YELLOW, CardColor.BLUE, CardColor.GREEN
     };
     public static MockedStatic<StpUtil> stpUtil;
 

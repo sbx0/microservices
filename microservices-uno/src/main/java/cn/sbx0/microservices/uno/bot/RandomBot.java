@@ -1,8 +1,8 @@
 package cn.sbx0.microservices.uno.bot;
 
 import cn.sbx0.microservices.entity.AccountVO;
-import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
-import cn.sbx0.microservices.uno.entity.CarPoint;
+import cn.sbx0.microservices.uno.constant.CardPoint;
+import cn.sbx0.microservices.uno.constant.GameRedisKey;
 import cn.sbx0.microservices.uno.entity.CardDeckEntity;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.feign.AccountService;
@@ -46,7 +46,7 @@ public class RandomBot {
 
     public void playCard(String roomCode) {
         initId();
-        String discardKey = GameRedisKeyConstant.ROOM_DISCARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String discardKey = GameRedisKey.ROOM_DISCARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         CardEntity previousCard = redisTemplate.opsForList().index(discardKey, 0);
         List<CardEntity> cards = gameCardService.getCardsByUserId(roomCode, id);
 
@@ -66,7 +66,7 @@ public class RandomBot {
             // match play
             canPlayCards = new ArrayList<>();
             // see penalty cards
-            String penaltyKey = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+            String penaltyKey = GameRedisKey.ROOM_PENALTY.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
             String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyKey);
             int size = 0;
             if (StringUtils.hasText(penaltyCards)) {
@@ -75,17 +75,17 @@ public class RandomBot {
             if (size > 0) {
                 // see can plus ?
                 for (CardEntity card : cards) {
-                    if (CarPoint.WILD_DRAW_FOUR.equals(card.getPoint())) {
+                    if (CardPoint.WILD_DRAW_FOUR.equals(card.getPoint())) {
                         canPlayCards.add(card);
                     }
-                    if (CarPoint.DRAW_TWO.equals(card.getPoint()) && CarPoint.DRAW_TWO.equals(previousCard.getPoint())) {
+                    if (CardPoint.DRAW_TWO.equals(card.getPoint()) && CardPoint.DRAW_TWO.equals(previousCard.getPoint())) {
                         canPlayCards.add(card);
                     }
                 }
             } else {
                 // filter which can play
                 for (CardEntity card : cards) {
-                    boolean canPlay = card.getPoint().contains(CarPoint.WILD);
+                    boolean canPlay = card.getPoint().contains(CardPoint.WILD);
                     if (card.getColor().equals(previousCard.getColor())) {
                         canPlay = true;
                     }
@@ -117,7 +117,7 @@ public class RandomBot {
 
         // random choose color
         String color;
-        if (card.getPoint().contains(CarPoint.WILD)) {
+        if (card.getPoint().contains(CardPoint.WILD)) {
             int colorIndex = CardDeckEntity.randomChoose(CardDeckEntity.COLORS.length);
             color = CardDeckEntity.COLORS[colorIndex];
         } else {

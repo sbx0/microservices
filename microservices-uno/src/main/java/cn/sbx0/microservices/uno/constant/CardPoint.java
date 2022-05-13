@@ -1,10 +1,10 @@
-package cn.sbx0.microservices.uno.entity;
+package cn.sbx0.microservices.uno.constant;
 
 /**
  * @author sbx0
- * @since 2022/3/9
+ * @since 2022/5/13
  */
-public class CarPoint {
+public class CardPoint {
     public static final String WILD_DRAW_FOUR = "wild draw four";
     public static final String DRAW_TWO = "draw two";
     public static final String WILD = "wild";

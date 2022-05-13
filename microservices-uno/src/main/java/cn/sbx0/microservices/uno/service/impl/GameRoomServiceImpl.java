@@ -3,7 +3,9 @@ package cn.sbx0.microservices.uno.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.bot.RandomBot;
-import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
+import cn.sbx0.microservices.uno.constant.CardPoint;
+import cn.sbx0.microservices.uno.constant.GameRedisKey;
+import cn.sbx0.microservices.uno.constant.MessageChannel;
 import cn.sbx0.microservices.uno.entity.*;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
 import cn.sbx0.microservices.uno.service.IGameCardService;
@@ -102,22 +104,22 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
         long userId = StpUtil.getLoginIdAsLong();
         GameRoomInfoVO vo = GameRoomConverter.INSTANCE.entityToInfoVO(room);
         vo.setIsIAmIn(userService.isIAmIn(room.getId(), userId));
-        String currentGamerKey = GameRedisKeyConstant.CURRENT_GAMER.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String currentGamerKey = GameRedisKey.CURRENT_GAMER.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         String currentGamerStr = stringRedisTemplate.opsForValue().get(currentGamerKey);
         if (currentGamerStr == null) {
             currentGamerStr = "0";
         }
         vo.setCurrentGamer(Integer.parseInt(currentGamerStr));
-        String penaltyCardsKey = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String penaltyCardsKey = GameRedisKey.ROOM_PENALTY.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
         if (!StringUtils.hasText(penaltyCards)) {
             penaltyCards = "0";
         }
         vo.setPenaltyCards(Integer.parseInt(penaltyCards));
-        String directionKey = GameRedisKeyConstant.ROOM_DIRECTION.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String directionKey = GameRedisKey.ROOM_DIRECTION.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         String direction = stringRedisTemplate.opsForValue().get(directionKey);
         if (!StringUtils.hasText(direction)) {
-            direction = CarPoint.NORMAL;
+            direction = CardPoint.NORMAL;
         }
         vo.setDirection(direction);
         return vo;

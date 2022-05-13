@@ -2,11 +2,11 @@ package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.AccountVO;
-import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
+import cn.sbx0.microservices.uno.constant.GameRedisKey;
+import cn.sbx0.microservices.uno.constant.MessageChannel;
 import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomUserEntity;
-import cn.sbx0.microservices.uno.entity.MessageChannel;
 import cn.sbx0.microservices.uno.feign.AccountService;
 import cn.sbx0.microservices.uno.mapper.GameRoomUserMapper;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
@@ -116,8 +116,8 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
             account.setId(one.getUserId());
             account.setUsername(one.getUsername());
             account.setNickname(one.getUsername());
-            String sizeKey = GameRedisKeyConstant.USER_CARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode)
-                    .replaceAll(GameRedisKeyConstant.USER_ID, one.getUserId().toString());
+            String sizeKey = GameRedisKey.USER_CARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode)
+                    .replaceAll(GameRedisKey.USER_ID, one.getUserId().toString());
             Long size = stringRedisTemplate.opsForList().size(sizeKey);
             if (size == null) {
                 size = 0L;

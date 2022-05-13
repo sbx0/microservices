@@ -1,7 +1,7 @@
 package cn.sbx0.microservices.uno.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
-import cn.sbx0.microservices.uno.entity.CarColor;
+import cn.sbx0.microservices.uno.constant.CardColor;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.service.impl.GameCardServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class GameCardControllerTest extends BaseControllerTest {
 
         CardEntity card = new CardEntity();
         card.setUuid("d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a");
-        card.setColor(CarColor.RED);
+        card.setColor(CardColor.RED);
         card.setUserId(1L);
         card.setPoint("4");
         cards.add(card);
@@ -45,7 +45,7 @@ class GameCardControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value("0"))
-                .andExpect(jsonPath("$.data[0].color").value(CarColor.RED))
+                .andExpect(jsonPath("$.data[0].color").value(CardColor.RED))
                 .andExpect(jsonPath("$.data[0].point").value(4))
                 .andReturn().getResponse().getContentAsString();
     }
@@ -56,7 +56,7 @@ class GameCardControllerTest extends BaseControllerTest {
 
         CardEntity card = new CardEntity();
         card.setUuid("d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a");
-        card.setColor(CarColor.RED);
+        card.setColor(CardColor.RED);
         card.setUserId(1L);
         card.setPoint("4");
         cards.add(card);
@@ -67,7 +67,7 @@ class GameCardControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value("0"))
-                .andExpect(jsonPath("$.data[0].color").value(CarColor.RED))
+                .andExpect(jsonPath("$.data[0].color").value(CardColor.RED))
                 .andExpect(jsonPath("$.data[0].point").value(4))
                 .andReturn().getResponse().getContentAsString();
     }
@@ -75,14 +75,14 @@ class GameCardControllerTest extends BaseControllerTest {
     @Test
     void playCard() throws Exception {
         String uuid = "d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a";
-        String color = CarColor.RED;
+        String color = CardColor.RED;
 
         stpUtil.when(StpUtil::getLoginIdAsLong).thenReturn(0L);
 
         given(service.playCard(ROOM_CODE, uuid, color, 0L)).willReturn(true);
 
         mvc.perform(get("/uno/card/play/" + ROOM_CODE + "/" + uuid)
-                        .queryParam("color", CarColor.RED)
+                        .queryParam("color", CardColor.RED)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value("0"))
@@ -98,7 +98,7 @@ class GameCardControllerTest extends BaseControllerTest {
 
         CardEntity card = new CardEntity();
         card.setUuid("d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a");
-        card.setColor(CarColor.RED);
+        card.setColor(CardColor.RED);
         card.setUserId(1L);
         card.setPoint("4");
         cards.add(card);
@@ -109,7 +109,7 @@ class GameCardControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value("0"))
-                .andExpect(jsonPath("$.data[0].color").value(CarColor.RED))
+                .andExpect(jsonPath("$.data[0].color").value(CardColor.RED))
                 .andExpect(jsonPath("$.data[0].point").value(4))
                 .andReturn().getResponse().getContentAsString();
     }
@@ -120,7 +120,7 @@ class GameCardControllerTest extends BaseControllerTest {
 
         CardEntity card = new CardEntity();
         card.setUuid("d8ffa264-497d-43ad-a1f0-b2f0b7aa9d7a");
-        card.setColor(CarColor.RED);
+        card.setColor(CardColor.RED);
         card.setUserId(1L);
         card.setPoint("4");
         cards.add(card);
@@ -131,7 +131,7 @@ class GameCardControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value("0"))
-                .andExpect(jsonPath("$.data[0].color").value(CarColor.RED))
+                .andExpect(jsonPath("$.data[0].color").value(CardColor.RED))
                 .andExpect(jsonPath("$.data[0].point").value(4))
                 .andReturn().getResponse().getContentAsString();
     }

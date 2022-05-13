@@ -2,10 +2,10 @@ package cn.sbx0.microservices.uno.logic;
 
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.bot.RandomBot;
-import cn.sbx0.microservices.uno.constant.GameRedisKeyConstant;
-import cn.sbx0.microservices.uno.entity.CarPoint;
+import cn.sbx0.microservices.uno.constant.CardPoint;
+import cn.sbx0.microservices.uno.constant.GameRedisKey;
+import cn.sbx0.microservices.uno.constant.MessageChannel;
 import cn.sbx0.microservices.uno.entity.CardEntity;
-import cn.sbx0.microservices.uno.entity.MessageChannel;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import cn.sbx0.microservices.uno.service.IMessageService;
 import org.springframework.context.annotation.Lazy;
@@ -42,7 +42,7 @@ public class BasicGameRule {
     private RandomBot randomBot;
 
     public AccountVO getCurrentGamer(String roomCode) {
-        String currentGamerKey = GameRedisKeyConstant.CURRENT_GAMER.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String currentGamerKey = GameRedisKey.CURRENT_GAMER.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         String currentGamerStr = stringRedisTemplate.opsForValue().get(currentGamerKey);
         if (!StringUtils.hasText(currentGamerStr)) {
             currentGamerStr = "0";
@@ -69,7 +69,7 @@ public class BasicGameRule {
             if (currentUserId.equals(previous.getUserId())) {
                 canPlay = true;
             }
-            if (current.getPoint().contains(CarPoint.WILD)) {
+            if (current.getPoint().contains(CardPoint.WILD)) {
                 canPlay = true;
             }
             if (current.getColor().equals(previous.getColor())) {
@@ -86,8 +86,8 @@ public class BasicGameRule {
 
     public boolean judgePenaltyCards(CardEntity previous, CardEntity current, String roomCode) {
         if (previous != null) {
-            if ((CarPoint.WILD_DRAW_FOUR.equals(previous.getPoint()) && !CarPoint.WILD_DRAW_FOUR.equals(current.getPoint())) || (CarPoint.DRAW_TWO.equals(previous.getPoint()) && !CarPoint.DRAW_TWO.equals(current.getPoint()) && !CarPoint.WILD_DRAW_FOUR.equals(current.getPoint()))) {
-                String penaltyCardsKey = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+            if ((CardPoint.WILD_DRAW_FOUR.equals(previous.getPoint()) && !CardPoint.WILD_DRAW_FOUR.equals(current.getPoint())) || (CardPoint.DRAW_TWO.equals(previous.getPoint()) && !CardPoint.DRAW_TWO.equals(current.getPoint()) && !CardPoint.WILD_DRAW_FOUR.equals(current.getPoint()))) {
+                String penaltyCardsKey = GameRedisKey.ROOM_PENALTY.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
                 String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
                 int size = 0;
                 if (StringUtils.hasText(penaltyCards)) {
@@ -100,7 +100,7 @@ public class BasicGameRule {
     }
 
     public void discardCard(String roomCode, CardEntity card) {
-        String key = GameRedisKeyConstant.ROOM_DISCARDS.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String key = GameRedisKey.ROOM_DISCARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         Long size = redisTemplate.opsForList().size(key);
         if (size == null) {
             size = 0L;
@@ -117,23 +117,23 @@ public class BasicGameRule {
         String direction;
         int size = 2;
         switch (card.getPoint()) {
-            case CarPoint.REVERSE:
-                key = GameRedisKeyConstant.ROOM_DIRECTION.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+            case CardPoint.REVERSE:
+                key = GameRedisKey.ROOM_DIRECTION.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
                 direction = stringRedisTemplate.opsForValue().get(key);
-                if (CarPoint.NORMAL.equals(direction)) {
-                    direction = CarPoint.REVERSE;
+                if (CardPoint.NORMAL.equals(direction)) {
+                    direction = CardPoint.REVERSE;
                 } else {
-                    direction = CarPoint.NORMAL;
+                    direction = CardPoint.NORMAL;
                 }
                 stringRedisTemplate.opsForValue().set(key, direction);
                 String finalDirection = direction;
                 nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.DIRECTION, "*", finalDirection));
                 step(roomCode, 1);
                 return;
-            case CarPoint.WILD_DRAW_FOUR:
+            case CardPoint.WILD_DRAW_FOUR:
                 size = 4;
-            case CarPoint.DRAW_TWO:
-                key = GameRedisKeyConstant.ROOM_PENALTY.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+            case CardPoint.DRAW_TWO:
+                key = GameRedisKey.ROOM_PENALTY.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
                 String numberStr = stringRedisTemplate.opsForValue().get(key);
                 if (numberStr == null) {
                     numberStr = "0";
@@ -145,7 +145,7 @@ public class BasicGameRule {
                 nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.PENALTY_CARDS, "*", value));
                 step(roomCode, 1);
                 return;
-            case CarPoint.SKIP:
+            case CardPoint.SKIP:
                 step(roomCode, 2);
                 return;
             default:
@@ -154,17 +154,17 @@ public class BasicGameRule {
     }
 
     public void step(String roomCode, int step) {
-        String drawKey = GameRedisKeyConstant.ROOM_DRAW.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
-        String key = GameRedisKeyConstant.CURRENT_GAMER.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String drawKey = GameRedisKey.ROOM_DRAW.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
+        String key = GameRedisKey.CURRENT_GAMER.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         String currentGamer = stringRedisTemplate.opsForValue().get(key);
         if (currentGamer == null) {
             currentGamer = "0";
         }
         List<AccountVO> gamers = userService.listByGameRoom(roomCode);
-        String directionKey = GameRedisKeyConstant.ROOM_DIRECTION.replaceAll(GameRedisKeyConstant.ROOM_CODE, roomCode);
+        String directionKey = GameRedisKey.ROOM_DIRECTION.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         String direction = stringRedisTemplate.opsForValue().get(directionKey);
         int newIndex = Integer.parseInt(currentGamer);
-        if (CarPoint.NORMAL.equals(direction)) {
+        if (CardPoint.NORMAL.equals(direction)) {
             newIndex = (newIndex + step) % gamers.size();
         } else {
             newIndex = (newIndex - step + gamers.size()) % gamers.size();
