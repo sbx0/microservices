@@ -15,7 +15,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.util.StringUtils;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -62,7 +67,55 @@ class AccountControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("code").value("0"))
                 .andReturn().getResponse().getContentAsString();
 
-        System.out.println("response = " + response);
+        assertTrue(StringUtils.hasText(response));
+    }
+
+    @Test
+    void logout() throws Exception {
+        String response = mvc.perform(post("/logout")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        assertFalse(StringUtils.hasText(response));
+    }
+
+    @Test
+    void register() throws Exception {
+        LoginDTO loginDTO = new LoginDTO();
+        loginDTO.setUsername("test");
+        loginDTO.setPassword("test");
+
+        given(service.register(any())).willReturn(new ResponseVO<>(ResponseVO.SUCCESS, true));
+
+
+        String response = mvc.perform(post("/register")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("code").value("0"))
+                .andReturn().getResponse().getContentAsString();
+
+        assertTrue(StringUtils.hasText(response));
+    }
+
+    @Test
+    void loginInfo() throws Exception {
+        AccountVO account = new AccountVO();
+        account.setUsername("test");
+        given(service.loginInfo(anyLong())).willReturn(account);
+
+        String response = mvc.perform(get("/loginInfo")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("code").value("0"))
+                .andExpect(jsonPath("$.data.username").value("test"))
+                .andReturn().getResponse().getContentAsString();
+
+        assertTrue(StringUtils.hasText(response));
     }
 
     @Test
@@ -79,7 +132,24 @@ class AccountControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("username").value(account.getUsername()))
                 .andReturn().getResponse().getContentAsString();
 
-        System.out.println("response = " + response);
+        assertTrue(StringUtils.hasText(response));
+    }
+
+    @Test
+    void findById() throws Exception {
+        AccountVO account = new AccountVO();
+        account.setId(1L);
+        account.setUsername("test");
+        given(service.loginInfo(anyLong())).willReturn(account);
+
+        String response = mvc.perform(get("/findById?id=" + account.getId())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(account.getId()))
+                .andExpect(jsonPath("username").value(account.getUsername()))
+                .andReturn().getResponse().getContentAsString();
+
+        assertTrue(StringUtils.hasText(response));
     }
 
 }

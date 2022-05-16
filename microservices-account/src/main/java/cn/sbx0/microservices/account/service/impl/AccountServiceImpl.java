@@ -52,15 +52,16 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
     }
 
     @Override
-    public boolean register(LoginDTO dto) {
+    public ResponseVO<Boolean> register(LoginDTO dto) {
         AccountEntity exist = findByUsername(dto.getUsername());
         if (exist != null) {
-            return false;
+            return new ResponseVO<>(ResponseVO.FAILED, null, "account exist!");
         }
         exist = new AccountEntity();
         exist.setUsername(dto.getUsername());
         exist.setPassword(BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt()));
-        return getBaseMapper().insert(exist) > 0;
+        boolean result = getBaseMapper().insert(exist) > 0;
+        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 
     @Override
