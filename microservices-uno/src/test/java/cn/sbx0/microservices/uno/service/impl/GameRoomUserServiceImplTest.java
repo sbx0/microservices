@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cn.sbx0.microservices.uno.TestDataProvider.GAMERS;
+import static cn.sbx0.microservices.uno.TestDataProvider.USER_ID;
 import static cn.sbx0.microservices.uno.TestDataProvider.ROOM_CODE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -156,5 +157,17 @@ class GameRoomUserServiceImplTest extends BaseServiceImplTest {
         given(mapper.alreadyJoinByCreateUserId(any())).willReturn(t);
         result = service.isIAmIn(1L, 1L);
         assertTrue(result);
+    }
+
+    @Test
+    void whereAmI() {
+        GameRoomUserEntity user = new GameRoomUserEntity();
+        user.setRoomId(1L);
+        given(mapper.alreadyJoinByCreateUserId(anyLong())).willReturn(user);
+        GameRoomEntity room = new GameRoomEntity();
+        room.setRoomCode(ROOM_CODE);
+        given(gameRoomService.getById(anyLong())).willReturn(room);
+        String result = service.whereAmI(USER_ID);
+        assertEquals(ROOM_CODE, result);
     }
 }
