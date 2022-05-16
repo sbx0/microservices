@@ -16,10 +16,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static cn.sbx0.microservices.uno.TestDataProvider.GAMERS;
-import static cn.sbx0.microservices.uno.TestDataProvider.USER_ID;
 import static cn.sbx0.microservices.uno.TestDataProvider.ROOM_CODE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -160,14 +161,21 @@ class GameRoomUserServiceImplTest extends BaseServiceImplTest {
     }
 
     @Test
-    void whereAmI() {
-        GameRoomUserEntity user = new GameRoomUserEntity();
-        user.setRoomId(1L);
-        given(mapper.alreadyJoinByCreateUserId(anyLong())).willReturn(user);
+    void createGameRoomByUserIds() {
+        given(gameRoomService.create(any(), anyLong())).willReturn(ROOM_CODE);
         GameRoomEntity room = new GameRoomEntity();
+        room.setId(1L);
         room.setRoomCode(ROOM_CODE);
-        given(gameRoomService.getById(anyLong())).willReturn(room);
-        String result = service.whereAmI(USER_ID);
+        room.setPlayersSize(1);
+        given(gameRoomService.getOneByRoomCode(ROOM_CODE)).willReturn(room);
+        AccountVO account = new AccountVO();
+        account.setNickname("test");
+        given(accountService.findById(anyLong())).willReturn(account);
+        Set<Long> ids = new HashSet<>();
+        ids.add(1L);
+        ids.add(2L);
+        ids.add(3L);
+        String result = service.createGameRoomByUserIds(ids);
         assertEquals(ROOM_CODE, result);
     }
 }
