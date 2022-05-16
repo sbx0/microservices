@@ -1,7 +1,6 @@
 package cn.sbx0.microservices.account.controller;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
-import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.account.mapper.AccountMapper;
 import cn.sbx0.microservices.account.service.impl.AccountServiceImpl;
 import cn.sbx0.microservices.entity.AccountEntity;
@@ -10,16 +9,12 @@ import cn.sbx0.microservices.entity.LoginDTO;
 import cn.sbx0.microservices.entity.ResponseVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -31,24 +26,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author sbx0
  * @since 2022/3/15
  */
-
-@ExtendWith(SpringExtension.class)
+@MockBean(classes = {AccountServiceImpl.class, AccountMapper.class})
 @WebMvcTest(controllers = AccountController.class)
-@ActiveProfiles("test")
-class AccountControllerTest {
+class AccountControllerTest extends BaseControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    MockMvc mvc;
-
-    @MockBean
-    AccountServiceImpl service;
-
-    @MockBean
-    AccountMapper mapper;
-
-    @MockBean
-    StpUtil stpUtil;
+    private AccountServiceImpl service;
 
     @Test
     void login() throws Exception {
@@ -71,9 +55,9 @@ class AccountControllerTest {
         given(service.login(BDDMockito.any())).willReturn(new ResponseVO<>(ResponseVO.SUCCESS, saTokenInfo));
 
         String response = mvc.perform(post("/login")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginDTO)))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value("0"))
                 .andReturn().getResponse().getContentAsString();
@@ -89,7 +73,7 @@ class AccountControllerTest {
         given(service.findByUserName("test")).willReturn(account);
 
         String response = mvc.perform(get("/findByUserName?name=" + account.getUsername())
-                        .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(account.getId()))
                 .andExpect(jsonPath("username").value(account.getUsername()))
