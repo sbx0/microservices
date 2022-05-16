@@ -31,13 +31,13 @@ public class AccountController extends BaseController<AccountServiceImpl, Accoun
     }
 
     @PostMapping("/register")
-    public Boolean register(@RequestBody LoginDTO dto) {
+    public ResponseVO<Boolean> register(@RequestBody LoginDTO dto) {
         return service.register(dto);
     }
 
-    @GetMapping("/user/loginInfo")
-    public AccountVO loginInfo() {
-        return service.loginInfo(StpUtil.getLoginIdAsLong());
+    @GetMapping("/loginInfo")
+    public ResponseVO<AccountVO> loginInfo() {
+        return new ResponseVO<>(ResponseVO.SUCCESS, service.loginInfo(StpUtil.getLoginIdAsLong()));
     }
 
     @GetMapping("/findByUserName")

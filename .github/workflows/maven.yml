@@ -24,7 +24,7 @@ jobs:
         run: mvn -DskipTests clean package
       - name: Generate Test Coverage Report
         if: github.ref == 'refs/heads/master'
-        run: mvn clean verify
+        run: mvn verify
       - name: Upload Report
         if: github.ref == 'refs/heads/master'
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh)

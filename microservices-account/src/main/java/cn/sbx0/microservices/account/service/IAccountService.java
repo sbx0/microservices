@@ -22,7 +22,7 @@ public interface IAccountService extends IService<AccountEntity> {
 
     void logout();
 
-    boolean register(LoginDTO dto);
+    ResponseVO<Boolean> register(LoginDTO dto);
 
     AccountVO loginInfo(Long userId);
 
