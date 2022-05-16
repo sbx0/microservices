@@ -3,7 +3,6 @@ package cn.sbx0.microservices.account.controller;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.account.mapper.AccountMapper;
-import cn.sbx0.microservices.account.mapper.ClientConfigMapper;
 import cn.sbx0.microservices.account.service.impl.AccountServiceImpl;
 import cn.sbx0.microservices.entity.AccountEntity;
 import cn.sbx0.microservices.entity.AccountVO;
@@ -47,9 +46,6 @@ class AccountControllerTest {
 
     @MockBean
     AccountMapper mapper;
-
-    @MockBean
-    ClientConfigMapper clientConfigMapper;
 
     @MockBean
     StpUtil stpUtil;
