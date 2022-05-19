@@ -4,9 +4,11 @@ import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.RedisTestSetup;
 import cn.sbx0.microservices.uno.bot.RandomBot;
 import cn.sbx0.microservices.uno.constant.CardColor;
-import cn.sbx0.microservices.uno.constant.GameRedisKey;
 import cn.sbx0.microservices.uno.constant.CardPoint;
+import cn.sbx0.microservices.uno.constant.GameRedisKey;
 import cn.sbx0.microservices.uno.entity.CardEntity;
+import cn.sbx0.microservices.uno.service.IGameResultService;
+import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import cn.sbx0.microservices.uno.service.IMessageService;
 import org.junit.jupiter.api.Test;
@@ -17,22 +19,20 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.UUID;
+
 import static cn.sbx0.microservices.uno.TestDataProvider.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-
-import java.util.UUID;
 
 /**
  * @author sbx0
  * @since 2022/5/13
  */
-@SuppressWarnings({ "SpringJavaAutowiredMembersInspection" })
+@SuppressWarnings({"SpringJavaAutowiredMembersInspection"})
 @ExtendWith(SpringExtension.class)
-@MockBean(classes = { IGameRoomUserService.class, IMessageService.class, RandomBot.class })
+@MockBean(classes = {IGameRoomUserService.class, IGameRoomService.class, IGameResultService.class, IMessageService.class, RandomBot.class})
 class BasicGameRuleTest extends RedisTestSetup {
     @Autowired
     private IGameRoomUserService userService;

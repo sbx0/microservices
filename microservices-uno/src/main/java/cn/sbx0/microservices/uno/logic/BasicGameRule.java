@@ -6,6 +6,10 @@ import cn.sbx0.microservices.uno.constant.CardPoint;
 import cn.sbx0.microservices.uno.constant.GameRedisKey;
 import cn.sbx0.microservices.uno.constant.MessageChannel;
 import cn.sbx0.microservices.uno.entity.CardEntity;
+import cn.sbx0.microservices.uno.entity.GameResultEntity;
+import cn.sbx0.microservices.uno.entity.GameRoomEntity;
+import cn.sbx0.microservices.uno.service.IGameResultService;
+import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
 import cn.sbx0.microservices.uno.service.IMessageService;
 import org.springframework.context.annotation.Lazy;
@@ -19,8 +23,10 @@ import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * @author sbx0
@@ -35,7 +41,12 @@ public class BasicGameRule {
     private StringRedisTemplate stringRedisTemplate;
     @Lazy
     @Resource
+    private IGameRoomService roomService;
+    @Lazy
+    @Resource
     private IGameRoomUserService userService;
+    @Resource
+    private IGameResultService resultService;
     @Resource
     private IMessageService messageService;
     @Resource
@@ -161,20 +172,58 @@ public class BasicGameRule {
             currentGamer = "0";
         }
         List<AccountVO> gamers = userService.listByGameRoom(roomCode);
+        List<GameResultEntity> results = resultService.listByGameRoomCode(roomCode);
+        Set<Long> ids = results.stream().map(GameResultEntity::getUserId)
+                .collect(Collectors.toSet());
         String directionKey = GameRedisKey.ROOM_DIRECTION.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
         String direction = stringRedisTemplate.opsForValue().get(directionKey);
-        int newIndex = Integer.parseInt(currentGamer);
-        if (CardPoint.NORMAL.equals(direction)) {
-            newIndex = (newIndex + step) % gamers.size();
-        } else {
-            newIndex = (newIndex - step + gamers.size()) % gamers.size();
-        }
+        int newIndex = whoNext(Integer.parseInt(currentGamer), gamers, ids, direction, step);
         stringRedisTemplate.opsForValue().set(key, String.valueOf(newIndex));
-        int finalNewIndex = newIndex;
-        nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.WHO_TURN, "*", String.valueOf(finalNewIndex)));
+        nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.WHO_TURN, "*", String.valueOf(newIndex)));
         randomBot.notify(roomCode, gamers.get(newIndex).getId());
         stringRedisTemplate.expire(drawKey, Duration.ZERO);
     }
 
+    public int whoNext(int currentGamer, List<AccountVO> gamers, Set<Long> ids, String direction, int step) {
+        int stepCount = 0;
+        for (int i = currentGamer; i < gamers.size() && stepCount <= step; i++) {
+            if (ids.contains(gamers.get(i).getId())) {
+                continue;
+            }
+            if (CardPoint.NORMAL.equals(direction)) {
+                stepCount++;
+                i = (i + 1) % gamers.size();
+            } else {
+                stepCount++;
+                i = (i - 1 + gamers.size()) % gamers.size();
+            }
+            if (stepCount == step) {
+                currentGamer = i;
+            }
+        }
+        return currentGamer;
+    }
 
+
+    public void lastCard(String roomCode, Long userId) {
+        // current room users
+        List<AccountVO> gamers = userService.listByGameRoom(roomCode);
+        // room round
+        GameRoomEntity room = roomService.getOneByRoomCode(roomCode);
+        // game result
+        List<GameResultEntity> results = resultService.listByGameRoomId(room.getId());
+        Set<Long> ids = results.stream().map(GameResultEntity::getUserId)
+                .collect(Collectors.toSet());
+        Set<Long> remainIds = gamers.stream().map(AccountVO::getId)
+                .filter(id -> !ids.contains(id))
+                .collect(Collectors.toSet());
+        if (remainIds.contains(userId)) {
+            GameResultEntity gameResult = new GameResultEntity();
+            gameResult.setRoomId(room.getId());
+            gameResult.setRound(room.getRound());
+            gameResult.setUserId(userId);
+            gameResult.setRanking(ids.size() + 1);
+            resultService.save(gameResult);
+        }
+    }
 }
