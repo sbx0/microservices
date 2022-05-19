@@ -40,7 +40,7 @@
         <sa-token.version>1.30.0</sa-token.version>
         <lombok.version>1.18.24</lombok.version>
         <velocity-engine-core.version>2.3</velocity-engine-core.version>
-        <jackson-datatype-jsr310.version>2.13.2</jackson-datatype-jsr310.version>
+        <jackson-datatype-jsr310.version>2.13.3</jackson-datatype-jsr310.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <mockito.version>4.5.1</mockito.version>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
