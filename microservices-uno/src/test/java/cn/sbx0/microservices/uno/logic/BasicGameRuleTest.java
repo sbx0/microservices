@@ -19,6 +19,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import static cn.sbx0.microservices.uno.TestDataProvider.*;
@@ -94,5 +96,54 @@ class BasicGameRuleTest extends RedisTestSetup {
         given(valueOperations.get(GameRedisKey.ROOM_DIRECTION.replaceAll(GameRedisKey.ROOM_CODE, ROOM_CODE))).willReturn(CardPoint.REVERSE);
         given(userService.listByGameRoom(anyString())).willReturn(GAMERS);
         gameRule.functionCard(ROOM_CODE, card);
+    }
+
+    @Test
+    void whoNext1() {
+        Set<Long> ids = new HashSet<>();
+        ids.add(3L);
+        ids.add(5L);
+        assertEquals(1, gameRule.whoNext(0, GAMERS, ids, CardPoint.NORMAL, 1));
+    }
+
+    @Test
+    void whoNext2() {
+        Set<Long> ids = new HashSet<>();
+        ids.add(3L);
+        ids.add(5L);
+        assertEquals(2, gameRule.whoNext(0, GAMERS, ids, CardPoint.NORMAL, 2));
+    }
+
+    @Test
+    void whoNext3() {
+        Set<Long> ids = new HashSet<>();
+        ids.add(3L);
+        ids.add(5L);
+        assertEquals(4, gameRule.whoNext(0, GAMERS, ids, CardPoint.NORMAL, 3));
+    }
+
+    @Test
+    void whoNext4() {
+        Set<Long> ids = new HashSet<>();
+        ids.add(3L);
+        ids.add(5L);
+        assertEquals(0, gameRule.whoNext(0, GAMERS, ids, CardPoint.NORMAL, 4));
+    }
+
+    @Test
+    void whoNext5() {
+        Set<Long> ids = new HashSet<>();
+        ids.add(3L);
+        ids.add(5L);
+        assertEquals(0, gameRule.whoNext(0, GAMERS, ids, CardPoint.REVERSE, 4));
+    }
+
+    @Test
+    void whoNext6() {
+        // 1 2 3 4 5
+        Set<Long> ids = new HashSet<>();
+        ids.add(3L);
+        ids.add(5L);
+        assertEquals(2, gameRule.whoNext(0, GAMERS, ids, CardPoint.REVERSE, 2));
     }
 }

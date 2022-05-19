@@ -186,19 +186,20 @@ public class BasicGameRule {
 
     public int whoNext(int currentGamer, List<AccountVO> gamers, Set<Long> ids, String direction, int step) {
         int stepCount = 0;
-        for (int i = currentGamer; i < gamers.size() && stepCount <= step; i++) {
-            if (ids.contains(gamers.get(i).getId())) {
-                continue;
-            }
+        for (int i = currentGamer; stepCount <= step; ) {
             if (CardPoint.NORMAL.equals(direction)) {
-                stepCount++;
                 i = (i + 1) % gamers.size();
             } else {
-                stepCount++;
                 i = (i - 1 + gamers.size()) % gamers.size();
+            }
+            if (ids.contains(gamers.get(i).getId())) {
+                continue;
+            } else {
+                stepCount++;
             }
             if (stepCount == step) {
                 currentGamer = i;
+                break;
             }
         }
         return currentGamer;
