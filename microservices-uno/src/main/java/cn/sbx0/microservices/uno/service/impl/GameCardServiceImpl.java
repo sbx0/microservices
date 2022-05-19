@@ -63,6 +63,7 @@ public class GameCardServiceImpl implements IGameCardService {
             canPlay = gameRule.judgePenaltyCards(previousCard, currentCard, roomCode);
         }
         if (canPlay) {
+            boolean lastCard = cards.size() == 1;
             cards.remove(currentCard);
             currentCard.setColor(color);
             gameRule.discardCard(roomCode, currentCard);
