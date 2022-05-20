@@ -17,7 +17,7 @@ SOURCE_CONFIGS="$PWD/microservices-configuration/src/main/resources/configuratio
 init() {
   echo "create .env"
   echo "# HOST_CONFIG_LOCATION which is where your configurations files located" >.env
-  sed -i '$a HOST_CONFIG_LOCATION=/mnt/c/Users/JsonSnow/IdeaProjects/microservices/build/configurations' .env
+  sed -i "\$a HOST_CONFIG_LOCATION=$PWD/build/configurations" .env
   sed -i '$a TZ=Asia/Shanghai' .env
   sed -i '$a REGION=wsl' .env
   sed -i '$a VERSION=0.0.0' .env
