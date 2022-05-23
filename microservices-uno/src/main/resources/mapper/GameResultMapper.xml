@@ -11,5 +11,6 @@
         select id, room_id, user_id, round, ranking, create_time
         from game_result
         where room_id = (select id from game_room where room_code = #{roomCode})
+        order by ranking
     </select>
 </mapper>

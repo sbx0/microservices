@@ -1,6 +1,7 @@
 package cn.sbx0.microservices.uno.service;
 
 import cn.sbx0.microservices.uno.entity.GameResultEntity;
+import cn.sbx0.microservices.uno.entity.GameResultVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface IGameResultService extends IService<GameResultEntity> {
     List<GameResultEntity> listByGameRoomId(Long id);
 
     List<GameResultEntity> listByGameRoomCode(String roomCode);
+
+    List<GameResultVO> listByGameRoom(String roomCode);
 }

@@ -33,4 +33,6 @@ public interface IGameRoomUserService extends IService<GameRoomUserEntity> {
     String createGameRoomByUserIds(Set<Long> ids);
 
     String whereAmI(Long userId);
+
+    boolean removeByRoomId(Long id);
 }

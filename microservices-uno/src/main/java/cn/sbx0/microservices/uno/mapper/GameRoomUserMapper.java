@@ -25,4 +25,6 @@ public interface GameRoomUserMapper extends BaseMapper<GameRoomUserEntity> {
     boolean quitGameRoom(Serializable userId);
 
     Integer countByGameRoom(Serializable id);
+
+    boolean removeByRoomId(Long roomId);
 }

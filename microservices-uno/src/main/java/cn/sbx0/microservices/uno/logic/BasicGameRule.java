@@ -235,11 +235,12 @@ public class BasicGameRule {
                 gameResult.setRoomId(room.getId());
                 gameResult.setRound(room.getRound());
                 gameResult.setUserId(lastUserId);
-                gameResult.setRanking(ids.size() + 1);
+                gameResult.setRanking(ids.size() + 2);
                 resultService.save(gameResult);
                 // update room status
                 room.setRoomStatus(GameRoomStatus.ENDING);
                 roomService.updateById(room);
+                userService.removeByRoomId(room.getId());
                 // send sse message
                 nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.ENDING, "*", MessageChannel.ENDING));
             }

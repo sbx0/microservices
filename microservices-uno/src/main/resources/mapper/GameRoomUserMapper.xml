@@ -28,6 +28,11 @@
                      #{entity.userId}
                  AND del_flag = 0)
     </insert>
+    <update id="removeByRoomId">
+        UPDATE game_room_user
+        SET del_flag = 1
+        WHERE room_id = #{roomId}
+    </update>
     <delete id="quitGameRoom">
         delete
         from game_room_user

@@ -44,6 +44,11 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     private IMessageService messageService;
 
     @Override
+    public boolean removeByRoomId(Long roomId) {
+        return getBaseMapper().removeByRoomId(roomId);
+    }
+
+    @Override
     public boolean botQuitGameRoom(String roomCode, String botName) {
         AccountVO account = accountService.findByUserName(botName);
         boolean result = getBaseMapper().quitGameRoom(account.getId());
