@@ -14,4 +14,6 @@ public class MessageChannel {
     public static final String DRAW_CARD = "draw_card";
     public static final String QUIT = "quit";
     public static final String JOIN = "join";
+    // one game round finished
+    public static final String ENDING = "ending";
 }
