@@ -2,6 +2,7 @@ package cn.sbx0.microservices.uno.service.impl;
 
 import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.bot.RandomBot;
+import cn.sbx0.microservices.uno.constant.GameRoomStatus;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomUserEntity;
 import cn.sbx0.microservices.uno.feign.AccountService;
@@ -67,13 +68,13 @@ class GameRoomUserServiceImplTest extends BaseServiceImplTest {
         assertFalse(result);
 
         GameRoomEntity room = new GameRoomEntity();
-        room.setRoomStatus(1);
+        room.setRoomStatus(GameRoomStatus.BEGINNING);
         room.setPlayersSize(2);
         given(gameRoomService.getOneByRoomCode(ROOM_CODE)).willReturn(room);
         result = service.botJoinGameRoom(ROOM_CODE, "botName");
         assertFalse(result);
 
-        room.setRoomStatus(0);
+        room.setRoomStatus(GameRoomStatus.INITIAL);
         given(gameRoomService.getOneByRoomCode(ROOM_CODE)).willReturn(room);
         given(accountService.findByUserName(anyString())).willReturn(GAMERS.get(0));
         given(mapper.atomSave(any(), anyInt())).willReturn(false);
@@ -92,12 +93,12 @@ class GameRoomUserServiceImplTest extends BaseServiceImplTest {
         assertFalse(result);
 
         GameRoomEntity room = new GameRoomEntity();
-        room.setRoomStatus(1);
+        room.setRoomStatus(GameRoomStatus.BEGINNING);
         given(gameRoomService.getOneByRoomCode(ROOM_CODE)).willReturn(room);
         result = service.joinGameRoom(ROOM_CODE);
         assertFalse(result);
 
-        room.setRoomStatus(0);
+        room.setRoomStatus(GameRoomStatus.INITIAL);
         given(gameRoomService.getOneByRoomCode(ROOM_CODE)).willReturn(room);
         given(accountService.loginInfo()).willReturn(GAMERS.get(0));
         given(mapper.atomSave(any(), any())).willReturn(false);

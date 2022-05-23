@@ -5,13 +5,14 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.account.entity.AccountConverter;
 import cn.sbx0.microservices.account.mapper.AccountMapper;
 import cn.sbx0.microservices.account.service.IAccountService;
-import cn.sbx0.microservices.entity.AccountEntity;
-import cn.sbx0.microservices.entity.AccountVO;
-import cn.sbx0.microservices.entity.LoginDTO;
-import cn.sbx0.microservices.entity.ResponseVO;
+import cn.sbx0.microservices.entity.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -74,5 +75,20 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
     public AccountVO findByUserName(String name) {
         AccountEntity entity = getBaseMapper().findByUsername(name);
         return AccountConverter.INSTANCE.entityToVO(entity);
+    }
+
+    @Override
+    public Map<Long, String> mapNameByIds(IDsDTO dto) {
+        Map<Long, String> cache = new HashMap<>();
+        Set<Long> ids = dto.getIds();
+        for (Long id : ids) {
+            AccountEntity account = getBaseMapper().selectById(id);
+            if (account != null) {
+                cache.put(id, account.getUsername());
+            } else {
+                cache.put(id, "not found!");
+            }
+        }
+        return cache;
     }
 }

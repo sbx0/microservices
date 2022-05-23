@@ -1,12 +1,17 @@
 package cn.sbx0.microservices.uno.feign;
 
 import cn.sbx0.microservices.entity.AccountVO;
+import cn.sbx0.microservices.entity.IDsDTO;
 import cn.sbx0.microservices.uno.config.FeignConfiguration;
 import lb.CustomLoadBalancerConfiguration;
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Map;
 
 /**
  * @author sbx0
@@ -23,4 +28,7 @@ public interface AccountService {
 
     @GetMapping(value = "/findById", produces = "application/json")
     AccountVO findById(@RequestParam(value = "id") Long id);
+
+    @PostMapping(value = "/mapNameByIds", produces = "application/json")
+    Map<Long, String> mapNameByIds(@RequestBody IDsDTO dto);
 }

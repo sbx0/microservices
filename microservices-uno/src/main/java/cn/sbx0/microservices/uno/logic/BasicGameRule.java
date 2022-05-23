@@ -4,6 +4,7 @@ import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.bot.RandomBot;
 import cn.sbx0.microservices.uno.constant.CardPoint;
 import cn.sbx0.microservices.uno.constant.GameRedisKey;
+import cn.sbx0.microservices.uno.constant.GameRoomStatus;
 import cn.sbx0.microservices.uno.constant.MessageChannel;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.entity.GameResultEntity;
@@ -206,6 +207,7 @@ public class BasicGameRule {
     }
 
 
+    // todo @Transactional
     public void lastCard(String roomCode, Long userId) {
         // current room users
         List<AccountVO> gamers = userService.listByGameRoom(roomCode);
@@ -225,6 +227,23 @@ public class BasicGameRule {
             gameResult.setUserId(userId);
             gameResult.setRanking(ids.size() + 1);
             resultService.save(gameResult);
+            if (remainIds.size() == 2) {
+                // mark last user complete
+                remainIds.remove(userId);
+                long lastUserId = remainIds.stream().toList().get(0);
+                gameResult = new GameResultEntity();
+                gameResult.setRoomId(room.getId());
+                gameResult.setRound(room.getRound());
+                gameResult.setUserId(lastUserId);
+                gameResult.setRanking(ids.size() + 2);
+                resultService.save(gameResult);
+                // update room status
+                room.setRoomStatus(GameRoomStatus.ENDING);
+                roomService.updateById(room);
+                userService.removeByRoomId(room.getId());
+                // send sse message
+                nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.ENDING, "*", MessageChannel.ENDING));
+            }
         }
     }
 }

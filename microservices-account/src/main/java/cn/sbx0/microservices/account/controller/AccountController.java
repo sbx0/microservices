@@ -6,11 +6,10 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.account.mapper.AccountMapper;
 import cn.sbx0.microservices.account.service.impl.AccountServiceImpl;
 import cn.sbx0.microservices.controller.BaseController;
-import cn.sbx0.microservices.entity.AccountEntity;
-import cn.sbx0.microservices.entity.AccountVO;
-import cn.sbx0.microservices.entity.LoginDTO;
-import cn.sbx0.microservices.entity.ResponseVO;
+import cn.sbx0.microservices.entity.*;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @author wangh
@@ -46,7 +45,12 @@ public class AccountController extends BaseController<AccountServiceImpl, Accoun
     }
 
     @GetMapping(value = "/findById")
-    AccountVO findById(@RequestParam(value = "id") Long id) {
+    public AccountVO findById(@RequestParam(value = "id") Long id) {
         return service.loginInfo(id);
+    }
+
+    @PostMapping("/mapNameByIds")
+    public Map<Long, String> mapNameByIds(@RequestBody IDsDTO dto) {
+        return service.mapNameByIds(dto);
     }
 }

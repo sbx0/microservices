@@ -1,11 +1,10 @@
 package cn.sbx0.microservices.account.service;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
-import cn.sbx0.microservices.entity.AccountEntity;
-import cn.sbx0.microservices.entity.AccountVO;
-import cn.sbx0.microservices.entity.LoginDTO;
-import cn.sbx0.microservices.entity.ResponseVO;
+import cn.sbx0.microservices.entity.*;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -27,4 +26,6 @@ public interface IAccountService extends IService<AccountEntity> {
     AccountVO loginInfo(Long userId);
 
     AccountVO findByUserName(String name);
+
+    Map<Long, String> mapNameByIds(IDsDTO dto);
 }

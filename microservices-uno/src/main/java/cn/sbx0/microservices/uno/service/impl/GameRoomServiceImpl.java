@@ -5,6 +5,7 @@ import cn.sbx0.microservices.entity.AccountVO;
 import cn.sbx0.microservices.uno.bot.RandomBot;
 import cn.sbx0.microservices.uno.constant.CardPoint;
 import cn.sbx0.microservices.uno.constant.GameRedisKey;
+import cn.sbx0.microservices.uno.constant.GameRoomStatus;
 import cn.sbx0.microservices.uno.constant.MessageChannel;
 import cn.sbx0.microservices.uno.entity.*;
 import cn.sbx0.microservices.uno.mapper.GameRoomMapper;
@@ -131,7 +132,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
         if (room == null) {
             return false;
         }
-        room.setRoomStatus(GameRoomStatusEnum.BEGINNING.getValue());
+        room.setRoomStatus(GameRoomStatus.BEGINNING);
         boolean result = updateById(room);
         if (result) {
             cardService.initCardDeck(roomCode);
