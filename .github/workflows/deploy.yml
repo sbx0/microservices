@@ -1,0 +1,26 @@
+name: Auto Deploy
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    environment: codacy-code-coverage
+
+    steps:
+      - name: Auto Deploy
+        if: github.ref == 'refs/heads/master'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd microservices
+            git pull
+            ./build.sh build
+            ./build.sh
