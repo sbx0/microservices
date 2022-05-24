@@ -9,6 +9,7 @@ import cn.sbx0.microservices.uno.feign.AccountService;
 import cn.sbx0.microservices.uno.mapper.GameRoomUserMapper;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
+import cn.sbx0.microservices.uno.service.IMessageService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -32,7 +33,7 @@ import static org.mockito.BDDMockito.given;
  * @since 2022/5/7
  */
 @SuppressWarnings({"unchecked", "SpringJavaAutowiredMembersInspection"})
-@MockBean(classes = {IGameRoomService.class, RandomBot.class, RandomBot.class, AccountService.class, GameRoomUserMapper.class})
+@MockBean(classes = {IGameRoomService.class, RandomBot.class, RandomBot.class, AccountService.class, GameRoomUserMapper.class, IMessageService.class})
 class GameRoomUserServiceImplTest extends BaseServiceImplTest {
     @Autowired
     private IGameRoomService gameRoomService;
