@@ -26,13 +26,13 @@
 
     <groupId>cn.sbx0</groupId>
     <artifactId>microservices</artifactId>
-    <version>BETA-1.3</version>
+    <version>0.0.1</version>
     <name>microservices</name>
     <description>Microservices Project</description>
 
     <properties>
         <java.version>1.17</java.version>
-        <microservices.version>BETA-1.3</microservices.version>
+        <microservices.version>0.0.1</microservices.version>
         <spring-cloud-dependencies.version>2021.0.2</spring-cloud-dependencies.version>
         <feign-httpclient.version>11.8</feign-httpclient.version>
         <mybatis-plus.version>3.5.1</mybatis-plus.version>
