@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 /**
  * @author sbx0
@@ -120,6 +119,7 @@ public class MatchServiceImpl implements IMatchService {
             if (queue.size() < size) {
                 continue;
             }
+            Set<Long> ids = new HashSet<>();
             for (int i = 0; i < size; ) {
                 MatchExpectDTO poll = queue.poll();
                 if (poll == null) {
@@ -128,12 +128,15 @@ public class MatchServiceImpl implements IMatchService {
                 if (DELETE_IDS.contains(poll.getUserId())) {
                     continue;
                 }
+                if (ids.contains(poll.getUserId())) {
+                    continue;
+                }
                 matched.add(poll);
+                ids.add(poll.getUserId());
                 i++;
             }
             if (matched.size() == size) {
                 CACHES.put(cache.getKey(), queue);
-                Set<Long> ids = matched.stream().map(MatchExpectDTO::getUserId).collect(Collectors.toSet());
                 String roomCode = gameRoomUserService.createGameRoomByUserIds(ids);
                 for (Long id : ids) {
                     executorService.execute(() -> messageService.send(CODE, CHANNEL_FOUND, String.valueOf(id), roomCode));
