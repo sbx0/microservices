@@ -41,6 +41,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
+    @Resource
     private IMessageService messageService;
 
     @Override

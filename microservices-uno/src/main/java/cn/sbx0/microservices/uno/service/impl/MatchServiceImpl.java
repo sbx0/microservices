@@ -2,6 +2,7 @@ package cn.sbx0.microservices.uno.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.sbx0.microservices.entity.ResponseVO;
+import cn.sbx0.microservices.uno.bot.RandomBot;
 import cn.sbx0.microservices.uno.entity.MatchExpectDTO;
 import cn.sbx0.microservices.uno.entity.QueueInfoVO;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
@@ -9,13 +10,15 @@ import cn.sbx0.microservices.uno.service.IMatchService;
 import cn.sbx0.microservices.uno.service.IMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.*;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -28,14 +31,17 @@ public class MatchServiceImpl implements IMatchService {
     public static final String CODE = "match";
     public static final String CHANNEL_INFO = "match_info";
     public static final String CHANNEL_FOUND = "match_found";
-    private final Deque<MatchExpectDTO> QUEUE = new ConcurrentLinkedDeque<>();
     private final static ConcurrentHashMap<String, ConcurrentLinkedQueue<MatchExpectDTO>> CACHES = new ConcurrentHashMap<>();
     private final static Set<Long> IDS_CACHE = new HashSet<>();
+    private final static Set<Long> DELETE_IDS = new HashSet<>();
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     @Resource
     private IMessageService messageService;
     @Resource
     private IGameRoomUserService gameRoomUserService;
+    @Resource
+    private RandomBot randomBot;
+    private List<MatchExpectDTO> BOTS;
 
     @Override
     public ResponseVO<Boolean> join(MatchExpectDTO dto) {
@@ -47,8 +53,15 @@ public class MatchServiceImpl implements IMatchService {
             if (IDS_CACHE.contains(dto.getUserId())) {
                 return new ResponseVO<>(ResponseVO.FAILED, false);
             }
-            QUEUE.addLast(dto);
             IDS_CACHE.add(dto.getUserId());
+            DELETE_IDS.remove(dto.getUserId());
+            String key = dto.getAllowBot().toString() + "," + dto.getGamerSize().toString();
+            ConcurrentLinkedQueue<MatchExpectDTO> queue = CACHES.get(key);
+            if (queue == null) {
+                queue = new ConcurrentLinkedQueue<>();
+            }
+            queue.add(dto);
+            CACHES.put(key, queue);
             executorService.execute(() -> messageService.send(CODE, CHANNEL_INFO, "*", IDS_CACHE.size()));
         }
         return new ResponseVO<>(ResponseVO.SUCCESS, true);
@@ -56,12 +69,8 @@ public class MatchServiceImpl implements IMatchService {
 
     @Override
     public ResponseVO<Boolean> quit(Long userId) {
-        QUEUE.forEach(q -> {
-            if (userId.equals(q.getUserId())) {
-                QUEUE.remove(q);
-            }
-        });
         IDS_CACHE.remove(userId);
+        DELETE_IDS.add(userId);
         executorService.execute(() -> messageService.send(CODE, CHANNEL_INFO, "*", IDS_CACHE.size()));
         return new ResponseVO<>(ResponseVO.SUCCESS, true);
     }
@@ -77,34 +86,61 @@ public class MatchServiceImpl implements IMatchService {
 
     @Override
     public void match() {
-        if (QUEUE.size() == 0) return;
-        MatchExpectDTO q = QUEUE.getFirst();
-        if (q == null) return;
-        int expect = q.getGamerSize();
-        String key = q.getAllowBot().toString() + q.getGamerSize().toString();
-        ConcurrentLinkedQueue<MatchExpectDTO> cache = CACHES.get(key);
-        if (cache == null) {
-            cache = new ConcurrentLinkedQueue<>();
-            cache.add(q);
-            CACHES.put(key, cache);
-        } else {
-            if (cache.size() == (expect - 1)) {
-                Set<Long> ids = cache.stream().map(MatchExpectDTO::getUserId).collect(Collectors.toSet());
-                ids.add(q.getUserId());
-                if (ids.size() == expect) {
-                    String roomCode = gameRoomUserService.createGameRoomByUserIds(ids);
-                    for (Long id : ids) {
-                        executorService.execute(() -> messageService.send(CODE, CHANNEL_FOUND, String.valueOf(id), roomCode));
-                    }
-                    ids.forEach(IDS_CACHE::remove);
-                    executorService.execute(() -> messageService.send(CODE, CHANNEL_INFO, "*", IDS_CACHE.size()));
-                    CACHES.put(key, new ConcurrentLinkedQueue<>());
+        if (BOTS == null) {
+            BOTS = new ArrayList<>();
+            BOTS.add(new MatchExpectDTO(randomBot.getId(), 2, true));
+            BOTS.add(new MatchExpectDTO(randomBot.getId(), 3, true));
+            BOTS.add(new MatchExpectDTO(randomBot.getId(), 4, true));
+            BOTS.add(new MatchExpectDTO(randomBot.getId(), 5, true));
+            BOTS.add(new MatchExpectDTO(randomBot.getId(), 6, true));
+            BOTS.add(new MatchExpectDTO(randomBot.getId(), 7, true));
+            BOTS.add(new MatchExpectDTO(randomBot.getId(), 8, true));
+            BOTS.add(new MatchExpectDTO(randomBot.getId(), 9, true));
+            for (MatchExpectDTO bot : BOTS) {
+                String key = bot.getAllowBot().toString() + "," + bot.getGamerSize().toString();
+                ConcurrentLinkedQueue<MatchExpectDTO> queue = CACHES.get(key);
+                if (queue == null) {
+                    queue = new ConcurrentLinkedQueue<>();
                 }
-            } else {
-                cache.add(q);
-                CACHES.put(key, cache);
+                queue.add(bot);
             }
         }
-        QUEUE.remove(q);
+        for (Map.Entry<String, ConcurrentLinkedQueue<MatchExpectDTO>> cache : CACHES.entrySet()) {
+            String keys = cache.getKey();
+            String[] split = keys.split(",");
+            String allowBotKey = split[0];
+            String sizeKey = split[1];
+            boolean allowBot = Boolean.parseBoolean(allowBotKey);
+            int size = Integer.parseInt(sizeKey);
+            List<MatchExpectDTO> matched = new ArrayList<>();
+            ConcurrentLinkedQueue<MatchExpectDTO> queue = cache.getValue();
+            if (CollectionUtils.isEmpty(queue)) {
+                continue;
+            }
+            if (queue.size() < size) {
+                continue;
+            }
+            for (int i = 0; i < size; ) {
+                MatchExpectDTO poll = queue.poll();
+                if (poll == null) {
+                    continue;
+                }
+                if (DELETE_IDS.contains(poll.getUserId())) {
+                    continue;
+                }
+                matched.add(poll);
+                i++;
+            }
+            if (matched.size() == size) {
+                CACHES.put(cache.getKey(), queue);
+                Set<Long> ids = matched.stream().map(MatchExpectDTO::getUserId).collect(Collectors.toSet());
+                String roomCode = gameRoomUserService.createGameRoomByUserIds(ids);
+                for (Long id : ids) {
+                    executorService.execute(() -> messageService.send(CODE, CHANNEL_FOUND, String.valueOf(id), roomCode));
+                }
+                ids.forEach(IDS_CACHE::remove);
+            }
+            executorService.execute(() -> messageService.send(CODE, CHANNEL_INFO, "*", IDS_CACHE.size()));
+        }
     }
 }

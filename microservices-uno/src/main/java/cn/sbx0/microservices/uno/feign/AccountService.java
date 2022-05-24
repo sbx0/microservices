@@ -20,7 +20,7 @@ import java.util.Map;
 @LoadBalancerClient(value = "ACCOUNT", configuration = CustomLoadBalancerConfiguration.class)
 @FeignClient(name = "ACCOUNT", configuration = FeignConfiguration.class)
 public interface AccountService {
-    @GetMapping(value = "/user/loginInfo", produces = "application/json")
+    @GetMapping(value = "/loginInfo", produces = "application/json")
     AccountVO loginInfo();
 
     @GetMapping(value = "/findByUserName", produces = "application/json")

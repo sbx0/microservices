@@ -44,6 +44,10 @@ public class RandomBot {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+    public Long getId() {
+        return id;
+    }
+
     public void playCard(String roomCode) {
         initId();
         String discardKey = GameRedisKey.ROOM_DISCARDS.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
