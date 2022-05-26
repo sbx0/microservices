@@ -8,10 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static cn.sbx0.microservices.uno.TestDataProvider.stpUtil;
@@ -24,7 +21,7 @@ import static org.mockito.Mockito.mockStatic;
  */
 @SuppressWarnings({"rawtypes", "unchecked", "SpringJavaAutowiredMembersInspection"})
 @ExtendWith(SpringExtension.class)
-@MockBean(classes = {RedisTemplate.class, StringRedisTemplate.class, ValueOperations.class, ListOperations.class})
+@MockBean(classes = {RedisTemplate.class, StringRedisTemplate.class, ValueOperations.class, ListOperations.class, SetOperations.class})
 public class BaseServiceImplTest {
     @Autowired
     protected RedisTemplate<String, CardEntity> redisTemplate;
@@ -34,6 +31,8 @@ public class BaseServiceImplTest {
     protected ValueOperations valueOperations;
     @Autowired
     protected ListOperations listOperations;
+    @Autowired
+    protected SetOperations setOperations;
 
     @BeforeAll
     static void beforeAll() {
@@ -51,8 +50,10 @@ public class BaseServiceImplTest {
     void beforeEach() {
         given(stringRedisTemplate.opsForValue()).willReturn(valueOperations);
         given(stringRedisTemplate.opsForList()).willReturn(listOperations);
+        given(stringRedisTemplate.opsForSet()).willReturn(setOperations);
         given(redisTemplate.opsForValue()).willReturn(valueOperations);
         given(redisTemplate.opsForList()).willReturn(listOperations);
+        given(redisTemplate.opsForSet()).willReturn(setOperations);
     }
 
 }
