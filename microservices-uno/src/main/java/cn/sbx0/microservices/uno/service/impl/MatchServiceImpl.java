@@ -37,8 +37,8 @@ public class MatchServiceImpl implements IMatchService {
     private IMessageService messageService;
     @Resource
     private IGameRoomUserService gameRoomUserService;
-    public static final String IDS_CACHE = "ids_cache";
-    public static final String DELETE_IDS = "delete_ids";
+    public static final String IDS_CACHE = "game:match:ids_cache";
+    public static final String DELETE_IDS = "game:match:delete_ids";
     private final String[] ALLOW_BOT = {"false,", "true,"};
     private final String[] SIZES = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
     @Resource
@@ -58,8 +58,11 @@ public class MatchServiceImpl implements IMatchService {
             }
             stringRedisTemplate.opsForSet().add(IDS_CACHE, dto.getUserId().toString());
             stringRedisTemplate.opsForSet().remove(DELETE_IDS, dto.getUserId().toString());
-            String key = dto.getAllowBot().toString() + "," + dto.getGamerSize().toString();
-            redisTemplate.opsForList().rightPush(key, dto);
+            String key = "game:match:queue:" + dto.getAllowBot().toString() + "," + dto.getGamerSize().toString();
+            Long index = redisTemplate.opsForList().indexOf(key, dto);
+            if (index == null) {
+                redisTemplate.opsForList().rightPush(key, dto);
+            }
             executorService.execute(() -> messageService.send(new MessageDTO<>(CODE, CHANNEL_INFO, "*", stringRedisTemplate.opsForSet().size(IDS_CACHE))));
         }
         return new ResponseVO<>(ResponseVO.SUCCESS, true);
@@ -89,7 +92,7 @@ public class MatchServiceImpl implements IMatchService {
     @Override
     public void match() {
         for (String sizeKey : SIZES) {
-            String key = ALLOW_BOT[0] + sizeKey;
+            String key = "game:match:queue:" + ALLOW_BOT[0] + sizeKey;
             int size = Integer.parseInt(sizeKey);
             List<MatchExpectDTO> matched = new ArrayList<>();
             Long queueSize = redisTemplate.opsForList().size(key);
