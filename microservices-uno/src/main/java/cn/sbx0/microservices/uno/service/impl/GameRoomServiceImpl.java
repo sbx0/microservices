@@ -143,7 +143,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
             cardService.initGame(roomCode);
             for (AccountVO gamer : gamers) {
                 List<CardEntity> cardEntities = cardService.drawCard(roomCode, gamer.getId(), 7);
-                nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.DRAW_CARD, gamer.getId().toString(), cardEntities));
+                nonBlockingService.execute(() -> messageService.send(new MessageDTO<>(roomCode, MessageChannel.DRAW_CARD, gamer.getId().toString(), cardEntities)));
             }
             randomBot.notify(roomCode, gamers.get(0).getId());
         }

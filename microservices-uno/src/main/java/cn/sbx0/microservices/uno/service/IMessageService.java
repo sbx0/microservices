@@ -1,5 +1,6 @@
 package cn.sbx0.microservices.uno.service;
 
+import cn.sbx0.microservices.uno.entity.MessageDTO;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
@@ -9,5 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public interface IMessageService {
     SseEmitter subscribe(String roomCode);
 
-    void send(String code, String channel, String id, Object message);
+    void send(MessageDTO dto);
+
+    void handleOwnerMessage();
 }

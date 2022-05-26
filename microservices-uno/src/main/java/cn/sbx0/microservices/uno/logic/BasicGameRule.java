@@ -9,6 +9,7 @@ import cn.sbx0.microservices.uno.constant.MessageChannel;
 import cn.sbx0.microservices.uno.entity.CardEntity;
 import cn.sbx0.microservices.uno.entity.GameResultEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
+import cn.sbx0.microservices.uno.entity.MessageDTO;
 import cn.sbx0.microservices.uno.service.IGameResultService;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
 import cn.sbx0.microservices.uno.service.IGameRoomUserService;
@@ -121,7 +122,7 @@ public class BasicGameRule {
             redisTemplate.opsForList().rightPop(key);
         }
         redisTemplate.opsForList().leftPush(key, card);
-        nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.DISCARD_CARDS, "*", card));
+        nonBlockingService.execute(() -> messageService.send(new MessageDTO<>(roomCode, MessageChannel.DISCARD_CARDS, "*", card)));
     }
 
     public void functionCard(String roomCode, CardEntity card) {
@@ -139,7 +140,7 @@ public class BasicGameRule {
                 }
                 stringRedisTemplate.opsForValue().set(key, direction);
                 String finalDirection = direction;
-                nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.DIRECTION, "*", finalDirection));
+                nonBlockingService.execute(() -> messageService.send(new MessageDTO<>(roomCode, MessageChannel.DIRECTION, "*", finalDirection)));
                 step(roomCode, 1);
                 return;
             case CardPoint.WILD_DRAW_FOUR:
@@ -154,7 +155,7 @@ public class BasicGameRule {
                 number += size;
                 String value = String.valueOf(number);
                 stringRedisTemplate.opsForValue().set(key, value);
-                nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.PENALTY_CARDS, "*", value));
+                nonBlockingService.execute(() -> messageService.send(new MessageDTO<>(roomCode, MessageChannel.PENALTY_CARDS, "*", value)));
                 step(roomCode, 1);
                 return;
             case CardPoint.SKIP:
@@ -180,7 +181,7 @@ public class BasicGameRule {
         String direction = stringRedisTemplate.opsForValue().get(directionKey);
         int newIndex = whoNext(Integer.parseInt(currentGamer), gamers, ids, direction, step);
         stringRedisTemplate.opsForValue().set(key, String.valueOf(newIndex));
-        nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.WHO_TURN, "*", String.valueOf(newIndex)));
+        nonBlockingService.execute(() -> messageService.send(new MessageDTO<>(roomCode, MessageChannel.WHO_TURN, "*", String.valueOf(newIndex))));
         randomBot.notify(roomCode, gamers.get(newIndex).getId());
         stringRedisTemplate.expire(drawKey, Duration.ZERO);
     }
@@ -242,7 +243,7 @@ public class BasicGameRule {
                 roomService.updateById(room);
                 userService.removeByRoomId(room.getId());
                 // send sse message
-                nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.ENDING, "*", MessageChannel.ENDING));
+                nonBlockingService.execute(() -> messageService.send(new MessageDTO<>(roomCode, MessageChannel.ENDING, "*", MessageChannel.ENDING)));
             }
         }
     }
