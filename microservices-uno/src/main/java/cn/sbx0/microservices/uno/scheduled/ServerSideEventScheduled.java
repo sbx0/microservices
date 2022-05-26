@@ -1,13 +1,17 @@
 package cn.sbx0.microservices.uno.scheduled;
 
 import cn.sbx0.microservices.uno.constant.MessageChannel;
+import cn.sbx0.microservices.uno.entity.MessageDTO;
 import cn.sbx0.microservices.uno.service.IMatchService;
 import cn.sbx0.microservices.uno.service.IMessageService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author sbx0
@@ -21,12 +25,29 @@ public class ServerSideEventScheduled {
     @Resource
     private IMatchService matchService;
 
-    @Scheduled(fixedDelay = 5000)
+    public static final Lock LOCK = new ReentrantLock();
+
+    @Async
+    @Scheduled(fixedRate = 5000)
     public void heartbeat() {
-        messageService.send("*", MessageChannel.MESSAGE, "*", "heartbeat");
+        messageService.send(new MessageDTO<>("*", MessageChannel.MESSAGE, "*", "heartbeat"));
     }
 
-    @Scheduled(fixedDelay = 1000)
+    @Async
+    @Scheduled(fixedRate = 100)
+    public void handleOtherMessage() {
+        if (LOCK.tryLock()) {
+            try {
+                LOCK.lock();
+                messageService.handleOwnerMessage();
+            } finally {
+                LOCK.unlock();
+            }
+        }
+    }
+
+    @Async
+    @Scheduled(fixedRate = 5000)
     public void match() {
         matchService.match();
     }

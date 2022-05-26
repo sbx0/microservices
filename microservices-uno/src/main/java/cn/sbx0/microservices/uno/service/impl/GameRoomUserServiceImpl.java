@@ -7,6 +7,7 @@ import cn.sbx0.microservices.uno.constant.MessageChannel;
 import cn.sbx0.microservices.uno.entity.GameRoomCreateDTO;
 import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomUserEntity;
+import cn.sbx0.microservices.uno.entity.MessageDTO;
 import cn.sbx0.microservices.uno.feign.AccountService;
 import cn.sbx0.microservices.uno.mapper.GameRoomUserMapper;
 import cn.sbx0.microservices.uno.service.IGameRoomService;
@@ -54,7 +55,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         AccountVO account = accountService.findByUserName(botName);
         boolean result = getBaseMapper().quitGameRoom(account.getId());
         if (result) {
-            nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.QUIT, "*", account));
+            nonBlockingService.execute(() -> messageService.send(new MessageDTO<>(roomCode, MessageChannel.QUIT, "*", account)));
         }
         return result;
     }
@@ -74,7 +75,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         gamer.setRemark("RandomBot");
         boolean result = getBaseMapper().atomSave(gamer, gameRoom.getPlayersSize());
         if (result) {
-            nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.JOIN, "*", account));
+            nonBlockingService.execute(() -> messageService.send(new MessageDTO<>(roomCode, MessageChannel.JOIN, "*", account)));
             return true;
         }
         return false;
@@ -94,7 +95,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         gamer.setCreateUserId(account.getId());
         boolean result = getBaseMapper().atomSave(gamer, gameRoom.getPlayersSize());
         if (result) {
-            nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.JOIN, "*", account));
+            nonBlockingService.execute(() -> messageService.send(new MessageDTO<>(roomCode, MessageChannel.JOIN, "*", account)));
         }
         return result;
     }
@@ -105,7 +106,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
         boolean result = getBaseMapper().quitGameRoom(userId);
         if (result) {
             AccountVO account = accountService.loginInfo();
-            nonBlockingService.execute(() -> messageService.send(roomCode, MessageChannel.QUIT, "*", account));
+            nonBlockingService.execute(() -> messageService.send(new MessageDTO<>(roomCode, MessageChannel.QUIT, "*", account)));
         }
         return result;
     }

@@ -1,5 +1,6 @@
 package cn.sbx0.microservices.uno.service.impl;
 
+import cn.sbx0.microservices.uno.entity.MessageDTO;
 import cn.sbx0.microservices.uno.service.IMessageService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,8 @@ class MessageServiceTest extends BaseServiceImplTest {
 
     @Test
     void send() {
-        service.send("*", "*", "*", "message");
-        service.send(ROOM_CODE, "*", "*", "message");
+        service.send(new MessageDTO<>("*", "*", "*", "message"));
+        service.send(new MessageDTO<>(ROOM_CODE, "*", "*", "message"));
     }
 
 }
