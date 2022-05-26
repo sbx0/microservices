@@ -10,4 +10,5 @@ import lombok.Data;
 public class QueueInfoVO {
     private int size;
     private boolean join;
+    private String choose;
 }

@@ -38,6 +38,7 @@ public class MatchServiceImpl implements IMatchService {
     @Resource
     private IGameRoomUserService gameRoomUserService;
     public static final String IDS_CACHE = "game:match:ids_cache";
+    public static final String CHOOSE_CACHE = "game:match:choose_cache";
     public static final String DELETE_IDS = "game:match:delete_ids";
     private final String[] ALLOW_BOT = {"false,", "true,"};
     private final String[] SIZES = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
@@ -59,6 +60,7 @@ public class MatchServiceImpl implements IMatchService {
             stringRedisTemplate.opsForSet().add(IDS_CACHE, dto.getUserId().toString());
             stringRedisTemplate.opsForSet().remove(DELETE_IDS, dto.getUserId().toString());
             String key = "game:match:queue:" + dto.getAllowBot().toString() + "," + dto.getGamerSize().toString();
+            stringRedisTemplate.opsForHash().put(CHOOSE_CACHE, dto.getUserId().toString(), dto.getGamerSize().toString());
             Long index = redisTemplate.opsForList().indexOf(key, dto);
             if (index == null) {
                 redisTemplate.opsForList().rightPush(key, dto);
@@ -84,6 +86,8 @@ public class MatchServiceImpl implements IMatchService {
         if (size == null) {
             size = 0L;
         }
+        String choose = (String) stringRedisTemplate.opsForHash().get(CHOOSE_CACHE, Long.toString(userId));
+        info.setChoose(choose);
         info.setSize(size.intValue());
         info.setJoin(Boolean.TRUE.equals(stringRedisTemplate.opsForSet().isMember(IDS_CACHE, Long.toString(userId))));
         return new ResponseVO<>(ResponseVO.SUCCESS, info);
