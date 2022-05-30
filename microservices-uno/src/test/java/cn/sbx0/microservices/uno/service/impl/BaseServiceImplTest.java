@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mockStatic;
  */
 @SuppressWarnings({"rawtypes", "unchecked", "SpringJavaAutowiredMembersInspection"})
 @ExtendWith(SpringExtension.class)
-@MockBean(classes = {RedisTemplate.class, StringRedisTemplate.class, ValueOperations.class, ListOperations.class, SetOperations.class})
+@MockBean(classes = {RedisTemplate.class, StringRedisTemplate.class, ValueOperations.class, ListOperations.class, SetOperations.class, HashOperations.class})
 public class BaseServiceImplTest {
     @Autowired
     protected RedisTemplate<String, CardEntity> redisTemplate;
@@ -33,6 +33,8 @@ public class BaseServiceImplTest {
     protected ListOperations listOperations;
     @Autowired
     protected SetOperations setOperations;
+    @Autowired
+    protected HashOperations hashOperations;
 
     @BeforeAll
     static void beforeAll() {
@@ -51,9 +53,11 @@ public class BaseServiceImplTest {
         given(stringRedisTemplate.opsForValue()).willReturn(valueOperations);
         given(stringRedisTemplate.opsForList()).willReturn(listOperations);
         given(stringRedisTemplate.opsForSet()).willReturn(setOperations);
+        given(stringRedisTemplate.opsForHash()).willReturn(hashOperations);
         given(redisTemplate.opsForValue()).willReturn(valueOperations);
         given(redisTemplate.opsForList()).willReturn(listOperations);
         given(redisTemplate.opsForSet()).willReturn(setOperations);
+        given(redisTemplate.opsForHash()).willReturn(hashOperations);
     }
 
 }
