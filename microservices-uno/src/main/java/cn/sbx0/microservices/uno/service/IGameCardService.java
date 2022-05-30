@@ -23,7 +23,7 @@ public interface IGameCardService {
 
     List<CardEntity> myCardList(String roomCode);
 
-    List<CardEntity> discardCardList(String roomCode);
+    List<CardEntity> getDiscardCards(String roomCode);
 
     void initGame(String roomCode);
 

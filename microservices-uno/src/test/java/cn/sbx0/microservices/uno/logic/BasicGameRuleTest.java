@@ -53,7 +53,7 @@ class BasicGameRuleTest extends RedisTestSetup {
     @Test
     void getCurrentGamer() {
         given(valueOperations.get(anyString())).willReturn("1");
-        given(userService.listByGameRoom(anyString())).willReturn(GAMERS);
+        given(userService.getGamerByCode(anyString())).willReturn(GAMERS);
 
         AccountVO currentGamer = gameRule.getCurrentGamer(ROOM_CODE);
         assertNotNull(currentGamer);
@@ -94,7 +94,7 @@ class BasicGameRuleTest extends RedisTestSetup {
     void functionCard() {
         CardEntity card = new CardEntity(UUID.randomUUID().toString(), CardColor.BLUE, CardPoint.REVERSE, 1L);
         given(valueOperations.get(GameRedisKey.ROOM_DIRECTION.replaceAll(GameRedisKey.ROOM_CODE, ROOM_CODE))).willReturn(CardPoint.REVERSE);
-        given(userService.listByGameRoom(anyString())).willReturn(GAMERS);
+        given(userService.getGamerByCode(anyString())).willReturn(GAMERS);
         gameRule.functionCard(ROOM_CODE, card);
     }
 

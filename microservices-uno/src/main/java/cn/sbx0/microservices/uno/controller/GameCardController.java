@@ -72,7 +72,7 @@ public class GameCardController {
      */
     @GetMapping("/discard/{roomCode}")
     public ResponseVO<List<CardEntity>> discardCardList(@PathVariable("roomCode") String roomCode) {
-        List<CardEntity> cards = service.discardCardList(roomCode);
+        List<CardEntity> cards = service.getDiscardCards(roomCode);
         return new ResponseVO<>(cards != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, cards);
     }
 }

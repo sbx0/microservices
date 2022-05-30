@@ -125,7 +125,7 @@ class GameCardControllerTest extends BaseControllerTest {
         card.setPoint("4");
         cards.add(card);
 
-        given(service.discardCardList(ROOM_CODE)).willReturn(cards);
+        given(service.getDiscardCards(ROOM_CODE)).willReturn(cards);
 
         mvc.perform(get("/uno/card/discard/" + ROOM_CODE)
                         .accept(MediaType.APPLICATION_JSON))
