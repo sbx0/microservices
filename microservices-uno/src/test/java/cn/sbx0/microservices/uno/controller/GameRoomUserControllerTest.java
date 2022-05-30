@@ -76,7 +76,7 @@ class GameRoomUserControllerTest extends BaseControllerTest {
 
         data.add(vo);
 
-        given(service.listByGameRoom(ROOM_CODE)).willReturn(data);
+        given(service.getGamerByCode(ROOM_CODE)).willReturn(data);
 
         mvc.perform(get("/uno/room/user/list/" + ROOM_CODE)
                         .accept(MediaType.APPLICATION_JSON))

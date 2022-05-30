@@ -22,7 +22,7 @@ public interface IGameRoomUserService extends IService<GameRoomUserEntity> {
 
     boolean botQuitGameRoom(String roomCode, String botName);
 
-    List<AccountVO> listByGameRoom(String roomCode);
+    List<AccountVO> getGamerByCode(String roomCode);
 
     Boolean isIAmIn(long roomId, long userId);
 

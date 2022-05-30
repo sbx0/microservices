@@ -131,7 +131,7 @@ class GameRoomUserServiceImplTest extends BaseServiceImplTest {
         user.setUserId(0L);
         gamers.add(user);
         given(mapper.listByGameRoom(any(), any())).willReturn(gamers);
-        List<AccountVO> accounts = service.listByGameRoom(ROOM_CODE);
+        List<AccountVO> accounts = service.getGamerByCode(ROOM_CODE);
         assertFalse(CollectionUtils.isEmpty(accounts));
     }
 

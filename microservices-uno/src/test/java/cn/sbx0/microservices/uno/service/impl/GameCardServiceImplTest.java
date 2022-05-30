@@ -81,7 +81,7 @@ class GameCardServiceImplTest extends BaseServiceImplTest {
         given(listOperations.range(any(), anyLong(), anyLong())).willReturn(CARDS);
         given(listOperations.index(any(), anyLong())).willReturn(CARDS.get(1));
 
-        given(userService.listByGameRoom(anyString())).willReturn(GAMERS);
+        given(userService.getGamerByCode(anyString())).willReturn(GAMERS);
 
         service.playCard(ROOM_CODE, CARDS.get(0).getUuid(), CARDS.get(0).getColor(), USER_ID);
     }
@@ -89,7 +89,7 @@ class GameCardServiceImplTest extends BaseServiceImplTest {
     @Test
     void nextPlay() {
         given(listOperations.rightPop(anyString())).willReturn(CARDS.get(0));
-        given(userService.listByGameRoom(ROOM_CODE)).willReturn(GAMERS);
+        given(userService.getGamerByCode(ROOM_CODE)).willReturn(GAMERS);
         given(valueOperations.get(anyString())).willReturn("1");
         List<CardEntity> cards = service.nextPlay(ROOM_CODE, USER_ID);
         assertNotNull(cards);
@@ -128,11 +128,11 @@ class GameCardServiceImplTest extends BaseServiceImplTest {
     void discardCardList() {
         given(listOperations.size(anyString())).willReturn(null);
         given(listOperations.range(anyString(), anyLong(), anyLong())).willReturn(CARDS);
-        List<CardEntity> cards = service.discardCardList(ROOM_CODE);
+        List<CardEntity> cards = service.getDiscardCards(ROOM_CODE);
         assertEquals(CARDS.size(), cards.size());
         given(listOperations.size(anyString())).willReturn((long) CARDS.size());
         given(listOperations.range(anyString(), anyLong(), anyLong())).willReturn(CARDS);
-        cards = service.discardCardList(ROOM_CODE);
+        cards = service.getDiscardCards(ROOM_CODE);
         assertEquals(CARDS.size(), cards.size());
     }
 }

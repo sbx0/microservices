@@ -112,7 +112,7 @@ public class GameRoomUserServiceImpl extends ServiceImpl<GameRoomUserMapper, Gam
     }
 
     @Override
-    public List<AccountVO> listByGameRoom(String roomCode) {
+    public List<AccountVO> getGamerByCode(String roomCode) {
         GameRoomEntity gameRoom = gameRoomService.getOneByRoomCode(roomCode);
         if (gameRoom == null) {
             return Collections.emptyList();

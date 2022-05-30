@@ -14,15 +14,15 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 /**
  * @author sbx0
  * @since 2022/5/10
  */
-@SuppressWarnings({"SpringJavaAutowiredMembersInspection"})
+@SuppressWarnings({"SpringJavaAutowiredMembersInspection", "unchecked"})
 @MockBean(classes = {IGameRoomUserService.class, RandomBot.class, BasicGameRule.class, IMessageService.class})
 class MatchServiceImplTest extends BaseServiceImplTest {
     @TestConfiguration
@@ -43,6 +43,7 @@ class MatchServiceImplTest extends BaseServiceImplTest {
         assertEquals(ResponseVO.SUCCESS, joinResponse.getCode());
         assertEquals(true, joinResponse.getData());
 
+        given(setOperations.size(any())).willReturn(1L);
         ResponseVO<QueueInfoVO> response = service.getQueueInfo();
         assertEquals(ResponseVO.SUCCESS, response.getCode());
         assertEquals(1, response.getData().getSize());
@@ -50,20 +51,6 @@ class MatchServiceImplTest extends BaseServiceImplTest {
         ResponseVO<Boolean> quitResponse = service.quit(dto.getUserId());
         assertEquals(ResponseVO.SUCCESS, quitResponse.getCode());
         assertEquals(true, quitResponse.getData());
-    }
-
-    @Test
-    void joinN() {
-        Random random = new Random();
-        int size = random.nextInt(2, 6);
-        for (int i = 0; i < size; i++) {
-            ResponseVO<Boolean> joinResponse = service.join(new MatchExpectDTO((long) i, 2, false));
-            assertEquals(ResponseVO.SUCCESS, joinResponse.getCode());
-            assertEquals(true, joinResponse.getData());
-        }
-        ResponseVO<QueueInfoVO> response = service.getQueueInfo();
-        assertEquals(ResponseVO.SUCCESS, response.getCode());
-        assertEquals(size, response.getData().getSize());
     }
 
     @Test

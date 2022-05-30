@@ -61,7 +61,7 @@ public class BasicGameRule {
             currentGamerStr = "0";
         }
         int index = Integer.parseInt(currentGamerStr);
-        List<AccountVO> gamers = userService.listByGameRoom(roomCode);
+        List<AccountVO> gamers = userService.getGamerByCode(roomCode);
         if (CollectionUtils.isEmpty(gamers)) {
             return null;
         }
@@ -173,7 +173,7 @@ public class BasicGameRule {
         if (currentGamer == null) {
             currentGamer = "0";
         }
-        List<AccountVO> gamers = userService.listByGameRoom(roomCode);
+        List<AccountVO> gamers = userService.getGamerByCode(roomCode);
         List<GameResultEntity> results = resultService.listByGameRoomCode(roomCode);
         Set<Long> ids = results.stream().map(GameResultEntity::getUserId)
                 .collect(Collectors.toSet());
@@ -211,7 +211,7 @@ public class BasicGameRule {
     // todo @Transactional
     public void lastCard(String roomCode, Long userId) {
         // current room users
-        List<AccountVO> gamers = userService.listByGameRoom(roomCode);
+        List<AccountVO> gamers = userService.getGamerByCode(roomCode);
         // room round
         GameRoomEntity room = roomService.getOneByRoomCode(roomCode);
         // game result

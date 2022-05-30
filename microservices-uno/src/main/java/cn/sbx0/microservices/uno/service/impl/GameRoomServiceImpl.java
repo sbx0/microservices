@@ -97,6 +97,35 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
     }
 
     @Override
+    public GameRoomInfoVO getInfoByUserId(String roomCode, Long userId) {
+        GameRoomEntity room = getOneByRoomCode(roomCode);
+        if (room == null) {
+            return null;
+        }
+        GameRoomInfoVO vo = GameRoomConverter.INSTANCE.entityToInfoVO(room);
+        vo.setIsIAmIn(userService.isIAmIn(room.getId(), userId));
+        String currentGamerKey = GameRedisKey.CURRENT_GAMER.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
+        String currentGamerStr = stringRedisTemplate.opsForValue().get(currentGamerKey);
+        if (currentGamerStr == null) {
+            currentGamerStr = "0";
+        }
+        vo.setCurrentGamer(Integer.parseInt(currentGamerStr));
+        String penaltyCardsKey = GameRedisKey.ROOM_PENALTY.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
+        String penaltyCards = stringRedisTemplate.opsForValue().get(penaltyCardsKey);
+        if (!StringUtils.hasText(penaltyCards)) {
+            penaltyCards = "0";
+        }
+        vo.setPenaltyCards(Integer.parseInt(penaltyCards));
+        String directionKey = GameRedisKey.ROOM_DIRECTION.replaceAll(GameRedisKey.ROOM_CODE, roomCode);
+        String direction = stringRedisTemplate.opsForValue().get(directionKey);
+        if (!StringUtils.hasText(direction)) {
+            direction = CardPoint.NORMAL;
+        }
+        vo.setDirection(direction);
+        return vo;
+    }
+
+    @Override
     public GameRoomInfoVO info(String roomCode) {
         GameRoomEntity room = getOneByRoomCode(roomCode);
         if (room == null) {
@@ -136,7 +165,7 @@ public class GameRoomServiceImpl extends ServiceImpl<GameRoomMapper, GameRoomEnt
         boolean result = updateById(room);
         if (result) {
             cardService.initCardDeck(roomCode);
-            List<AccountVO> gamers = userService.listByGameRoom(roomCode);
+            List<AccountVO> gamers = userService.getGamerByCode(roomCode);
             if (CollectionUtils.isEmpty(gamers)) {
                 return false;
             }

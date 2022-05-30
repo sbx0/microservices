@@ -23,4 +23,6 @@ public interface IGameRoomService extends IService<GameRoomEntity> {
     Boolean start(String roomCode);
 
     String choose(String roomCode);
+
+    GameRoomInfoVO getInfoByUserId(String roomCode, Long userId);
 }

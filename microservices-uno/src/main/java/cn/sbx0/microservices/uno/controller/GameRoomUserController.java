@@ -40,7 +40,7 @@ public class GameRoomUserController extends BaseController<GameRoomUserServiceIm
 
     @GetMapping("/list/{roomCode}")
     public ResponseVO<List<AccountVO>> listByGameRoom(@PathVariable("roomCode") String roomCode) {
-        List<AccountVO> data = service.listByGameRoom(roomCode);
+        List<AccountVO> data = service.getGamerByCode(roomCode);
         return new ResponseVO<>(data != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, data);
     }
 }

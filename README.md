@@ -72,4 +72,4 @@ my [GitHub home page](https://github.com/sbx0).
 
 ## Code Coverage
 
-`mvn -T 1C clean verify`
+`mvn verify --fail-fast`

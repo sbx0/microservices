@@ -112,7 +112,7 @@ class GameRoomServiceImplTest extends BaseServiceImplTest {
         result = service.start(ROOM_CODE);
         assertFalse(result);
 
-        given(userService.listByGameRoom(ROOM_CODE)).willReturn(GAMERS);
+        given(userService.getGamerByCode(ROOM_CODE)).willReturn(GAMERS);
         result = service.start(ROOM_CODE);
         assertTrue(result);
     }
