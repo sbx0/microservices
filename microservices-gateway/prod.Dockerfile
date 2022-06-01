@@ -2,8 +2,6 @@ FROM eclipse-temurin:17
 
 MAINTAINER sbx0
 
-RUN apt update && apt -y install curl && apt -y install tzdata
-
 HEALTHCHECK --interval=5s --timeout=30s CMD curl -f http://localhost:$GATEWAY_PORT/actuator/health || exit 1
 
 ADD /*.jar /bootstrap.jar

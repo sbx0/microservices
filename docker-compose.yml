@@ -30,6 +30,7 @@ services:
     build:
       context: ./microservices-registry
       dockerfile: Dockerfile
+    restart: always
     network_mode: "host"
     deploy:
       resources:
@@ -60,15 +61,14 @@ services:
       dockerfile: Dockerfile
     volumes:
       - $HOST_CONFIG_LOCATION:$CONFIG_LOCATION
-    depends_on:
-      microservices-registry:
-        condition: service_healthy
+    restart: always
     network_mode: "host"
     deploy:
       resources:
         limits:
           memory: 300m
     environment:
+      WAIT_HOSTS: wsl2.sbx0.cn:8761
       REGION:
       VERSION:
       REGISTRY_URL:
@@ -131,11 +131,10 @@ services:
         limits:
           memory: 400m
     depends_on:
-      microservices-configuration:
-        condition: service_healthy
-      microservices-registry:
-        condition: service_healthy
+      - microservices-registry
+      - microservices-configuration
     environment:
+      WAIT_HOSTS: wsl2.sbx0.cn:8761, wsl2.sbx0.cn:8888
       REGION:
       VERSION:
       REGISTRY_URL:
@@ -164,11 +163,10 @@ services:
         limits:
           memory: 500m
     depends_on:
-      microservices-configuration:
-        condition: service_healthy
-      microservices-registry:
-        condition: service_healthy
+      - microservices-registry
+      - microservices-configuration
     environment:
+      WAIT_HOSTS: wsl2.sbx0.cn:8761, wsl2.sbx0.cn:8888
       REGION:
       VERSION:
       REGISTRY_URL:
