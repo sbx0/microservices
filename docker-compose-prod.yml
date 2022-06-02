@@ -11,6 +11,7 @@ services:
       resources:
         limits:
           memory: 300m
+    restart: always
     environment:
       REGION:
       VERSION:
@@ -36,15 +37,16 @@ services:
       dockerfile: prod.Dockerfile
     volumes:
       - $HOST_CONFIG_LOCATION:$CONFIG_LOCATION
-    depends_on:
-      microservices-registry:
-        condition: service_healthy
     network_mode: "host"
     deploy:
       resources:
         limits:
           memory: 300m
+    restart: always
+    depends_on:
+      - microservices-registry
     environment:
+      WAIT_HOSTS: localhost:8761
       REGION:
       VERSION:
       REGISTRY_URL:
@@ -67,17 +69,17 @@ services:
     build:
       context: ./microservices-gateway
       dockerfile: prod.Dockerfile
-    depends_on:
-      microservices-configuration:
-        condition: service_healthy
-      microservices-registry:
-        condition: service_healthy
     network_mode: "host"
     deploy:
       resources:
         limits:
-          memory: 300m
+          memory: 500m
+    restart: always
+    depends_on:
+      - microservices-registry
+      - microservices-configuration
     environment:
+      WAIT_HOSTS: localhost:8761, localhost:8888
       REGION:
       VERSION:
       REGISTRY_URL:
@@ -105,13 +107,13 @@ services:
     deploy:
       resources:
         limits:
-          memory: 400m
+          memory: 500m
+    restart: always
     depends_on:
-      microservices-configuration:
-        condition: service_healthy
-      microservices-registry:
-        condition: service_healthy
+      - microservices-registry
+      - microservices-configuration
     environment:
+      WAIT_HOSTS: localhost:8761, localhost:8888
       REGION:
       VERSION:
       REGISTRY_URL:
@@ -139,12 +141,12 @@ services:
       resources:
         limits:
           memory: 500m
+    restart: always
     depends_on:
-      microservices-configuration:
-        condition: service_healthy
-      microservices-registry:
-        condition: service_healthy
+      - microservices-registry
+      - microservices-configuration
     environment:
+      WAIT_HOSTS: localhost:8761, localhost:8888
       REGION:
       VERSION:
       REGISTRY_URL:
