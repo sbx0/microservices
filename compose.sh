@@ -87,7 +87,7 @@ log() {
     docker-compose -f docker-compose.yml --env-file .env logs -f --tail=1
     ;;
   *)
-    docker-compose -f docker-compose-prod.yml --env-file logs -f --tail=1
+    docker-compose -f docker-compose-prod.yml --env-file .env logs -f --tail=1
     ;;
   esac
 }
