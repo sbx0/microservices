@@ -92,6 +92,11 @@ copy-up() {
   ./compose.sh build-and-up "$1" "$2"
 }
 
+log() {
+  cd build
+  ./compose.sh log "$1"
+}
+
 case "$1" in
 "init" | "i")
   init
@@ -101,6 +106,9 @@ case "$1" in
   ;;
 "copy" | "c")
   copy
+  ;;
+"log" | "l")
+  log "$2"
   ;;
 *)
   copy-up "$1" "$2"

@@ -132,6 +132,7 @@ services:
       resources:
         limits:
           memory: 500m
+    restart: always
     depends_on:
       - microservices-registry
       - microservices-configuration
