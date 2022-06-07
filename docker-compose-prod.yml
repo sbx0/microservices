@@ -3,9 +3,12 @@ version: '3.7'
 services:
 
   microservices-registry:
+    container_name: microservices-registry
     build:
       context: ./microservices-registry
       dockerfile: prod.Dockerfile
+    volumes:
+      - /etc/timezone:/etc/timezone
     network_mode: "host"
     deploy:
       resources:
@@ -32,11 +35,13 @@ services:
       IP_ADDRESS:
 
   microservices-configuration:
+    container_name: microservices-configuration
     build:
       context: ./microservices-configuration
       dockerfile: prod.Dockerfile
     volumes:
       - $HOST_CONFIG_LOCATION:$CONFIG_LOCATION
+      - /etc/timezone:/etc/timezone
     network_mode: "host"
     deploy:
       resources:
@@ -66,10 +71,13 @@ services:
       IP_ADDRESS:
 
   microservices-gateway:
+    container_name: microservices-gateway
     build:
       context: ./microservices-gateway
       dockerfile: prod.Dockerfile
     network_mode: "host"
+    volumes:
+      - /etc/timezone:/etc/timezone
     deploy:
       resources:
         limits:
@@ -100,6 +108,7 @@ services:
       IP_ADDRESS:
 
   microservices-account:
+    container_name: microservices-account
     build:
       context: ./microservices-account
       dockerfile: prod.Dockerfile
@@ -109,6 +118,8 @@ services:
         limits:
           memory: 500m
     restart: always
+    volumes:
+      - /etc/timezone:/etc/timezone
     depends_on:
       - microservices-registry
       - microservices-configuration
@@ -133,6 +144,7 @@ services:
       IP_ADDRESS:
 
   microservices-uno:
+    container_name: microservices-uno
     build:
       context: ./microservices-uno
       dockerfile: prod.Dockerfile
@@ -141,7 +153,8 @@ services:
       resources:
         limits:
           memory: 500m
-    restart: always
+    volumes:
+      - /etc/timezone:/etc/timezone
     depends_on:
       - microservices-registry
       - microservices-configuration
