@@ -5,8 +5,10 @@ services:
   mysql:
     image: mysql:latest
     container_name: mysql
-    command: --default-authentication-plugin=mysql_native_password
+    command: --authentication_policy=*
     restart: always
+    volumes:
+      - /etc/timezone:/etc/timezone
     environment:
       MYSQL_ROOT_PASSWORD: test
     network_mode: "host"
@@ -20,6 +22,8 @@ services:
     container_name: redis
     command: redis-server --requirepass test
     restart: always
+    volumes:
+      - /etc/timezone:/etc/timezone
     network_mode: "host"
     deploy:
       resources:
@@ -27,14 +31,18 @@ services:
           memory: 300m
 
   microservices-registry:
+    container_name: microservices-registry
     build:
       context: ./microservices-registry
       dockerfile: Dockerfile
+    volumes:
+      - /etc/timezone:/etc/timezone
     network_mode: "host"
     deploy:
       resources:
         limits:
           memory: 300m
+    restart: always
     environment:
       REGION:
       VERSION:
@@ -55,20 +63,23 @@ services:
       IP_ADDRESS:
 
   microservices-configuration:
+    container_name: microservices-configuration
     build:
       context: ./microservices-configuration
       dockerfile: Dockerfile
     volumes:
       - $HOST_CONFIG_LOCATION:$CONFIG_LOCATION
-    depends_on:
-      microservices-registry:
-        condition: service_healthy
+      - /etc/timezone:/etc/timezone
     network_mode: "host"
     deploy:
       resources:
         limits:
           memory: 300m
+    restart: always
+    depends_on:
+      - microservices-registry
     environment:
+      WAIT_HOSTS: wsl2.sbx0.cn:8761
       REGION:
       VERSION:
       REGISTRY_URL:
@@ -122,6 +133,7 @@ services:
   #      IP_ADDRESS:
 
   microservices-account:
+    container_name: microservices-account
     build:
       context: ./microservices-account
       dockerfile: Dockerfile
@@ -129,13 +141,15 @@ services:
     deploy:
       resources:
         limits:
-          memory: 400m
+          memory: 500m
+    restart: always
+    volumes:
+      - /etc/timezone:/etc/timezone
     depends_on:
-      microservices-configuration:
-        condition: service_healthy
-      microservices-registry:
-        condition: service_healthy
+      - microservices-registry
+      - microservices-configuration
     environment:
+      WAIT_HOSTS: wsl2.sbx0.cn:8761, wsl2.sbx0.cn:8888
       REGION:
       VERSION:
       REGISTRY_URL:
@@ -155,6 +169,7 @@ services:
       IP_ADDRESS:
 
   microservices-uno:
+    container_name: microservices-uno
     build:
       context: ./microservices-uno
       dockerfile: Dockerfile
@@ -163,12 +178,13 @@ services:
       resources:
         limits:
           memory: 500m
+    volumes:
+      - /etc/timezone:/etc/timezone
     depends_on:
-      microservices-configuration:
-        condition: service_healthy
-      microservices-registry:
-        condition: service_healthy
+      - microservices-registry
+      - microservices-configuration
     environment:
+      WAIT_HOSTS: wsl2.sbx0.cn:8761, wsl2.sbx0.cn:8888
       REGION:
       VERSION:
       REGISTRY_URL:

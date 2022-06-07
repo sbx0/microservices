@@ -187,6 +187,7 @@ public class BasicGameRule {
     }
 
     public int whoNext(int currentGamer, List<AccountVO> gamers, Set<Long> ids, String direction, int step) {
+        if (gamers.size() == 0) return 0;
         int stepCount = 0;
         for (int i = currentGamer; stepCount <= step; ) {
             if (CardPoint.NORMAL.equals(direction)) {
