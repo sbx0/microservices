@@ -5,6 +5,8 @@ import cn.sbx0.microservices.uno.entity.GameRoomEntity;
 import cn.sbx0.microservices.uno.entity.GameRoomInfoVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 服务类
@@ -25,4 +27,6 @@ public interface IGameRoomService extends IService<GameRoomEntity> {
     String choose(String roomCode);
 
     GameRoomInfoVO getInfoByUserId(String roomCode, Long userId);
+
+    List<GameRoomEntity> pagingList(String keyword);
 }

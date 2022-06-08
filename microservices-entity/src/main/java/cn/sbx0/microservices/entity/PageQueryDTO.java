@@ -12,7 +12,7 @@ import lombok.Setter;
 public class PageQueryDTO {
     private Integer page;
     private Integer size;
-    private String keywords;
+    private String keyword;
 
     public PageQueryDTO() {
         this.page = 1;

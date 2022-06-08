@@ -4,6 +4,8 @@ import cn.sbx0.microservices.entity.Paging;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * @author sbx0
  * @since 2022/4/19
@@ -15,6 +17,8 @@ public interface GameRoomConverter {
     GameRoomVO entityToVO(GameRoomEntity source);
 
     Paging<GameRoomVO> pagingEntityToVO(Paging<GameRoomEntity> source);
+
+    List<GameRoomVO> listEntityToVO(List<GameRoomEntity> source);
 
     GameRoomEntity dtoToEntity(GameRoomCreateDTO source);
 
