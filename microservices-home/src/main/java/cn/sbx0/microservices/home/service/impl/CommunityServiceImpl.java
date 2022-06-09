@@ -2,6 +2,7 @@ package cn.sbx0.microservices.home.service.impl;
 
 import cn.sbx0.microservices.entity.*;
 import cn.sbx0.microservices.home.entity.CommunityConverter;
+import cn.sbx0.microservices.home.entity.CommunityEditDTO;
 import cn.sbx0.microservices.home.entity.CommunityEntity;
 import cn.sbx0.microservices.home.entity.CommunityVO;
 import cn.sbx0.microservices.home.mapper.CommunityMapper;
@@ -62,5 +63,12 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityMapper, Community
         paging.setCode("0");
         paging.setMessage("success");
         return paging;
+    }
+
+    @Override
+    public ResponseVO<Boolean> updateOneById(CommunityEditDTO dto) {
+        int resultNum = getBaseMapper().updateById(CommunityConverter.INSTANCE.editDTOtoEntity(dto));
+        boolean result = resultNum > 0;
+        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }
 }

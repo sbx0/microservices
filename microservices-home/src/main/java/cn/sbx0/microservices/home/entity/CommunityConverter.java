@@ -15,4 +15,6 @@ public interface CommunityConverter {
 
     Paging<CommunityVO> entityPagingToVO(Paging<CommunityEntity> source);
 
+    CommunityEntity editDTOtoEntity(CommunityEditDTO source);
+
 }

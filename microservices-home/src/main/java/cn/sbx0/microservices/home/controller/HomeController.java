@@ -5,7 +5,8 @@ import cn.sbx0.microservices.entity.PageQueryDTO;
 import cn.sbx0.microservices.entity.Paging;
 import cn.sbx0.microservices.home.entity.CommunityVO;
 import cn.sbx0.microservices.home.service.IHomeService;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,8 +26,8 @@ public class HomeController {
     @Resource
     private IHomeService service;
 
-    @GetMapping("/communities")
-    public Paging<CommunityVO> communityPagingList(PageQueryDTO dto) {
+    @PostMapping("/communities")
+    public Paging<CommunityVO> communityPagingList(@RequestBody PageQueryDTO dto) {
         return service.communityPagingList(dto);
     }
 }
