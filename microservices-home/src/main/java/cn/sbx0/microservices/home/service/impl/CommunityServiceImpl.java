@@ -1,10 +1,7 @@
 package cn.sbx0.microservices.home.service.impl;
 
 import cn.sbx0.microservices.entity.*;
-import cn.sbx0.microservices.home.entity.CommunityConverter;
-import cn.sbx0.microservices.home.entity.CommunityEditDTO;
-import cn.sbx0.microservices.home.entity.CommunityEntity;
-import cn.sbx0.microservices.home.entity.CommunityVO;
+import cn.sbx0.microservices.home.entity.*;
 import cn.sbx0.microservices.home.mapper.CommunityMapper;
 import cn.sbx0.microservices.home.service.ICommunityService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -68,6 +65,13 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityMapper, Community
     @Override
     public ResponseVO<Boolean> updateOneById(CommunityEditDTO dto) {
         int resultNum = getBaseMapper().updateById(CommunityConverter.INSTANCE.editDTOtoEntity(dto));
+        boolean result = resultNum > 0;
+        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+    }
+
+    @Override
+    public ResponseVO<Boolean> addOne(CommunityAddDTO dto) {
+        int resultNum = getBaseMapper().insert(CommunityConverter.INSTANCE.saveDTOtoEntity(dto));
         boolean result = resultNum > 0;
         return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
     }

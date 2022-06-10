@@ -4,6 +4,7 @@ import cn.sbx0.microservices.entity.PageQueryDTO;
 import cn.sbx0.microservices.entity.Paging;
 import cn.sbx0.microservices.entity.ResponseVO;
 import cn.sbx0.microservices.entity.TableStructure;
+import cn.sbx0.microservices.home.entity.CommunityAddDTO;
 import cn.sbx0.microservices.home.entity.CommunityEditDTO;
 import cn.sbx0.microservices.home.entity.CommunityEntity;
 import cn.sbx0.microservices.home.entity.CommunityVO;
@@ -25,4 +26,6 @@ public interface ICommunityService extends IService<CommunityEntity> {
     Paging<CommunityEntity> pagingList(PageQueryDTO dto);
 
     ResponseVO<Boolean> updateOneById(CommunityEditDTO dto);
+
+    ResponseVO<Boolean> addOne(CommunityAddDTO dto);
 }

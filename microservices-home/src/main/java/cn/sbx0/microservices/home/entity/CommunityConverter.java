@@ -17,4 +17,5 @@ public interface CommunityConverter {
 
     CommunityEntity editDTOtoEntity(CommunityEditDTO source);
 
+    CommunityEntity saveDTOtoEntity(CommunityAddDTO dto);
 }
