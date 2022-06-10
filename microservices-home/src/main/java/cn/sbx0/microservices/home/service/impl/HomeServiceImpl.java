@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,6 +49,13 @@ public class HomeServiceImpl implements IHomeService {
             for (QueryOrderDTO order : orders) {
                 order.setField(humpToLine(order.getField()));
             }
+        } else {
+            orders = new ArrayList<>();
+            QueryOrderDTO queryOrder = new QueryOrderDTO();
+            queryOrder.setField("subjective_rating");
+            queryOrder.setSort("desc");
+            orders.add(queryOrder);
+            dto.setOrders(orders);
         }
         return communityService.voPagingList(dto);
     }
