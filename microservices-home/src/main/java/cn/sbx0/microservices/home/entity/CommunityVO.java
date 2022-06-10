@@ -111,5 +111,8 @@ public class CommunityVO implements Serializable {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime updateTime;
 
-
+    /**
+     * 地图配置
+     */
+    private String mapConfig;
 }

@@ -4,8 +4,8 @@
 
     <select id="pagingList" resultType="cn.sbx0.microservices.home.entity.CommunityEntity">
         SELECT id, community_name, community_address, average_price, building_age, building_type, building_number,
-        household_number, volume_rate, greening_rate, parking_above, parking_under, developer, property, new_flag,
-        remark, del_flag, create_time, update_time
+        household_number, volume_rate, greening_rate, parking_above, parking_under, developer, property,map_config,
+        new_flag, remark, del_flag, create_time, update_time
         FROM community
         <where>
             del_flag = 0

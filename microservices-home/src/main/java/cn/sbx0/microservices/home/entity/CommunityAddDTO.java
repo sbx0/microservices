@@ -94,4 +94,9 @@ public class CommunityAddDTO implements Serializable {
     private Integer newFlag;
 
     private String remark;
+
+    /**
+     * 地图配置
+     */
+    private String mapConfig;
 }
