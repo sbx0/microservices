@@ -99,4 +99,20 @@ public class CommunityEditDTO implements Serializable {
      * 地图配置
      */
     private String mapConfig;
+
+    /**
+     * 区域
+     */
+    private String areaName;
+
+    /**
+     * 主观评分
+     */
+    private Integer subjectiveRating;
+
+    /**
+     * 客观评分
+     */
+    private Integer objectiveRating;
+
 }

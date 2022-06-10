@@ -138,5 +138,20 @@ public class CommunityEntity implements Serializable {
      */
     private String mapConfig;
 
+    /**
+     * 区域
+     */
+    private String areaName;
+
+    /**
+     * 主观评分
+     */
+    private Integer subjectiveRating;
+
+    /**
+     * 客观评分
+     */
+    private Integer objectiveRating;
+
 
 }
