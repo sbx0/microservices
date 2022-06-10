@@ -234,6 +234,6 @@ services:
       DB_URL:
       DB_USERNAME:
       DB_PASSWORD:
-      UNO_PORT:
-      UNO_PROFILES:
+      HOME_PORT:
+      HOME_PROFILES:
       IP_ADDRESS:
