@@ -17,4 +17,6 @@ public interface GameRoomMapper extends BaseMapper<GameRoomEntity> {
     List<GameRoomEntity> alreadyCreatedButUnusedRoomsByCreateUserId(long userId);
 
     GameRoomEntity getOneByRoomCode(String roomCode);
+
+    List<GameRoomEntity> pagingList(String keyword);
 }

@@ -44,4 +44,28 @@
         where room_code = #{roomCode}
           and del_flag = 0
     </select>
+    <select id="pagingList" resultType="cn.sbx0.microservices.uno.entity.GameRoomEntity">
+        select id,
+        room_code,
+        room_name,
+        room_password,
+        players_size,
+        room_status,
+        public_flag,
+        instance_id,
+        round,
+        remark,
+        del_flag,
+        create_user_id,
+        create_time,
+        update_user_id,
+        update_time
+        from game_room
+        <where>
+            del_flag = 0
+            <if test="keyword != null and keyword != ''">
+                and keyword = #{keyword}
+            </if>
+        </where>
+    </select>
 </mapper>

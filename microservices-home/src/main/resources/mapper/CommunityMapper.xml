@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.sbx0.microservices.home.mapper.CommunityMapper">
+
+    <select id="pagingList" resultType="cn.sbx0.microservices.home.entity.CommunityEntity">
+        SELECT id, community_name, community_address, average_price, building_age, building_type, building_number,
+        household_number, volume_rate, greening_rate, parking_above, parking_under, developer, property, new_flag,
+        remark, del_flag, create_time, update_time
+        FROM community
+        <where>
+            del_flag = 0
+            <if test="keyword != null and keyword != ''">
+                AND community_name = #{keyword}
+            </if>
+        </where>
+        <foreach item="item" index="index" collection="orders" open="ORDER " separator="," nullable="false">
+            #{item.field} #{item.sort}
+        </foreach>
+    </select>
+    <select id="tableStructure" resultType="java.util.Map">
+        select c.column_name,
+               c.column_type,
+               c.column_comment
+        from information_schema.columns c
+        where c.table_name = 'community'
+    </select>
+</mapper>

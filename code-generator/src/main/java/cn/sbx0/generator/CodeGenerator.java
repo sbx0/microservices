@@ -10,9 +10,9 @@ import java.util.Map;
 public class CodeGenerator {
     public static final String author = "wangh";
     public static final String packageConfig = "cn.sbx0.microservices";
-    public static final String moduleName = "microservices-uno";
-    public static final String modulePackageConfig = "uno";
-    public static final String table = "game_result";
+    public static final String moduleName = "microservices-home";
+    public static final String modulePackageConfig = "home";
+    public static final String table = "community";
     public static String url;
     public static String username;
     public static String password;

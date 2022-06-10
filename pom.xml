@@ -15,6 +15,7 @@
         <module>microservices-infrastructure</module>
         <module>microservices-account</module>
         <module>microservices-uno</module>
+        <module>microservices-home</module>
     </modules>
 
     <parent>
