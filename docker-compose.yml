@@ -202,3 +202,38 @@ services:
       UNO_PORT:
       UNO_PROFILES:
       IP_ADDRESS:
+
+  microservices-home:
+    container_name: microservices-home
+    build:
+      context: ./microservices-home
+      dockerfile: Dockerfile
+    network_mode: "host"
+    deploy:
+      resources:
+        limits:
+          memory: 500m
+    volumes:
+      - /etc/timezone:/etc/timezone
+    depends_on:
+      - microservices-registry
+      - microservices-configuration
+    environment:
+      WAIT_HOSTS: wsl2.sbx0.cn:8761, wsl2.sbx0.cn:8888
+      REGION:
+      VERSION:
+      REGISTRY_URL:
+      SECURITY_NAME:
+      SECURITY_PASSWORD:
+      CONFIG_URL:
+      HOST_CONFIG_LOCATION:
+      CONFIG_LOCATION:
+      REDIS_HOST:
+      REDIS_PORT:
+      REDIS_PASSWORD:
+      DB_URL:
+      DB_USERNAME:
+      DB_PASSWORD:
+      UNO_PORT:
+      UNO_PROFILES:
+      IP_ADDRESS:
