@@ -13,8 +13,8 @@
                 AND community_name = #{keyword}
             </if>
         </where>
-        <foreach item="item" index="index" collection="orders" open="ORDER " separator="," nullable="false">
-            #{item.field} #{item.sort}
+        <foreach item="item" index="index" collection="orders" open="ORDER BY " separator="," nullable="false">
+            ${item.field} ${item.sort}
         </foreach>
     </select>
     <select id="tableStructure" resultType="java.util.Map">
