@@ -12,7 +12,7 @@ public class CodeGenerator {
     public static final String packageConfig = "cn.sbx0.microservices";
     public static final String moduleName = "microservices-home";
     public static final String modulePackageConfig = "home";
-    public static final String table = "community";
+    public static final String table = "community_house";
     public static String url;
     public static String username;
     public static String password;
