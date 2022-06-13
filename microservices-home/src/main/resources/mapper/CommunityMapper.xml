@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.sbx0.microservices.home.mapper.CommunityMapper">
-
     <select id="pagingList" resultType="cn.sbx0.microservices.home.entity.CommunityEntity">
         SELECT id, community_name, community_address, average_price, building_age, building_type, building_number,
         household_number, volume_rate, greening_rate, parking_above, parking_under, developer, property, new_flag,

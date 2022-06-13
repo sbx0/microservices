@@ -2,6 +2,7 @@ package cn.sbx0.microservices.home.service;
 
 import cn.sbx0.microservices.entity.PageQueryDTO;
 import cn.sbx0.microservices.entity.Paging;
+import cn.sbx0.microservices.home.entity.CommunityHouseVO;
 import cn.sbx0.microservices.home.entity.CommunityVO;
 
 /**
@@ -14,4 +15,6 @@ import cn.sbx0.microservices.home.entity.CommunityVO;
  */
 public interface IHomeService {
     Paging<CommunityVO> communityPagingList(PageQueryDTO dto);
+
+    Paging<CommunityHouseVO> communityHousesPagingList(PageQueryDTO dto);
 }

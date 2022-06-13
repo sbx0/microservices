@@ -3,7 +3,9 @@ package cn.sbx0.microservices.home.service.impl;
 import cn.sbx0.microservices.entity.PageQueryDTO;
 import cn.sbx0.microservices.entity.Paging;
 import cn.sbx0.microservices.entity.QueryOrderDTO;
+import cn.sbx0.microservices.home.entity.CommunityHouseVO;
 import cn.sbx0.microservices.home.entity.CommunityVO;
+import cn.sbx0.microservices.home.service.ICommunityHouseService;
 import cn.sbx0.microservices.home.service.ICommunityService;
 import cn.sbx0.microservices.home.service.IHomeService;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ import java.util.regex.Pattern;
 public class HomeServiceImpl implements IHomeService {
     @Resource
     private ICommunityService communityService;
+    @Resource
+    private ICommunityHouseService communityHouseService;
 
     private static Pattern linePattern = Pattern.compile("_(\\w)");
     private static Pattern humpPattern = Pattern.compile("[A-Z]");
@@ -58,5 +62,23 @@ public class HomeServiceImpl implements IHomeService {
             dto.setOrders(orders);
         }
         return communityService.voPagingList(dto);
+    }
+
+    @Override
+    public Paging<CommunityHouseVO> communityHousesPagingList(PageQueryDTO dto) {
+        List<QueryOrderDTO> orders = dto.getOrders();
+        if (!CollectionUtils.isEmpty(orders)) {
+            for (QueryOrderDTO order : orders) {
+                order.setField(humpToLine(order.getField()));
+            }
+        } else {
+            orders = new ArrayList<>();
+            QueryOrderDTO queryOrder = new QueryOrderDTO();
+            queryOrder.setField("subjective_rating");
+            queryOrder.setSort("desc");
+            orders.add(queryOrder);
+            dto.setOrders(orders);
+        }
+        return communityHouseService.voPagingList(dto);
     }
 }
