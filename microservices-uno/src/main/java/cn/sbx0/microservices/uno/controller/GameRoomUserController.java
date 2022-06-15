@@ -29,18 +29,18 @@ public class GameRoomUserController extends BaseController<GameRoomUserServiceIm
     @GetMapping("/join/{roomCode}")
     public ResponseVO<Boolean> joinGameRoom(@PathVariable("roomCode") String roomCode) {
         boolean success = service.joinGameRoom(roomCode);
-        return new ResponseVO<>(success ? ResponseVO.SUCCESS : ResponseVO.FAILED, success);
+        return ResponseVO.judge(success, success);
     }
 
     @GetMapping("/quit/{roomCode}")
     public ResponseVO<Boolean> quitGameRoom(@PathVariable("roomCode") String roomCode) {
         boolean success = service.quitGameRoom(roomCode);
-        return new ResponseVO<>(success ? ResponseVO.SUCCESS : ResponseVO.FAILED, success);
+        return ResponseVO.judge(success, success);
     }
 
     @GetMapping("/list/{roomCode}")
     public ResponseVO<List<AccountVO>> listByGameRoom(@PathVariable("roomCode") String roomCode) {
         List<AccountVO> data = service.getGamerByCode(roomCode);
-        return new ResponseVO<>(data != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, data);
+        return ResponseVO.judge(data != null, data);
     }
 }

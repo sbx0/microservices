@@ -22,12 +22,12 @@ public class BotController {
     @GetMapping("/add/{roomCode}")
     public ResponseVO<Boolean> joinRoom(@PathVariable("roomCode") String roomCode) {
         boolean result = randomBot.joinRoom(roomCode);
-        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+        return ResponseVO.judge(result, result);
     }
 
     @GetMapping("/remove/{roomCode}")
     public ResponseVO<Boolean> quitRoom(@PathVariable("roomCode") String roomCode) {
         boolean result = randomBot.quitRoom(roomCode);
-        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+        return ResponseVO.judge(result, result);
     }
 }

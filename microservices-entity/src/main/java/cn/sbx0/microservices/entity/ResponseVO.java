@@ -14,23 +14,42 @@ public class ResponseVO<T> {
     private String message;
     private T data;
 
+    public static <T> ResponseVO<T> success() {
+        return success(null);
+    }
+
+    public static <T> ResponseVO<T> success(T data) {
+        ResponseVO<T> response = new ResponseVO<>();
+        response.setCode(SUCCESS);
+        response.setData(data);
+        response.setMessage("success");
+        return response;
+    }
+
+    public static <T> ResponseVO<T> failed() {
+        return failed(null);
+    }
+
+    public static <T> ResponseVO<T> failed(T data) {
+        ResponseVO<T> response = new ResponseVO<>();
+        response.setCode(FAILED);
+        response.setData(data);
+        response.setMessage("failed");
+        return response;
+    }
+
+    public static <T> ResponseVO<T> failed(T data, String message) {
+        ResponseVO<T> response = new ResponseVO<>();
+        response.setCode(FAILED);
+        response.setData(data);
+        response.setMessage(message);
+        return response;
+    }
+
+    public static <T> ResponseVO<T> judge(boolean result, T data) {
+        return result ? success(data) : failed(data);
+    }
+
     public ResponseVO() {
     }
-
-    public ResponseVO(String code, T data) {
-        this.code = code;
-        this.data = data;
-        if (SUCCESS.equals(code)) {
-            this.message = "success";
-        } else {
-            this.message = "failed";
-        }
-    }
-
-    public ResponseVO(String code, T data, String message) {
-        this.code = code;
-        this.data = data;
-        this.message = message;
-    }
-
 }

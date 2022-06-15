@@ -55,7 +55,7 @@ public class MatchServiceImpl implements IMatchService {
             executorService.execute(() -> messageService.send(new MessageDTO<>(CODE, CHANNEL_FOUND, String.valueOf(dto.getUserId()), roomCode)));
         } else {
             if (Boolean.TRUE.equals(stringRedisTemplate.opsForSet().isMember(IDS_CACHE, dto.getUserId().toString()))) {
-                return new ResponseVO<>(ResponseVO.FAILED, false);
+                return ResponseVO.failed(false);
             }
             stringRedisTemplate.opsForSet().add(IDS_CACHE, dto.getUserId().toString());
             stringRedisTemplate.opsForSet().remove(DELETE_IDS, dto.getUserId().toString());
@@ -67,7 +67,7 @@ public class MatchServiceImpl implements IMatchService {
             }
             executorService.execute(() -> messageService.send(new MessageDTO<>(CODE, CHANNEL_INFO, "*", stringRedisTemplate.opsForSet().size(IDS_CACHE))));
         }
-        return new ResponseVO<>(ResponseVO.SUCCESS, true);
+        return ResponseVO.success(true);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class MatchServiceImpl implements IMatchService {
         stringRedisTemplate.opsForSet().remove(IDS_CACHE, userId.toString());
         stringRedisTemplate.opsForSet().add(DELETE_IDS, userId.toString());
         executorService.execute(() -> messageService.send(new MessageDTO<>(CODE, CHANNEL_INFO, "*", stringRedisTemplate.opsForSet().size(IDS_CACHE))));
-        return new ResponseVO<>(ResponseVO.SUCCESS, true);
+        return ResponseVO.success(true);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class MatchServiceImpl implements IMatchService {
         info.setChoose(choose);
         info.setSize(size.intValue());
         info.setJoin(Boolean.TRUE.equals(stringRedisTemplate.opsForSet().isMember(IDS_CACHE, Long.toString(userId))));
-        return new ResponseVO<>(ResponseVO.SUCCESS, info);
+        return ResponseVO.success(info);
     }
 
     @Override

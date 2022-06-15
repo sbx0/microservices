@@ -43,21 +43,21 @@ public class GameRoomController extends BaseController<GameRoomServiceImpl, Game
     @PostMapping("/create")
     public ResponseVO<String> create(@RequestBody GameRoomCreateDTO dto) {
         String code = service.create(dto, StpUtil.getLoginIdAsLong());
-        return new ResponseVO<>(code != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, code);
+        return ResponseVO.judge(code != null, code);
     }
 
     @ResponseBody
     @GetMapping("/info/{roomCode}")
     public ResponseVO<GameRoomInfoVO> info(@PathVariable("roomCode") String roomCode) {
         GameRoomInfoVO entity = service.info(roomCode);
-        return new ResponseVO<>(entity != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, entity);
+        return ResponseVO.judge(entity != null, entity);
     }
 
     @ResponseBody
     @GetMapping("/start/{roomCode}")
     public ResponseVO<Boolean> start(@PathVariable("roomCode") String roomCode) {
         Boolean result = service.start(roomCode);
-        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+        return ResponseVO.judge(result, result);
     }
 
     @ResponseBody

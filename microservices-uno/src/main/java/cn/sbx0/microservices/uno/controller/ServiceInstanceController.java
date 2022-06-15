@@ -21,6 +21,6 @@ public class ServiceInstanceController {
 
     @GetMapping("/choose/{roomCode}")
     public ResponseVO<String> choose(@PathVariable("roomCode") String roomCode) {
-        return new ResponseVO<>(ResponseVO.SUCCESS, gameRoomService.choose(roomCode));
+        return ResponseVO.success(gameRoomService.choose(roomCode));
     }
 }

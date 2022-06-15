@@ -36,6 +36,6 @@ public class GameServiceImpl implements IGameService {
         gameInfo.setCards(cardService.getCardsByUserId(code, userId));
         gameInfo.setGamers(gamerService.getGamerByCode(code));
         gameInfo.setDiscards(cardService.getDiscardCards(code));
-        return new ResponseVO<>(ResponseVO.SUCCESS, gameInfo);
+        return ResponseVO.success(gameInfo);
     }
 }

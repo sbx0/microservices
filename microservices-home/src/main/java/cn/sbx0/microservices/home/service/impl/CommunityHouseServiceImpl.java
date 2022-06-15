@@ -59,20 +59,20 @@ public class CommunityHouseServiceImpl extends ServiceImpl<CommunityHouseMapper,
             columns.add(columnStructure);
         }
         tableStructure.setColumns(columns);
-        return new ResponseVO<>(ResponseVO.SUCCESS, tableStructure);
+        return ResponseVO.success(tableStructure);
     }
 
     @Override
     public ResponseVO<Boolean> updateOneById(CommunityHouseEditDTO dto) {
         int resultNum = getBaseMapper().updateById(CommunityHouseConverter.INSTANCE.editDTOtoEntity(dto));
         boolean result = resultNum > 0;
-        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+        return ResponseVO.judge(result, result);
     }
 
     @Override
     public ResponseVO<Boolean> addOne(CommunityHouseAddDTO dto) {
         int resultNum = getBaseMapper().insert(CommunityHouseConverter.INSTANCE.saveDTOtoEntity(dto));
         boolean result = resultNum > 0;
-        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+        return ResponseVO.judge(result, result);
     }
 }

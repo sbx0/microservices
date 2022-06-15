@@ -38,7 +38,7 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityMapper, Community
             columns.add(columnStructure);
         }
         tableStructure.setColumns(columns);
-        return new ResponseVO<>(ResponseVO.SUCCESS, tableStructure);
+        return ResponseVO.success(tableStructure);
     }
 
     @Override
@@ -66,13 +66,13 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityMapper, Community
     public ResponseVO<Boolean> updateOneById(CommunityEditDTO dto) {
         int resultNum = getBaseMapper().updateById(CommunityConverter.INSTANCE.editDTOtoEntity(dto));
         boolean result = resultNum > 0;
-        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+        return ResponseVO.judge(result, result);
     }
 
     @Override
     public ResponseVO<Boolean> addOne(CommunityAddDTO dto) {
         int resultNum = getBaseMapper().insert(CommunityConverter.INSTANCE.saveDTOtoEntity(dto));
         boolean result = resultNum > 0;
-        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+        return ResponseVO.judge(result, result);
     }
 }
