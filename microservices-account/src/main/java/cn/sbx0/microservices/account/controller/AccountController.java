@@ -36,7 +36,7 @@ public class AccountController extends BaseController<AccountServiceImpl, Accoun
 
     @GetMapping("/loginInfo")
     public ResponseVO<AccountVO> loginInfo() {
-        return new ResponseVO<>(ResponseVO.SUCCESS, service.loginInfo(StpUtil.getLoginIdAsLong()));
+        return ResponseVO.success(service.loginInfo(StpUtil.getLoginIdAsLong()));
     }
 
     @GetMapping("/findByUserName")

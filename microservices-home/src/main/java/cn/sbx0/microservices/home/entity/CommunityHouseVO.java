@@ -11,7 +11,6 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.Year;
 
 /**
  * <p>
@@ -23,11 +22,18 @@ import java.time.Year;
  */
 @Getter
 @Setter
-public class CommunityVO implements Serializable {
+public class CommunityHouseVO implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
+    /**
+     * ID
+     */
     private Long id;
+
+    /**
+     * 小区
+     */
+    private Long communityId;
 
     /**
      * 小区名称
@@ -35,91 +41,29 @@ public class CommunityVO implements Serializable {
     private String communityName;
 
     /**
-     * 地址
+     * 名称
      */
-    private String communityAddress;
+    private String houseName;
 
     /**
-     * 均价
+     * 装修类型
      */
-    private BigDecimal averagePrice;
+    private String decorationType;
 
     /**
-     * 建筑年代
+     * 价格
      */
-    private Year buildingAge;
+    private BigDecimal housePrice;
 
     /**
-     * 建筑类型
+     * 面积
      */
-    private String buildingType;
+    private BigDecimal houseSize;
 
     /**
-     * 栋数
+     * 首付
      */
-    private Integer buildingNumber;
-
-    /**
-     * 户数
-     */
-    private String householdNumber;
-
-    /**
-     * 容积率
-     */
-    private BigDecimal volumeRate;
-
-    /**
-     * 绿化率
-     */
-    private BigDecimal greeningRate;
-
-    /**
-     * 地上停车位
-     */
-    private Integer parkingAbove;
-
-    /**
-     * 地下停车位
-     */
-    private Integer parkingUnder;
-
-    /**
-     * 开发商
-     */
-    private String developer;
-
-    /**
-     * 物业
-     */
-    private String property;
-
-    /**
-     * 0 二手房 1 新房
-     */
-    private Integer newFlag;
-
-    private String remark;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime createTime;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime updateTime;
-
-    /**
-     * 地图配置
-     */
-    private String mapConfig;
-
-    /**
-     * 区域
-     */
-    private String areaName;
+    private BigDecimal firstPay;
 
     /**
      * 主观评分
@@ -131,4 +75,29 @@ public class CommunityVO implements Serializable {
      */
     private Integer objectiveRating;
 
+    /**
+     * 备注
+     */
+    private String remark;
+
+    /**
+     * 删除标记
+     */
+    private Integer delFlag;
+
+    /**
+     * 创建时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime createTime;
+
+    /**
+     * 修改时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime updateTime;
 }

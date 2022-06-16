@@ -3,6 +3,7 @@ package cn.sbx0.microservices.home.controller;
 
 import cn.sbx0.microservices.entity.PageQueryDTO;
 import cn.sbx0.microservices.entity.Paging;
+import cn.sbx0.microservices.home.entity.CommunityHouseVO;
 import cn.sbx0.microservices.home.entity.CommunityVO;
 import cn.sbx0.microservices.home.service.IHomeService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,11 @@ public class HomeController {
     @PostMapping("/communities")
     public Paging<CommunityVO> communityPagingList(@RequestBody PageQueryDTO dto) {
         return service.communityPagingList(dto);
+    }
+
+    @PostMapping("/communityHouses")
+    public Paging<CommunityHouseVO> communityHousesPagingList(@RequestBody PageQueryDTO dto) {
+        return service.communityHousesPagingList(dto);
     }
 }
 

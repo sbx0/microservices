@@ -39,12 +39,12 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
         if (account != null && account.getId() > 0) {
             if (BCrypt.checkpw(dto.getPassword(), account.getPassword())) {
                 StpUtil.login(account.getId());
-                return new ResponseVO<>(ResponseVO.SUCCESS, StpUtil.getTokenInfo());
+                return ResponseVO.success(StpUtil.getTokenInfo());
             } else {
-                return new ResponseVO<>(ResponseVO.FAILED, null, "wrong password");
+                return ResponseVO.failed(null, "wrong password");
             }
         }
-        return new ResponseVO<>(ResponseVO.FAILED, null, "account not found");
+        return ResponseVO.failed(null, "account not found");
     }
 
     @Override
@@ -56,13 +56,13 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountEntity
     public ResponseVO<Boolean> register(LoginDTO dto) {
         AccountEntity exist = findByUsername(dto.getUsername());
         if (exist != null) {
-            return new ResponseVO<>(ResponseVO.FAILED, null, "account exist!");
+            return ResponseVO.failed(null, "account exist!");
         }
         exist = new AccountEntity();
         exist.setUsername(dto.getUsername());
         exist.setPassword(BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt()));
         boolean result = getBaseMapper().insert(exist) > 0;
-        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+        return ResponseVO.judge(result, result);
     }
 
     @Override

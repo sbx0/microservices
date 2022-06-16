@@ -18,11 +18,11 @@ import java.time.Year;
 
 /**
  * <p>
- *
+ * 小区
  * </p>
  *
  * @author wangh
- * @since 2022-06-09
+ * @since 2022-06-10
  */
 @Getter
 @Setter
@@ -31,6 +31,9 @@ public class CommunityEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * ID
+     */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
@@ -100,23 +103,55 @@ public class CommunityEntity implements Serializable {
     private String property;
 
     /**
-     * 0 二手房 1 新房
+     * 新旧
      */
     private Integer newFlag;
 
+    /**
+     * 备注
+     */
     private String remark;
 
+    /**
+     * 删除标记
+     */
     private Integer delFlag;
 
+    /**
+     * 创建时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createTime;
 
+    /**
+     * 修改时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime updateTime;
+
+    /**
+     * 地图配置
+     */
+    private String mapConfig;
+
+    /**
+     * 区域
+     */
+    private String areaName;
+
+    /**
+     * 主观评分
+     */
+    private Integer subjectiveRating;
+
+    /**
+     * 客观评分
+     */
+    private Integer objectiveRating;
 
 
 }

@@ -8,16 +8,16 @@ build() {
   case "$1" in
   "local")
     if [ -n "$2" ]; then
-      docker-compose -f docker-compose.yml --env-file .env build "$2"
+      docker-compose --compatibility -f docker-compose.yml --env-file .env build "$2"
     else
-      docker-compose -f docker-compose.yml --env-file .env build
+      docker-compose --compatibility -f docker-compose.yml --env-file .env build
     fi
     ;;
   *)
     if [ -n "$2" ]; then
-      docker-compose -f docker-compose-prod.yml --env-file .env build "$2"
+      docker-compose --compatibility -f docker-compose-prod.yml --env-file .env build "$2"
     else
-      docker-compose -f docker-compose-prod.yml --env-file .env build
+      docker-compose --compatibility -f docker-compose-prod.yml --env-file .env build
     fi
     ;;
   esac

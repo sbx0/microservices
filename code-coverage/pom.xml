@@ -22,6 +22,11 @@
             <artifactId>microservices-uno</artifactId>
             <version>${microservices.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cn.sbx0</groupId>
+            <artifactId>microservices-home</artifactId>
+            <version>${microservices.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

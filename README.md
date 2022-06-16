@@ -54,7 +54,7 @@ my [GitHub home page](https://github.com/sbx0).
 
 ## IDEA RUN CONFIG
 
-`CONFIG_URL=http://wsl2.sbx0.cn:8888;SECURITY_PASSWORD=test;SECURITY_NAME=sbx0;REGION=docker;VERSION=0.0.0;REGISTRY_URL=http://wsl2.sbx0.cn:8761/eureka/;IP_ADDRESS=172.30.32.1;DB_URL=jdbc:mysql://wsl2.sbx0.cn:3306/assembler?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true`
+`CONFIG_URL=http://wsl2.sbx0.cn:8888;SECURITY_PASSWORD=test;SECURITY_NAME=sbx0;REGION=docker;VERSION=0.0.0;REGISTRY_URL=http://wsl2.sbx0.cn:8761/eureka/;IP_ADDRESS=win.sbx0.cn;DB_URL=jdbc:mysql://wsl2.sbx0.cn:3306/assembler?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true`
 
 ## WSL2
 

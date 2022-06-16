@@ -28,6 +28,6 @@ public class GameResultController extends BaseController<GameResultServiceImpl, 
     @GetMapping("/list/{roomCode}")
     public ResponseVO<List<GameResultVO>> listByGameRoom(@PathVariable("roomCode") String roomCode) {
         List<GameResultVO> data = service.listByGameRoom(roomCode);
-        return new ResponseVO<>(data != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, data);
+        return ResponseVO.judge(data != null, data);
     }
 }

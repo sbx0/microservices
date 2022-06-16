@@ -57,7 +57,7 @@ class AccountControllerTest extends BaseControllerTest {
         saTokenInfo.setLoginId(1);
         saTokenInfo.setLoginType("test");
 
-        given(service.login(BDDMockito.any())).willReturn(new ResponseVO<>(ResponseVO.SUCCESS, saTokenInfo));
+        given(service.login(BDDMockito.any())).willReturn(ResponseVO.success(saTokenInfo));
 
         String response = mvc.perform(post("/login")
                 .accept(MediaType.APPLICATION_JSON)
@@ -87,7 +87,7 @@ class AccountControllerTest extends BaseControllerTest {
         loginDTO.setUsername("test");
         loginDTO.setPassword("test");
 
-        given(service.register(any())).willReturn(new ResponseVO<>(ResponseVO.SUCCESS, true));
+        given(service.register(any())).willReturn(ResponseVO.success(true));
 
 
         String response = mvc.perform(post("/register")

@@ -26,7 +26,7 @@ public class GameCardController {
     @GetMapping("/my/{roomCode}")
     public ResponseVO<List<CardEntity>> myCardList(@PathVariable("roomCode") String roomCode) {
         List<CardEntity> cards = service.myCardList(roomCode);
-        return new ResponseVO<>(cards != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, cards);
+        return ResponseVO.judge(cards != null, cards);
     }
 
     /**
@@ -37,7 +37,7 @@ public class GameCardController {
             @PathVariable("roomCode") String roomCode
     ) {
         List<CardEntity> result = service.drawCard(roomCode, 1);
-        return new ResponseVO<>(result != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+        return ResponseVO.judge(result != null, result);
     }
 
     /**
@@ -54,8 +54,8 @@ public class GameCardController {
             @PathVariable("uuid") String uuid,
             @RequestParam(value = "color", required = false) String color
     ) {
-        Boolean result = service.playCard(roomCode, uuid, color, StpUtil.getLoginIdAsLong());
-        return new ResponseVO<>(result ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+        boolean result = service.playCard(roomCode, uuid, color, StpUtil.getLoginIdAsLong());
+        return ResponseVO.judge(result, result);
     }
 
     /**
@@ -64,7 +64,7 @@ public class GameCardController {
     @GetMapping("/next/{roomCode}")
     public ResponseVO<List<CardEntity>> nextPlay(@PathVariable("roomCode") String roomCode) {
         List<CardEntity> result = service.nextPlay(roomCode, StpUtil.getLoginIdAsLong());
-        return new ResponseVO<>(result != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, result);
+        return ResponseVO.judge(result != null, result);
     }
 
     /**
@@ -73,7 +73,7 @@ public class GameCardController {
     @GetMapping("/discard/{roomCode}")
     public ResponseVO<List<CardEntity>> discardCardList(@PathVariable("roomCode") String roomCode) {
         List<CardEntity> cards = service.getDiscardCards(roomCode);
-        return new ResponseVO<>(cards != null ? ResponseVO.SUCCESS : ResponseVO.FAILED, cards);
+        return ResponseVO.judge(cards != null, cards);
     }
 }
 
