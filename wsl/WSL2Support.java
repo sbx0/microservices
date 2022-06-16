@@ -20,6 +20,9 @@ public class WSL2Support {
 
     public static void main(String[] args) {
         String wslIp = exec("ifconfig eth0 | grep -w inet | awk '{print $2}'");
+        if ("".equals(wslIp)) {
+            System.out.println("please 'apt install net-tools' first.");
+        }
         String winIp = exec("cat /etc/resolv.conf | grep 'nameserver' | awk '{print $2}'");
 
         System.out.println("change wsl host");
@@ -33,6 +36,8 @@ public class WSL2Support {
         StringBuilder winIp = new StringBuilder(winIpSource);
         Path path = Paths.get(host);
         try {
+            boolean findWslDomain = false;
+            boolean findWindowsDomain = false;
             List<String> lines = Files.readAllLines(path);
             for (int i = 0, linesSize = lines.size(); i < linesSize; i++) {
                 String line = lines.get(i);
@@ -41,12 +46,20 @@ public class WSL2Support {
                     line = wslIp.append("\t" + WSL_DOMAIN).toString();
                     System.out.println(line + "\tnew");
                     lines.set(i, line);
+                    findWslDomain = true;
                 } else if (line.contains(WINDOWS_DOMAIN)) {
                     System.out.println(line + "\told");
                     line = winIp.append("\t" + WINDOWS_DOMAIN).toString();
                     System.out.println(line + "\tnew");
                     lines.set(i, line);
+                    findWindowsDomain = true;
                 }
+            }
+            if (!findWslDomain) {
+                lines.add(wslIp.append("\t" + WSL_DOMAIN).toString());
+            }
+            if (!findWindowsDomain) {
+                lines.add(winIp.append("\t" + WINDOWS_DOMAIN).toString());
             }
             write(host, lines);
         } catch (IOException e) {
