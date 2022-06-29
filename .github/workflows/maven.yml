@@ -32,7 +32,7 @@ jobs:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
       - name: Upload Report to Server
         if: github.ref == 'refs/heads/master'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.2
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.3
         with:
           username: 'root'
           server: '${{ secrets.SSH_IP }}'
