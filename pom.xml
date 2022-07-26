@@ -16,6 +16,7 @@
         <module>microservices-account</module>
         <module>microservices-uno</module>
         <module>microservices-home</module>
+        <module>microservices-bot</module>
     </modules>
 
     <parent>

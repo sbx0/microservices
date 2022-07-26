@@ -6,3 +6,4 @@ target
 .env
 build
 *.class
+/logs/
