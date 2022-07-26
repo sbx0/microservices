@@ -29,6 +29,6 @@ public class AutoSendScheduled {
     @Scheduled(cron = "0 0 * * * ?")
     public void handleGitHubTask() {
         log.info("handleGitHubTask");
-        gitHubBotService.readData();
+        gitHubBotService.readData("xiaoye97", "DinkumChinese");
     }
 }

@@ -24,6 +24,17 @@ class GitHubBotServiceImplTest {
 
     @Test
     void readData() {
-        gitHubBotService.readData();
+        gitHubBotService.readData("xiaoye97", "DinkumChinese");
+    }
+
+    @Test
+    void readData2() {
+        gitHubBotService.readData("spring-projects", "spring-boot");
+    }
+
+    @Test
+    void readData3() {
+//        gitHubBotService.readData("fatedier", "frp");
+        gitHubBotService.readData("square", "retrofit");
     }
 }

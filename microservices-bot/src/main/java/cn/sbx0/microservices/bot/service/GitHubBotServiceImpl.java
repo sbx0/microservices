@@ -28,14 +28,14 @@ public class GitHubBotServiceImpl implements IGitHubBotService {
     private IMessageService messageService;
 
     @Override
-    public void readData() {
-        Call<GitHubReleasesResponse> call = retrofitConfig.gitHubService.getDinkumChineseLatest();
+    public void readData(String user, String repositoryName) {
+        Call<GitHubReleasesResponse> call = retrofitConfig.gitHubService.getDinkumChineseLatest(user, repositoryName);
         try {
             Response<GitHubReleasesResponse> execute = call.execute();
             if (execute.isSuccessful()) {
                 GitHubReleasesResponse body = execute.body();
                 log.info(JSONUtils.toJSONString(body));
-                handleData(body);
+                handleData(repositoryName, body);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -43,18 +43,18 @@ public class GitHubBotServiceImpl implements IGitHubBotService {
     }
 
     @Override
-    public String handleData(GitHubReleasesResponse data) {
+    public String handleData(String repositoryName, GitHubReleasesResponse data) {
         if (data == null) {
             return null;
         }
         String nodeId = data.getNode_id();
-        String last = stringRedisTemplate.opsForValue().get("DinkumChineseLatest");
+        String last = stringRedisTemplate.opsForValue().get(repositoryName + "Latest");
         if (last == null || !last.equals(nodeId)) {
-            stringRedisTemplate.opsForValue().set("DinkumChineseLatest", nodeId);
-            log.info("DinkumChinese update");
+            stringRedisTemplate.opsForValue().set(repositoryName + "Latest", nodeId);
+            log.info(repositoryName + " update");
             MessageEntity msg = new MessageEntity();
             msg.setTitle("程序更新");
-            msg.setText("#### " + data.getName() + "\n\n" + data.getBody());
+            msg.setText("#### " + repositoryName + " " + data.getTag_name() + "\n\n" + data.getBody());
             msg.setButtonText("查看详情");
             msg.setButtonUrl(data.getHtml_url());
             messageService.sendMessage(msg);

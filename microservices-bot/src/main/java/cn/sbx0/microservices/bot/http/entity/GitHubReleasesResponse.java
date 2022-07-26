@@ -7,7 +7,7 @@ import lombok.Data;
  * @author sbx0
  * @since 2022/7/25
  */
-@JsonIgnoreProperties({"author", "assets"})
+@JsonIgnoreProperties({"author", "assets", "reactions"})
 @Data
 public class GitHubReleasesResponse {
     private String url;
