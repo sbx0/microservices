@@ -54,3 +54,12 @@ logging:
       max-history: 30
   level:
     root: info
+
+dingtalk:
+  bot:
+    access-token: ${BOT_ACCESS_TOKEN}
+
+east-money:
+  base-url: ${EAST_MONEY_BASE_URL}
+real-time-east-money:
+  base-url: ${REAL_TIME_EAST_MONEY_BASE_URL}
