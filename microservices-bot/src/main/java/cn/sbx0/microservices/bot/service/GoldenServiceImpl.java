@@ -1,10 +1,10 @@
 package cn.sbx0.microservices.bot.service;
 
+import cn.sbx0.microservices.bot.config.RetrofitConfig;
 import cn.sbx0.microservices.bot.entity.MessageEntity;
 import cn.sbx0.microservices.bot.http.entity.EastMoneyServiceResponse;
 import cn.sbx0.microservices.bot.http.entity.GetFundNetDiagramResponse;
 import cn.sbx0.microservices.bot.http.entity.RealTimeEastMoneyResponse;
-import cn.sbx0.microservices.bot.utils.RetrofitConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;

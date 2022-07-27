@@ -1,10 +1,11 @@
-package cn.sbx0.microservices.bot.utils;
+package cn.sbx0.microservices.bot.config;
 
 import cn.sbx0.microservices.bot.converter.JsonpConverterFactory;
 import cn.sbx0.microservices.bot.http.DingDingService;
 import cn.sbx0.microservices.bot.http.EastMoneyService;
 import cn.sbx0.microservices.bot.http.GitHubService;
 import cn.sbx0.microservices.bot.http.RealTimeEastMoneyService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,11 @@ import javax.annotation.PostConstruct;
 @Component
 public class RetrofitConfig {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    static {
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
     public EastMoneyService eastMoneyService;
     public RealTimeEastMoneyService realTimeEastMoneyService;
     public DingDingService dingDingService;
