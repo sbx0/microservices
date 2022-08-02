@@ -3,7 +3,6 @@ package cn.sbx0.microservices.bot.service;
 import cn.sbx0.microservices.bot.config.RetrofitConfig;
 import cn.sbx0.microservices.bot.entity.MessageEntity;
 import cn.sbx0.microservices.bot.http.entity.GitHubReleasesResponse;
-import cn.sbx0.microservices.bot.utils.JSONUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,6 @@ public class GitHubBotServiceImpl implements IGitHubBotService {
             Response<GitHubReleasesResponse> execute = call.execute();
             if (execute.isSuccessful()) {
                 GitHubReleasesResponse body = execute.body();
-                log.info(JSONUtils.toJSONString(body));
                 handleData(repositoryName, body);
             }
         } catch (IOException e) {

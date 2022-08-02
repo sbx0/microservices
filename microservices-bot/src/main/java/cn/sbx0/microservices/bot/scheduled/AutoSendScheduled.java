@@ -30,5 +30,13 @@ public class AutoSendScheduled {
     public void handleGitHubTask() {
         log.info("handleGitHubTask");
         gitHubBotService.readData("xiaoye97", "DinkumChinese");
+        gitHubBotService.readData("spring-projects", "spring-boot");
+    }
+
+    @Scheduled(cron = "0 0 9 * * ?")
+    public void handleMemorialDayTask() {
+        log.info("handleGitHubTask");
+        gitHubBotService.readData("xiaoye97", "DinkumChinese");
+        gitHubBotService.readData("spring-projects", "spring-boot");
     }
 }
