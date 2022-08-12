@@ -35,7 +35,12 @@ public class GoldenServiceImpl implements IGoldenService {
         }
         int upDay = 0;
         int downDay = 0;
+        double minPrice = Double.MAX_VALUE;
         for (GetFundNetDiagramResponse one : data) {
+            double price = (int) ((Double.parseDouble(one.getDWJZ()) * 285.0) * 100) / 100.0;
+            if (price < minPrice) {
+                minPrice = price;
+            }
             String jzzzl = one.getJZZZL();
             double zdf = Double.parseDouble(jzzzl);
             if (zdf > 0) {
@@ -46,11 +51,15 @@ public class GoldenServiceImpl implements IGoldenService {
                 upDay = 0;
             }
         }
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("##### 近期最低 ").append(minPrice).append("\n\n");
         if (upDay != 0) {
-            return "#### 已连续涨 " + upDay + " 天";
+            stringBuilder.append("##### 已连续涨 ").append(upDay).append(" 天");
+            return stringBuilder.toString();
         }
         if (downDay != 0) {
-            return "#### 已连续跌 " + -downDay + " 天";
+            stringBuilder.append("##### 已连续跌 ").append(-downDay).append(" 天");
+            return stringBuilder.toString();
         }
         return "";
     }
@@ -64,7 +73,7 @@ public class GoldenServiceImpl implements IGoldenService {
         double price = (int) ((Double.parseDouble(gsz) * 285.0) * 100) / 100.0;
         stringBuffer.append("#### ").append(data.getName()).append(" ").append("[").append(data.getFundcode()).append("]").append("\n\n")
                 .append("##### 实时估算 ").append(price).append(" ").append("[").append(data.getGszzl()).append("]").append("\n\n")
-                .append("##### 昨日金价 ").append(oldPrice).append(" ").append("\n\n")
+                .append("##### 上交金价 ").append(oldPrice).append(" ").append("\n\n")
         ;
         return stringBuffer.toString();
     }
