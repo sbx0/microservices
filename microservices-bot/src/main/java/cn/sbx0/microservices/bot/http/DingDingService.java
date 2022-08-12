@@ -12,7 +12,7 @@ import retrofit2.http.Query;
  */
 public interface DingDingService {
     @POST("/robot/send")
-    Call<Void> sendRobotMessage(
+    Call<Object> sendRobotMessage(
             @Query("access_token") String accessToken,
             @Body SendRobotMessageBody data
     );

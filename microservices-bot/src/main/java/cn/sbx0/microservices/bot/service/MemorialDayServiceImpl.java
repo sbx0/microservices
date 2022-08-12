@@ -24,8 +24,8 @@ public class MemorialDayServiceImpl implements IMemorialDayService {
     @Override
     public void handleData(List<MemorialDayEntity> days) {
         StringBuilder stringBuilder = new StringBuilder();
+        LocalDateTime now = LocalDateTime.now().toLocalDate().atStartOfDay();
         for (MemorialDayEntity day : days) {
-            LocalDateTime now = LocalDateTime.now();
             LocalDateTime memorialDay = LocalDate.parse(day.getDay(), DATE_TIME_FORMATTER).atStartOfDay();
             long cal = Duration.between(now, memorialDay).toDays();
             if (cal < 0) {

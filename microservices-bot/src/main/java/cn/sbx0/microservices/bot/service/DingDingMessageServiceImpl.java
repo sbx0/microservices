@@ -4,10 +4,12 @@ import cn.sbx0.microservices.bot.config.RetrofitConfig;
 import cn.sbx0.microservices.bot.entity.MessageEntity;
 import cn.sbx0.microservices.bot.http.entity.SendRobotMessageActionCardBody;
 import cn.sbx0.microservices.bot.http.entity.SendRobotMessageBody;
+import cn.sbx0.microservices.bot.utils.JSONUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
+import retrofit2.Response;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -36,9 +38,12 @@ public class DingDingMessageServiceImpl implements IMessageService {
         actionCard.setSingleTitle(data.getButtonText());
         actionCard.setSingleUrl(data.getButtonUrl());
         message.setActionCard(actionCard);
-        Call<Void> sendCall = retrofitConfig.dingDingService.sendRobotMessage(accessToken, message);
+        Call<Object> sendCall = retrofitConfig.dingDingService.sendRobotMessage(accessToken, message);
         try {
-            sendCall.execute();
+            Response<Object> execute = sendCall.execute();
+            if (execute.isSuccessful()) {
+                log.info(JSONUtils.toJSONString(execute.body()));
+            }
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
