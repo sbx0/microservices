@@ -27,7 +27,10 @@ public class AutoSendScheduled {
     @Resource
     private IMemorialDayService memorialDayService;
 
-    @Scheduled(cron = "0 0 10,11,14,15 * * ?")
+    /**
+     * Monday to Friday at 3pm
+     */
+    @Scheduled(cron = "0 0 15 * * 01,02,03,04,05")
     public void handleGoldenTask() {
         log.info("handleGoldenTask");
         goldenService.readData();
@@ -40,6 +43,9 @@ public class AutoSendScheduled {
         gitHubBotService.readData("spring-projects", "spring-boot");
     }
 
+    /**
+     * every day at nine
+     */
     @Scheduled(cron = "0 0 9 * * ?")
     public void handleMemorialDayTask() {
         log.info("handleMemorialDayTask");
