@@ -45,8 +45,8 @@ public class AutoSendScheduled {
         log.info("handleMemorialDayTask");
         List<MemorialDayEntity> days = new ArrayList<>();
         days.add(new MemorialDayEntity("2020-05-23", "我们在一起", false));
-        days.add(new MemorialDayEntity("2022-08-13", "宝贝生日", true));
-        days.add(new MemorialDayEntity("2022-11-19", "哼哼生日", true));
+        days.add(new MemorialDayEntity("-08-13", "宝贝生日", true));
+        days.add(new MemorialDayEntity("-11-19", "哼哼生日", true));
         days.add(new MemorialDayEntity("2020-06-15", "毕业", false));
         memorialDayService.handleData(days);
     }
