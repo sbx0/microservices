@@ -7,7 +7,7 @@ import cn.sbx0.microservices.bot.http.entity.GitHubReleasesResponse;
  * @since 2022/7/25
  */
 public interface IGitHubBotService {
-    void readData(String user, String repositoryName);
+    void readData(String author, String name);
 
     String handleData(String repositoryName, GitHubReleasesResponse data);
 }

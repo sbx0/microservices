@@ -27,13 +27,13 @@ public class GitHubBotServiceImpl implements IGitHubBotService {
     private IMessageService messageService;
 
     @Override
-    public void readData(String user, String repositoryName) {
-        Call<GitHubReleasesResponse> call = retrofitConfig.gitHubService.getDinkumChineseLatest(user, repositoryName);
+    public void readData(String author, String name) {
+        Call<GitHubReleasesResponse> call = retrofitConfig.gitHubService.getDinkumChineseLatest(author, name);
         try {
             Response<GitHubReleasesResponse> execute = call.execute();
             if (execute.isSuccessful()) {
                 GitHubReleasesResponse body = execute.body();
-                handleData(repositoryName, body);
+                handleData(name, body);
             }
         } catch (IOException e) {
             e.printStackTrace();

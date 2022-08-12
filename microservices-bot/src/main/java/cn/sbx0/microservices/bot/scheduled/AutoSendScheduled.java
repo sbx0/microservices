@@ -1,9 +1,11 @@
 package cn.sbx0.microservices.bot.scheduled;
 
+import cn.sbx0.microservices.bot.entity.GithubRepositoryEntity;
 import cn.sbx0.microservices.bot.entity.MemorialDayEntity;
 import cn.sbx0.microservices.bot.service.IGitHubBotService;
 import cn.sbx0.microservices.bot.service.IGoldenService;
 import cn.sbx0.microservices.bot.service.IMemorialDayService;
+import cn.sbx0.microservices.bot.utils.JSONUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -37,10 +39,21 @@ public class AutoSendScheduled {
     }
 
     @Scheduled(cron = "0 0 * * * ?")
-    public void handleGitHubTask() {
-        log.info("handleGitHubTask");
-        gitHubBotService.readData("xiaoye97", "DinkumChinese");
-        gitHubBotService.readData("spring-projects", "spring-boot");
+    public void handleGitHubTask() throws InterruptedException {
+        List<GithubRepositoryEntity> list = new ArrayList<>();
+        list.add(new GithubRepositoryEntity("xiaoye97", "DinkumChinese"));
+        list.add(new GithubRepositoryEntity("spring-projects", "spring-boot"));
+        list.add(new GithubRepositoryEntity("dotnetcore", "FastGithub"));
+        list.add(new GithubRepositoryEntity("barry-ran", "QtScrcpy"));
+        list.add(new GithubRepositoryEntity("zerotier", "ZeroTierOne"));
+        list.add(new GithubRepositoryEntity("fatedier", "frp"));
+        list.add(new GithubRepositoryEntity("moonlight-stream", "moonlight-qt"));
+        list.add(new GithubRepositoryEntity("moonlight-stream", "Internet-Hosting-Tool"));
+        for (GithubRepositoryEntity repository : list) {
+            log.info("handleGitHubTask " + JSONUtils.toJSONString(repository));
+            gitHubBotService.readData(repository.getAuthor(), repository.getName());
+            Thread.sleep(5000);
+        }
     }
 
     /**
