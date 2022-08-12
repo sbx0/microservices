@@ -50,7 +50,7 @@ public class GoldenServiceImpl implements IGoldenService {
             return "#### 已连续涨 " + upDay + " 天";
         }
         if (downDay != 0) {
-            return "#### 已连续跌 " + downDay + " 天";
+            return "#### 已连续跌 " + -downDay + " 天";
         }
         return "";
     }
