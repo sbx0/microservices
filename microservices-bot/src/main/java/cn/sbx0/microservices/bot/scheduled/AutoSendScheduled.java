@@ -32,7 +32,7 @@ public class AutoSendScheduled {
     /**
      * Monday to Friday at 3pm
      */
-    @Scheduled(cron = "0 0 15 * * 01,02,03,04,05")
+    @Scheduled(cron = "0 45 14 * * 01,02,03,04,05")
     public void handleGoldenTask() {
         log.info("handleGoldenTask");
         goldenService.readData();
