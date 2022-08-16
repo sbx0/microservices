@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author sbx0
@@ -23,17 +25,6 @@ public class MemorialDayServiceImpl implements IMemorialDayService {
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     @Resource
     private IMessageService messageService;
-
-    public static void main(String[] args) {
-        LocalDateTime now = LocalDateTime.now().toLocalDate().atStartOfDay();
-        int year = now.getYear();
-        System.out.println(year);
-        LocalDateTime memorialDay = LocalDate.parse("2021-08-12", DATE_TIME_FORMATTER).atStartOfDay();
-        int memorialYear = memorialDay.getYear();
-        if (memorialYear != year) {
-
-        }
-    }
 
     @Override
     public void handleData(List<MemorialDayEntity> days) {
@@ -55,18 +46,30 @@ public class MemorialDayServiceImpl implements IMemorialDayService {
             }
             LocalDateTime memorialDay = LocalDate.parse(dayStr, DATE_TIME_FORMATTER).atStartOfDay();
             long cal = Duration.between(now, memorialDay).toDays();
-            if (cal < 0) {
-                stringBuilder.append(day.getSentence()).append("已经 ").append(-cal).append(" 天！");
-            } else if (cal > 0) {
-                stringBuilder.append(day.getSentence()).append("还有 ").append(cal).append(" 天！");
+            day.setRemainDay(cal);
+        }
+        days = days.stream().sorted((o1, o2) -> {
+            long a = Math.abs(o1.getRemainDay());
+            long b = Math.abs(o2.getRemainDay());
+            if (Objects.equals(a, b)) {
+                return 0;
             } else {
-                stringBuilder.append(day.getSentence()).append("就是今天！");
+                return a > b ? 1 : -1;
+            }
+        }).collect(Collectors.toList());
+        for (MemorialDayEntity day : days) {
+            if (day.getRemainDay() < 0) {
+                stringBuilder.append("##### ").append(day.getSentence()).append("已经 ").append(-day.getRemainDay()).append(" 天！");
+            } else if (day.getRemainDay() > 0) {
+                stringBuilder.append("##### ").append(day.getSentence()).append("还有 ").append(day.getRemainDay()).append(" 天！");
+            } else {
+                stringBuilder.append("##### ").append(day.getSentence()).append("就是今天！");
             }
             stringBuilder.append("\n\n");
         }
         MessageEntity msg = new MessageEntity();
         msg.setTitle("时间都去哪了");
-        msg.setText("#### " + stringBuilder);
+        msg.setText(stringBuilder.toString());
         msg.setButtonText("查看详情");
         msg.setButtonUrl("https://m.rili.com.cn/wannianli/");
         log.info(JSONUtils.toJSONString(msg));

@@ -12,6 +12,8 @@ public class MemorialDayEntity {
     private String sentence;
     private Boolean changeEveryYear;
 
+    private Long remainDay;
+
     public MemorialDayEntity() {
     }
 
