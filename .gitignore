@@ -6,3 +6,5 @@ target
 .env
 build
 *.class
+/logs/
+/microservices-bot/logs/

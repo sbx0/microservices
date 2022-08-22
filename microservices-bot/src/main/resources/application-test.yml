@@ -1,0 +1,65 @@
+server:
+  port: ${PORT:9999}
+  shutdown: graceful
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${REGISTRY_URL:http://127.0.0.1/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+    prefer-same-zone-eureka: true
+    region: ${REGION:local}
+    registry-fetch-interval-seconds: 5
+    enabled: false
+  instance:
+    ip-address: ${IP_ADDRESS:172.30.40.220}
+    appname: backup
+    instance-id: ${spring.application.name}:${random.uuid}
+    prefer-ip-address: true
+    metadata-map:
+      version: ${VERSION:dev}
+      region: ${REGION:local}
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    database: ${REDIS_DB}
+    host: ${REDIS_HOST}
+    password: ${REDIS_PASSWORD}
+    port: ${REDIS_PORT}
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+sa-token:
+  token-name: token
+
+logging:
+  file:
+    name: ./logs/backup.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: ./logs/backup-%d{yyyy-MM-dd}.%i.log
+      clean-history-on-start: false
+      max-file-size: 1MB
+      total-size-cap: 1GB
+      max-history: 30
+  level:
+    root: info
+
+dingtalk:
+  bot:
+    access-token: ${BOT_ACCESS_TOKEN}
+
+east-money:
+  base-url: ${EAST_MONEY_BASE_URL}
+real-time-east-money:
+  base-url: ${REAL_TIME_EAST_MONEY_BASE_URL}
