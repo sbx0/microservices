@@ -59,11 +59,11 @@ public class MemorialDayServiceImpl implements IMemorialDayService {
         }).collect(Collectors.toList());
         for (MemorialDayEntity day : days) {
             if (day.getRemainDay() < 0) {
-                stringBuilder.append("##### ").append(day.getSentence()).append("已经 ").append(-day.getRemainDay()).append(" 天！");
+                stringBuilder.append("##### ").append(day.getSentence()).append(" 已经 ").append(-day.getRemainDay()).append(" 天！");
             } else if (day.getRemainDay() > 0) {
-                stringBuilder.append("##### ").append(day.getSentence()).append("还有 ").append(day.getRemainDay()).append(" 天！");
+                stringBuilder.append("##### ").append(day.getSentence()).append(" 还有 ").append(day.getRemainDay()).append(" 天！");
             } else {
-                stringBuilder.append("##### ").append(day.getSentence()).append("就是今天！");
+                stringBuilder.append("##### ").append(day.getSentence()).append(" 就是今天！");
             }
             stringBuilder.append("\n\n");
         }
