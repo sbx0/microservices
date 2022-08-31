@@ -1,10 +1,7 @@
 package cn.sbx0.microservices.bot.config;
 
 import cn.sbx0.microservices.bot.converter.JsonpConverterFactory;
-import cn.sbx0.microservices.bot.http.DingDingService;
-import cn.sbx0.microservices.bot.http.EastMoneyService;
-import cn.sbx0.microservices.bot.http.GitHubService;
-import cn.sbx0.microservices.bot.http.RealTimeEastMoneyService;
+import cn.sbx0.microservices.bot.http.*;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +27,7 @@ public class RetrofitConfig {
     public RealTimeEastMoneyService realTimeEastMoneyService;
     public DingDingService dingDingService;
     public GitHubService gitHubService;
+    public WeixinApiService weixinApiService;
     @Value("${east-money.base-url}")
     private String eastMoneyBaseUrl;
     @Value("${real-time-east-money.base-url}")
@@ -57,5 +55,10 @@ public class RetrofitConfig {
                 .addConverterFactory(JacksonConverterFactory.create(OBJECT_MAPPER))
                 .build()
                 .create(GitHubService.class);
+        weixinApiService = new Retrofit.Builder()
+                .baseUrl("https://api.weixin.qq.com")
+                .addConverterFactory(JacksonConverterFactory.create(OBJECT_MAPPER))
+                .build()
+                .create(WeixinApiService.class);
     }
 }

@@ -52,7 +52,7 @@ public class GitHubBotServiceImpl implements IGitHubBotService {
             log.info(repositoryName + " update");
             MessageEntity msg = new MessageEntity();
             msg.setTitle("程序更新");
-            msg.setText("#### " + repositoryName + " " + data.getTag_name() + "\n\n" + data.getBody());
+            msg.setText(repositoryName + " " + data.getTag_name() + "更新了");
             msg.setButtonText("查看详情");
             msg.setButtonUrl(data.getHtml_url());
             messageService.sendMessage(msg);

@@ -63,3 +63,10 @@ east-money:
   base-url: ${EAST_MONEY_BASE_URL}
 real-time-east-money:
   base-url: ${REAL_TIME_EAST_MONEY_BASE_URL}
+
+weixin:
+  app-id: ${WEIXIN_APP_ID}
+  app-secret: ${WEIXIN_APP_SECRET}
+  auth:
+    token: ${WEIXIN_AUTH_TOKEN}
+  userid: ${WEIXIN_USER_ID}

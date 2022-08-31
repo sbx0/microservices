@@ -52,13 +52,13 @@ public class GoldenServiceImpl implements IGoldenService {
             }
         }
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("##### 近期最低 ").append(minPrice).append("\n\n");
+        stringBuilder.append("近期最低 ").append(minPrice).append("\n\n");
         if (upDay != 0) {
-            stringBuilder.append("##### 已连续涨 ").append(upDay).append(" 天");
+            stringBuilder.append("已连续涨 ").append(upDay).append(" 天");
             return stringBuilder.toString();
         }
         if (downDay != 0) {
-            stringBuilder.append("##### 已连续跌 ").append(-downDay).append(" 天");
+            stringBuilder.append("已连续跌 ").append(-downDay).append(" 天");
             return stringBuilder.toString();
         }
         return "";
@@ -71,9 +71,9 @@ public class GoldenServiceImpl implements IGoldenService {
         String gsz = data.getGsz();
         double oldPrice = (int) ((Double.parseDouble(dwjz) * 285.0) * 100) / 100.0;
         double price = (int) ((Double.parseDouble(gsz) * 285.0) * 100) / 100.0;
-        stringBuffer.append("#### ").append(data.getName()).append(" ").append("[").append(data.getFundcode()).append("]").append("\n\n")
-                .append("##### 实时估算 ").append(price).append(" ").append("[").append(data.getGszzl()).append("]").append("\n\n")
-                .append("##### 上交金价 ").append(oldPrice).append(" ").append("\n\n")
+        stringBuffer.append(data.getName()).append(" ").append("[").append(data.getFundcode()).append("]").append("\n\n")
+                .append("实时估算 ").append(price).append(" ").append("[").append(data.getGszzl()).append("]").append("\n\n")
+                .append("上交金价 ").append(oldPrice).append(" ").append("\n\n")
         ;
         return stringBuffer.toString();
     }
