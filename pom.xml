@@ -17,6 +17,7 @@
         <module>microservices-uno</module>
         <module>microservices-home</module>
         <module>microservices-bot</module>
+        <module>microservices-todo</module>
     </modules>
 
     <parent>
