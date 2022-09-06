@@ -74,6 +74,8 @@ services:
       - microservices-configuration
     env_file:
       - .env
+    environment:
+      WAIT_HOSTS: localhost:8761, localhost:8888
 
   microservices-todo:
     container_name: microservices-todo
@@ -92,3 +94,5 @@ services:
       - microservices-configuration
     env_file:
       - .env
+    environment:
+      WAIT_HOSTS: localhost:8761, localhost:8888
