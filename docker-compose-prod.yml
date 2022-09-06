@@ -75,28 +75,10 @@ services:
     env_file:
       - .env
 
-  microservices-uno:
-    container_name: microservices-uno
+  microservices-todo:
+    container_name: microservices-todo
     build:
-      context: ./microservices-uno
-      dockerfile: prod.Dockerfile
-    network_mode: "host"
-    deploy:
-      resources:
-        limits:
-          memory: 500m
-    volumes:
-      - /etc/timezone:/etc/timezone
-    depends_on:
-      - microservices-registry
-      - microservices-configuration
-    env_file:
-      - .env
-
-  microservices-home:
-    container_name: microservices-home
-    build:
-      context: ./microservices-home
+      context: ./microservices-todo
       dockerfile: prod.Dockerfile
     network_mode: "host"
     deploy:
