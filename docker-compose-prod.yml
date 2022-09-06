@@ -15,24 +15,8 @@ services:
         limits:
           memory: 300m
     restart: always
-    environment:
-      REGION:
-      VERSION:
-      REGISTRY_URL:
-      SECURITY_NAME:
-      SECURITY_PASSWORD:
-      CONFIG_URL:
-      HOST_CONFIG_LOCATION:
-      CONFIG_LOCATION:
-      REDIS_HOST:
-      REDIS_PORT:
-      REDIS_PASSWORD:
-      DB_URL:
-      DB_USERNAME:
-      DB_PASSWORD:
-      REGISTRY_PORT:
-      REGISTRY_PROFILES:
-      IP_ADDRESS:
+    env_file:
+      - .env
 
   microservices-configuration:
     container_name: microservices-configuration
@@ -50,25 +34,8 @@ services:
     restart: always
     depends_on:
       - microservices-registry
-    environment:
-      WAIT_HOSTS: localhost:8761
-      REGION:
-      VERSION:
-      REGISTRY_URL:
-      SECURITY_NAME:
-      SECURITY_PASSWORD:
-      CONFIG_URL:
-      HOST_CONFIG_LOCATION:
-      CONFIG_LOCATION:
-      REDIS_HOST:
-      REDIS_PORT:
-      REDIS_PASSWORD:
-      DB_URL:
-      DB_USERNAME:
-      DB_PASSWORD:
-      CONFIGURATION_PORT:
-      CONFIGURATION_PROFILES:
-      IP_ADDRESS:
+    env_file:
+      - .env
 
   microservices-gateway:
     container_name: microservices-gateway
@@ -86,26 +53,8 @@ services:
     depends_on:
       - microservices-registry
       - microservices-configuration
-    environment:
-      WAIT_HOSTS: localhost:8761, localhost:8888
-      REGION:
-      VERSION:
-      REGISTRY_URL:
-      SECURITY_NAME:
-      SECURITY_PASSWORD:
-      CONFIG_URL:
-      HOST_CONFIG_LOCATION:
-      CONFIG_LOCATION:
-      REDIS_HOST:
-      REDIS_PORT:
-      REDIS_PASSWORD:
-      DB_URL:
-      DB_USERNAME:
-      DB_PASSWORD:
-      GATEWAY_PORT:
-      GATEWAY_PROFILES:
-      NEXT_URL:
-      IP_ADDRESS:
+    env_file:
+      - .env
 
   microservices-account:
     container_name: microservices-account
@@ -123,25 +72,8 @@ services:
     depends_on:
       - microservices-registry
       - microservices-configuration
-    environment:
-      WAIT_HOSTS: localhost:8761, localhost:8888
-      REGION:
-      VERSION:
-      REGISTRY_URL:
-      SECURITY_NAME:
-      SECURITY_PASSWORD:
-      CONFIG_URL:
-      HOST_CONFIG_LOCATION:
-      CONFIG_LOCATION:
-      REDIS_HOST:
-      REDIS_PORT:
-      REDIS_PASSWORD:
-      DB_URL:
-      DB_USERNAME:
-      DB_PASSWORD:
-      ACCOUNT_PORT:
-      ACCOUNT_PROFILES:
-      IP_ADDRESS:
+    env_file:
+      - .env
 
   microservices-uno:
     container_name: microservices-uno
@@ -158,25 +90,8 @@ services:
     depends_on:
       - microservices-registry
       - microservices-configuration
-    environment:
-      WAIT_HOSTS: localhost:8761, localhost:8888
-      REGION:
-      VERSION:
-      REGISTRY_URL:
-      SECURITY_NAME:
-      SECURITY_PASSWORD:
-      CONFIG_URL:
-      HOST_CONFIG_LOCATION:
-      CONFIG_LOCATION:
-      REDIS_HOST:
-      REDIS_PORT:
-      REDIS_PASSWORD:
-      DB_URL:
-      DB_USERNAME:
-      DB_PASSWORD:
-      UNO_PORT:
-      UNO_PROFILES:
-      IP_ADDRESS:
+    env_file:
+      - .env
 
   microservices-home:
     container_name: microservices-home
@@ -193,22 +108,5 @@ services:
     depends_on:
       - microservices-registry
       - microservices-configuration
-    environment:
-      WAIT_HOSTS: localhost:8761, localhost:8888
-      REGION:
-      VERSION:
-      REGISTRY_URL:
-      SECURITY_NAME:
-      SECURITY_PASSWORD:
-      CONFIG_URL:
-      HOST_CONFIG_LOCATION:
-      CONFIG_LOCATION:
-      REDIS_HOST:
-      REDIS_PORT:
-      REDIS_PASSWORD:
-      DB_URL:
-      DB_USERNAME:
-      DB_PASSWORD:
-      HOME_PORT:
-      HOME_PROFILES:
-      IP_ADDRESS:
+    env_file:
+      - .env

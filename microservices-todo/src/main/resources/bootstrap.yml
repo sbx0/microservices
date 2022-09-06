@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: todo
+  cloud:
+    inetutils:
+      preferred-networks: 192.168.1\.(.*)
+    config:
+      uri: ${CONFIG_URL:http://:192.168.1.3:8888}
+      fail-fast: true
+      username: ${SECURITY_NAME:sbx0}
+      password: ${SECURITY_PASSWORD:123456}
