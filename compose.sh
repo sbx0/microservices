@@ -4,103 +4,31 @@
 SOURCE_CONFIGS="../microservices-configuration/src/main/resources/configurations"
 CHANGED_CONFIGS="./configurations/*"
 
-build() {
-  case "$1" in
-  "local")
-    if [ -n "$2" ]; then
-      docker-compose --compatibility -f docker-compose.yml --env-file .env build "$2"
-    else
-      docker-compose --compatibility -f docker-compose.yml --env-file .env build
-    fi
-    ;;
-  *)
-    if [ -n "$2" ]; then
-      docker-compose --compatibility -f docker-compose-prod.yml --env-file .env build "$2"
-    else
-      docker-compose --compatibility -f docker-compose-prod.yml --env-file .env build
-    fi
-    ;;
-  esac
-}
-
 up() {
-  # $1 environment eg. local / server
-  # $2 service_name eg. microservices-registry / microservices-configuration
-  case "$1" in
-  "local")
-    if [ -n "$2" ]; then
-      docker-compose -f docker-compose.yml --env-file .env --compatibility up -d "$2"
+    if [ -n "$1" ]; then
+      docker-compose --compatibility up -d --build "$1"
     else
-      docker-compose -f docker-compose.yml --env-file .env --compatibility up -d
+      docker-compose --compatibility up -d --build
     fi
-    ;;
-  *)
-    if [ -n "$2" ]; then
-      docker-compose -f docker-compose-prod.yml --env-file .env --compatibility up -d "$2"
-    else
-      docker-compose -f docker-compose-prod.yml --env-file .env --compatibility up -d
-    fi
-    ;;
-  esac
-}
-
-down() {
-  case "$1" in
-  "local")
-    docker-compose -f docker-compose.yml --env-file .env down
-    ;;
-  *)
-    docker-compose -f docker-compose-prod.yml --env-file .env down
-    ;;
-  esac
-}
-
-build-and-up() {
-  build "$1" "$2"
-  up "$1" "$2"
 }
 
 restart() {
-  case "$1" in
-  "local")
-    if [ -n "$2" ]; then
-      docker-compose -f docker-compose.yml --env-file .env --no-deps --build restart "$2"
+    if [ -n "$1" ]; then
+      docker-compose --no-deps --build .env restart "$1"
     else
       echo "service-name require"
       echo "eg. bash compose.sh restart service-name"
     fi
-    ;;
-  *)
-    if [ -n "$2" ]; then
-      docker-compose -f docker-compose-prod.yml --env-file --no-deps --build .env restart "$2"
-    else
-      echo "service-name require"
-      echo "eg. bash compose.sh restart service-name"
-    fi
-    ;;
-  esac
 }
 
+
+
 log() {
-  case "$1" in
-  "local")
-    docker-compose -f docker-compose.yml --env-file .env logs -f --tail=1
-    ;;
-  *)
-    docker-compose -f docker-compose-prod.yml --env-file .env logs -f --tail=1
-    ;;
-  esac
+    docker-compose logs -f --tail=1
 }
 
 config() {
-  case "$1" in
-  "local")
-    docker-compose -f docker-compose.yml --env-file .env config
-    ;;
-  *)
-    docker-compose -f docker-compose-prod.yml --env-file .env config
-    ;;
-  esac
+    docker-compose -f docker-compose.yml config
 }
 
 back() {
@@ -111,33 +39,30 @@ stats() {
   docker stats
 }
 
+down() {
+    docker-compose down
+}
+
 case "$1" in
-"build" | "b")
-  build "$2"
-  ;;
-  # ./compose.sh up environment service_name
-"up" | "p")
+"up")
   up "$2" "$3"
-  ;;
-"build-and-up" | "bp")
-  build-and-up "$2" "$3"
   ;;
 "restart" | "re")
   restart "$2"
   ;;
-"config" | "c")
-  config "$2"
+"log")
+  log
+  ;;
+"stats" | "st")
+  stats
   ;;
 "back")
   back
   ;;
-"stats")
-  stats
+"config")
+  config "$2"
   ;;
-"log" | "l")
-  log "$2"
-  ;;
-"down" | "d")
+"down")
   down "$2"
   ;;
 *)

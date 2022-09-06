@@ -9,8 +9,7 @@ SERVICES=(
   microservices-configuration
   microservices-gateway
   microservices-registry
-  microservices-uno
-  microservices-home
+  microservices-todo
 )
 SOURCE_CONFIGS="$PWD/microservices-configuration/src/main/resources/configurations/*"
 # WSL_IP=$(ifconfig eth0 | grep -w inet | awk '{print $2}')
@@ -46,12 +45,9 @@ init() {
   sed -i '$a # ACCOUNT' .env
   sed -i '$a ACCOUNT_PORT=0' .env
   sed -i '$a ACCOUNT_PROFILES=dev' .env
-  sed -i '$a # UNO' .env
-  sed -i '$a UNO_PORT=0' .env
-  sed -i '$a UNO_PROFILES=dev' .env
-  sed -i '$a # HOME' .env
-  sed -i '$a HOME_PORT=0' .env
-  sed -i '$a HOME_PROFILES=dev' .env
+  sed -i '$a # TODO' .env
+  sed -i '$a TODO_PORT=0' .env
+  sed -i '$a TODO_PROFILES=dev' .env
   sed -i '$a IP_ADDRESS=wsl2.sbx0.cn' .env
   # sed -i "\$a CONFIG_LOCATION=${PWD}/${BUILD}/configurations" .env
   # echo "config environment"
@@ -93,7 +89,7 @@ copy() {
 copy-up() {
   copy
   cd build || exit
-  ./compose.sh build-and-up "$1" "$2"
+  ./compose.sh up "$1"
 }
 
 log() {
