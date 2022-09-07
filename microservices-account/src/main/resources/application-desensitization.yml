@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${ACCOUNT_PORT:0}
 
 eureka:
   client:
@@ -8,10 +8,11 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     prefer-same-zone-eureka: true
+    region: ${REGION:local}
     registryFetchIntervalSeconds: 5
   instance:
     ip-address: 172.26.245.239
-    appname: gateway
+    appname: account
     instance-id: ${spring.application.name}:${random.uuid}
     prefer-ip-address: true
     metadata-map:
@@ -20,31 +21,20 @@ eureka:
 
 spring:
   application:
-    name: gateway
-  cloud:
-    loadbalancer:
-      cache:
-        enable: false
-    gateway:
-      httpclient:
-        connect-timeout: 1000
-        response-timeout: 5s
-      discovery:
-        locator:
-          enabled: true
-        httpclient:
-          connect-timeout: 1000
-          response-timeout: 5s
-      routes:
-        - id: nextjs
-          uri: http://172.26.245.239:3000
-          predicates:
-            - Path=/**
+    name: account
+  datasource:
+    url: ${DB_URL:jdbc:mysql://test/tset?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:test}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     database: 0
-    host: 172.26.245.239
-    password: YOUR PASSWORD
-    port: 6379
+    host: ${REDIS_HOST:test}
+    password: ${REDIS_PASSWORD:test}
+    port: ${REDIS_PORT:6379}
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
@@ -53,16 +43,17 @@ management:
   endpoints:
     web:
       exposure:
-        include:
-          - health
-          - info
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
 
 logging:
   file:
-    name: ./logs/gateway.log
+    name: ./logs/account.log
   logback:
     rollingpolicy:
-      file-name-pattern: ./logs/gateway-%d{yyyy-MM-dd}.%i.log
+      file-name-pattern: ./logs/account-%d{yyyy-MM-dd}.%i.log
       clean-history-on-start: false
       max-file-size: 1MB
       total-size-cap: 1GB

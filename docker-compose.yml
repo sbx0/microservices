@@ -9,6 +9,7 @@ services:
       dockerfile: prod.Dockerfile
     volumes:
       - /etc/timezone:/etc/timezone
+      - ./logs:/logs
     network_mode: "host"
     deploy:
       resources:
@@ -26,6 +27,7 @@ services:
     volumes:
       - $HOST_CONFIG_LOCATION:$CONFIG_LOCATION
       - /etc/timezone:/etc/timezone
+      - ./logs:/logs
     network_mode: "host"
     deploy:
       resources:
@@ -45,6 +47,7 @@ services:
     network_mode: "host"
     volumes:
       - /etc/timezone:/etc/timezone
+      - ./logs:/logs
     deploy:
       resources:
         limits:
@@ -69,6 +72,7 @@ services:
     restart: always
     volumes:
       - /etc/timezone:/etc/timezone
+      - ./logs:/logs
     depends_on:
       - microservices-registry
       - microservices-configuration
@@ -89,6 +93,7 @@ services:
           memory: 500m
     volumes:
       - /etc/timezone:/etc/timezone
+      - ./logs:/logs
     depends_on:
       - microservices-registry
       - microservices-configuration
