@@ -8,11 +8,11 @@ import java.util.Collections;
 import java.util.Map;
 
 public class CodeGenerator {
-    public static final String author = "wangh";
+    public static final String author = "sbx0";
     public static final String packageConfig = "cn.sbx0.microservices";
-    public static final String moduleName = "microservices-home";
-    public static final String modulePackageConfig = "home";
-    public static final String table = "community_house";
+    public static final String moduleName = "microservices-todo";
+    public static final String modulePackageConfig = "todo";
+    public static final String table = "mission_info";
     public static String url;
     public static String username;
     public static String password;

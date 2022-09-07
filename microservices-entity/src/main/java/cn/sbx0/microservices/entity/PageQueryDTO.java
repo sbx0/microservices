@@ -17,10 +17,12 @@ public class PageQueryDTO {
     private Integer size;
     private String keyword;
     private List<QueryOrderDTO> orders;
+    private List<QueryFilterDTO> filters;
 
     public PageQueryDTO() {
         this.page = 1;
-        this.size = 10;
+        this.size = 20;
         this.orders = Collections.emptyList();
+        this.filters = Collections.emptyList();
     }
 }
