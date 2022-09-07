@@ -10,7 +10,7 @@ eureka:
     enable-self-preservation: false
     eviction-interval-timer-in-ms: 100000
   instance:
-    ip-address: ${IP_ADDRESS:172.30.40.220}
+    ip-address: 172.26.245.239
     prefer-ip-address: true
   client:
     register-with-eureka: false

@@ -13,7 +13,7 @@ eureka:
     registry-fetch-interval-seconds: 5
     enabled: false
   instance:
-    ip-address: ${IP_ADDRESS:172.30.40.220}
+    ip-address: 172.26.245.239
     appname: backup
     instance-id: ${spring.application.name}:${random.uuid}
     prefer-ip-address: true
