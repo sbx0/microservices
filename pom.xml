@@ -39,7 +39,7 @@
         <feign-httpclient.version>11.9.1</feign-httpclient.version>
         <mybatis-plus.version>3.5.1</mybatis-plus.version>
         <mybatis.version>2.2.2</mybatis.version>
-        <pagehelper-spring-boot-starter.version>1.4.3</pagehelper-spring-boot-starter.version>
+        <pagehelper-spring-boot-starter.version>1.4.4</pagehelper-spring-boot-starter.version>
         <sa-token.version>1.30.0</sa-token.version>
         <lombok.version>1.18.24</lombok.version>
         <velocity-engine-core.version>2.3</velocity-engine-core.version>
