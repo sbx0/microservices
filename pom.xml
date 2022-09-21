@@ -50,7 +50,7 @@
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
-        <byte-buddy.version>1.12.13</byte-buddy.version>
+        <byte-buddy.version>1.12.17</byte-buddy.version>
         <spring-restdocs-mockmvc.version>2.0.6.RELEASE</spring-restdocs-mockmvc.version>
         <retrofit.version>2.9.0</retrofit.version>
         <commons-codec.version>1.15</commons-codec.version>
