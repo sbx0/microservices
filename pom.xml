@@ -35,7 +35,7 @@
     <properties>
         <java.version>1.17</java.version>
         <microservices.version>0.0.1</microservices.version>
-        <spring-cloud-dependencies.version>2021.0.3</spring-cloud-dependencies.version>
+        <spring-cloud-dependencies.version>2022.0.1</spring-cloud-dependencies.version>
         <feign-httpclient.version>11.9.1</feign-httpclient.version>
         <mybatis-plus.version>3.5.1</mybatis-plus.version>
         <mybatis.version>2.2.2</mybatis.version>
